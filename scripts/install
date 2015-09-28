@@ -35,6 +35,10 @@ sed -i "s@NAMETOCHANGE@dolibarr@g" ../conf/php-fpm.conf
 
 finalphpconf=/etc/php5/fpm/pool.d/dolibarr.conf
 
+db_pwd=$(dd if=/dev/urandom bs=1 count=200 2> /dev/null | tr -c -d '[A-Za-z0-9]' | sed -n 's/\(.\{24\}\).*/\1/p')
+
+sudo yunohost app initdb dolibarr -p $db_pwd
+
 sudo cp ../conf/php-fpm.conf $finalphpconf
 sudo chown root: $finalphpconf
 sudo chmod 644 $finalphpconf
