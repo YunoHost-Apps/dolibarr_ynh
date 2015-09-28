@@ -18,9 +18,8 @@ final_path=/var/www/dolibarr
 sudo mkdir -p $final_path
 sudo cp -a ../sources/dolibarr/* $final_path
 
+sudo touch $final_path/htdocs/conf/conf.php
 sudo chown -R www-data: $final_path
-
-touch $final_path/htdocs/conf/conf.php
 
 if [[ "$path" == "" ]]; then
   sed -i "s@PATHTOCHANGE@/@g" ../conf/nginx.conf
