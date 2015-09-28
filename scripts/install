@@ -33,7 +33,7 @@ sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/dolibarr.conf
 
 sed -i "s@NAMETOCHANGE@ndolibarr@g" ../conf/php-fpm.conf
 
-finalphpconf=/etc/php5/fpm/pool.d/noalyss.conf
+finalphpconf=/etc/php5/fpm/pool.d/dolibarr.conf
 
 sudo cp ../conf/php-fpm.conf $finalphpconf
 sudo chown root: $finalphpconf
