@@ -21,3 +21,16 @@ sudo cp -a ../sources/dolibarr/* $final_path
 sudo chown -R www-data: $final_path
 
 touch $final_path/dolibarr/conf/conf.php
+
+if [[ "$path" == "" ]]; then
+  sed -i "s@PATHTOCHANGE@/@g" ../conf/nginx.conf
+else
+  sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
+fi
+
+sed -i "s@ALIASTOCHANGE@$final_path/htdocs/@g" ../conf/nginx.conf
+
+sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/dolibarr.conf
+
+sed -i "s@NAMETOCHANGE@noalyss@g" ../conf/php-fpm.conf
+sudo cp ../conf/noalyss.conf $final_path/include/config.inc.php
