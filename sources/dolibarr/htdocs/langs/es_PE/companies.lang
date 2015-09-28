@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - companies
+VATIsUsed=Sujeto a IGV
+VATIsNotUsed=No sujeto a IGV
+VATIntra=RUC
+VATIntraShort=RUC
+VATIntraVeryShort=RUC

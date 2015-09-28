@@ -1,0 +1,22 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=Use lot/serial number
+ProductStatusOnBatch=Yes (lot/serial required)
+ProductStatusNotOnBatch=No (lot/serial not used)
+ProductStatusOnBatchShort=Có
+ProductStatusNotOnBatchShort=Không
+Batch=Lot/Serial
+atleast1batchfield=Eat-by date or Sell-by date or Lot/Serial number
+batch_number=Lot/Serial number
+BatchNumberShort=Lot/Serial
+l_eatby=Ăn theo ngày
+l_sellby=Bán theo ngày
+DetailBatchNumber=Lot/Serial details
+DetailBatchFormat=Lot/Serial: %s - Eat by: %s - Sell by: %s (Qty : %d)
+printBatch=Lot/Serial: %s
+printEatby=Ăn theo: %s
+printSellby=Bán theo: %s
+printQty=SL: %d
+AddDispatchBatchLine=Thêm 1 line cho Shelf Life dispatching
+BatchDefaultNumber=Không định nghĩa
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, increase/decrease stock mode is forced to last choice and can't be edited. Other options can be defined as you want.
+ProductDoesNotUseBatchSerial=This product does not use lot/serial number

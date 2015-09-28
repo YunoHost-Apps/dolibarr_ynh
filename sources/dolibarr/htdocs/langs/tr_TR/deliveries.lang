@@ -1,0 +1,26 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Teslimat
+Deliveries=Teslimatlar
+DeliveryCard=Teslimat kartı
+DeliveryOrder=Teslimat emri
+DeliveryOrders=Teslimat emirleri
+DeliveryDate=Teslim tarihi
+DeliveryDateShort=Tes. tarihİ
+CreateDeliveryOrder=Teslimat emri oluştur
+QtyDelivered=Teslimat Mik
+SetDeliveryDate=Nakliye tarihini ayarla
+ValidateDeliveryReceipt=Teslimat fişini doğrula
+ValidateDeliveryReceiptConfirm=Bu teslimat fişini doğrulamak istediğinizden emin misiniz?
+DeleteDeliveryReceipt=Teslimat fişi sil
+DeleteDeliveryReceiptConfirm=<b>%s</b> Teslimat fişini silmek istediğiniz emin misiniz ?
+DeliveryMethod=Teslimat yöntemi
+TrackingNumber=İzleme numarası
+DeliveryNotValidated=Teslimat doğrulanmadı
+# merou PDF model
+NameAndSignature=Adı ve İmzası:
+ToAndDate=Teslim alan ___________________________________ Tarih _____ / _____ /__________
+GoodStatusDeclaration=Yukarıdaki malzemeleri iyi durumda teslim aldım,
+Deliverer=Teslim eden :
+Sender=Gönderen
+Recipient=Alıcı
+ErrorStockIsNotEnough=Yeterli stok yok

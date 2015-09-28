@@ -1,0 +1,22 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=Use lot/serial number
+ProductStatusOnBatch=Yes (lot/serial required)
+ProductStatusNotOnBatch=No (lot/serial not used)
+ProductStatusOnBatchShort=Da
+ProductStatusNotOnBatchShort=Nu
+Batch=Lot/Serial
+atleast1batchfield=Eat-by date or Sell-by date or Lot/Serial number
+batch_number=Lot/Serial number
+BatchNumberShort=Lot/Serial
+l_eatby=Data expirare
+l_sellby=Data vânzare
+DetailBatchNumber=Lot/Serial details
+DetailBatchFormat=Lot/Serial: %s - Eat by: %s - Sell by: %s (Qty : %d)
+printBatch=Lot/Serial: %s
+printEatby=Expiră : %s
+printSellby=Vanzare: %s
+printQty=Cant: %d
+AddDispatchBatchLine=Adauga o linie pentru Perioada de valabilitate expediere
+BatchDefaultNumber=Nedefinit
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, increase/decrease stock mode is forced to last choice and can't be edited. Other options can be defined as you want.
+ProductDoesNotUseBatchSerial=This product does not use lot/serial number

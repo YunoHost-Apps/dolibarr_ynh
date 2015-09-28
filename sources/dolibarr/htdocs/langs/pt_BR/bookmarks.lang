@@ -1,0 +1,13 @@
+# Dolibarr language file - Source file is en_US - bookmarks
+ShowBookmark=Visualizar Favorito
+OpenANewWindow=Abrir em uma nova janela
+BookmarkTargetNewWindowShort=Uma nova janela
+BookmarkTargetReplaceWindowShort=Na janela atual
+BookmarkTitle=Título do favorito
+BehaviourOnClick=Comportamento ao clicar em uma URL
+CreateBookmark=Criar favorito
+SetHereATitleForLink=Definir um título para ao favorito
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Usar uma URL de HTTP externa ou uma URL relativa do Dolibarr
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Escolha se a página aberta pelo link deve aparecer na janela atual ou na nova
+BookmarksManagement=Administração dos favoritos
+ListOfBookmarks=Lista de favoritos

@@ -1,0 +1,22 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=Użyj lot / numer seryjny
+ProductStatusOnBatch=Tak (lot / numer seryjny wymagany)
+ProductStatusNotOnBatch=Nie (lot / numer seryjny nie wykorzystany)
+ProductStatusOnBatchShort=Tak
+ProductStatusNotOnBatchShort=Nie
+Batch=Lot/Serial
+atleast1batchfield=Data wykorzystania lub data sprzedaży lub Lot / Numer seryjny
+batch_number=Lot/ Numer seryjny
+BatchNumberShort=Lot/ Nr. Seryjny
+l_eatby=Wykorzystaj - po dacie
+l_sellby=Sprzedaj - po dacie
+DetailBatchNumber=Lot/Serial detale
+DetailBatchFormat=Lot/Serial: %s - Wykorzystano: %s - Sprzedano: %s (Qty : %d)
+printBatch=Lot/Serial: %s
+printEatby=Wykorzystaj po: %s
+printSellby=Sprzedaj po: %s
+printQty=Ilość: %d
+AddDispatchBatchLine=Dodaj linię dla przedłużenia wysyłki
+BatchDefaultNumber=Niezdefiniowano
+WhenProductBatchModuleOnOptionAreForced=Gdy moduł lot / numer seryjny jest aktywny, zwiększenie / zmniejszenie Tryb magazynowy jest wymuszony do ostatniego wyboru i nie może być edytowany. Inne opcje można określić, jak chcesz.
+ProductDoesNotUseBatchSerial=This product does not use lot/serial number

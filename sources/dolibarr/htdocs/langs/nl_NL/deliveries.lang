@@ -1,0 +1,28 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Levering
+Deliveries=Leveringen
+DeliveryCard=Bezorging kaart
+DeliveryOrder=Ontvangsbon
+DeliveryOrders=Ontvangstbonnen
+DeliveryDate=Leveringsdatum
+DeliveryDateShort=Leveringsdatum
+CreateDeliveryOrder=Genereer ontvangstbon\n
+QtyDelivered=Aantal geleverd
+SetDeliveryDate=Stel verzenddatum in
+ValidateDeliveryReceipt=Valideer ontvangstbewijs
+ValidateDeliveryReceiptConfirm=Weet u zeker dat u dit ontvangstbewijs wilt valideren?
+DeleteDeliveryReceipt=Verwijder ontvangstbewijs
+DeleteDeliveryReceiptConfirm=Weet u zeker dat u dit ontvangstbewijs wilt verwijderen?
+DeliveryMethod=Leveringswijze
+TrackingNumber=Volgnummer
+DeliveryNotValidated=Levering niet gevalideerd
+# merou PDF model
+NameAndSignature=Naam en handtekening:
+ToAndDate=Aan________________________________ op ____ / _____ / __________
+GoodStatusDeclaration=Hebben de bovenstaande goederen in goede conditie ontvangen,
+Deliverer=Bezorger:
+Sender=Afzender
+Recipient=Ontvanger
+ErrorStockIsNotEnough=Er is niet genoeg voorraad
+Shippable=Zendklaar
+NonShippable=Niet verzendbaar

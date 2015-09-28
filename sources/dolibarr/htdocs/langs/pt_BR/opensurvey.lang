@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - opensurvey
+CreatePoll=Criar uma enquete
+PollTitle=Titulo da enquete
+TypeDate=Modelo para datas
+TypeClassic=Modelo padrão
+RemoveAllDays=Remova todos os dias
+TheBestChoice=A melhor escolha no momento é
+TheBestChoices=As melhores escolhas no momento são
+ConfirmRemovalOfPoll=Você tem certeza que deseja remover esta enquete (e todos os votos)
+RemovePoll=Remover enquete
+CheckBox=Caixa de resposta simples
+YesNoList=Escolher (nulo/sim/não)
+PourContreList=Escolher (nulo/a favor/contra)
+ExportSpreadsheet=Exportar resultado para planilha
+NbOfVoters=Nr. de eleitores
+SurveyResults=Resultado
+YouAreInivitedToVote=Você foi convidado para votar nesta enquete
+ErrorPollDoesNotExists=Erro, enquete <strong>%s</strong> não existe.
+AddEndHour=Adicionar hora final
+votes=voto(s)
+NoCommentYet=Nenhum comentário foi publicado para este voto ainda
+CanEditVotes=É possível alterar voto dos demais
+CanComment=Os eleitores podem comentar na enquete
+CanSeeOthersVote=Os eleitores podem ver os votos de outras pessoas
+ErrorOpenSurveyOneChoice=Digite pelo menos uma opção
+ErrorOpenSurveyDateFormat=A data deve ter o formato YYYY-MM-DD
+SurveyExpiredInfo=O período de votação da enquete expirou.

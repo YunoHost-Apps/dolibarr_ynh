@@ -1,0 +1,13 @@
+# Dolibarr language file - Source file is en_US - banks
+CashAccount=Kassa
+BankAccountDomiciliation=Konto-Adresse
+NewCashAccount=Neue Kassa
+LabelBankCashAccount=Bank- oder Kassabezeichnung
+BankType2=Kassa
+IncludeClosedAccount=Geschlossene konten miteinbeziehen
+WithdrawalPayment=Widerrufsrecht Zahlung
+ShowCheckReceipt=Zeige überprüfen Einzahlungsbeleg
+Graph=Grafik
+TransactionWithOtherAccount=Kontoübertrag
+FutureTransaction=Transaction in futur. Kein Weg zu versöhnen.
+SelectChequeTransactionAndGenerate=Select / Filter prüft, in die Scheckeinreichung Erhalt gehören und klicken Sie auf &quot;Erstellen&quot;.

@@ -1,0 +1,28 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Pristatymas
+Deliveries=Pristatymai
+DeliveryCard=Pristatymo kortelė
+DeliveryOrder=Pristatymo užsakymas
+DeliveryOrders=Pristatymo užsakymai
+DeliveryDate=Pristatymo data
+DeliveryDateShort=Pristatymo data
+CreateDeliveryOrder=Sukurti pristatymo užsakymą
+QtyDelivered=Pristatytas Kiekis
+SetDeliveryDate=Nustatyti pakrovimo datą
+ValidateDeliveryReceipt=Patvirtinti pristatymo kvitą
+ValidateDeliveryReceiptConfirm=Ar tikrai norite patvirtinti šitą pristatymo kvitą ?
+DeleteDeliveryReceipt=Ištrinti pristatymo kvitą
+DeleteDeliveryReceiptConfirm=Ar tikrai norite ištrinti pristatymo kvitą <b>%s</b> ?
+DeliveryMethod=Pristatymo būdas
+TrackingNumber=Sekimo numeris
+DeliveryNotValidated=Pristatymas nepatvirtintas
+# merou PDF model
+NameAndSignature=Vardas, Pavardė ir parašas:
+ToAndDate=Kam___________________________________ nuo ____ / _____ / __________
+GoodStatusDeclaration=Prekes, nurodytas aukščiau, gavome geros būklės,
+Deliverer=Pristatė:
+Sender=Siuntėjas
+Recipient=Gavėjas
+ErrorStockIsNotEnough=Nėra pakankamai atsargų
+Shippable=Pristatomas
+NonShippable=Nepristatomas

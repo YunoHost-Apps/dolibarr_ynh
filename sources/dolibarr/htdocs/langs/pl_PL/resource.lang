@@ -1,0 +1,34 @@
+
+MenuResourceIndex=Zasoby
+MenuResourceAdd=Nowe zasoby
+MenuResourcePlanning=Planowane Zasoby
+DeleteResource=Usuń zasoby
+ConfirmDeleteResourceElement=Potwierdz usunięcie zasobów dla tego elementu
+NoResourceInDatabase=Brak zasobów w bazie danych
+NoResourceLinked=Brak podliknowanych zasobów
+
+ResourcePageIndex=Lista zasobów
+ResourceSingular=Zasoby
+ResourceCard=Karta zasobów
+AddResource=Utwórz zasoby
+ResourceFormLabel_ref=Nazwa zasobów
+ResourceType=Typ zasobów
+ResourceFormLabel_description=Opis zasobów
+
+ResourcesLinkedToElement=Zasaby połączone z elementem
+
+ShowResourcePlanning=Pokaż zasoby planowane
+GotoDate=Idz do daty
+
+ResourceElementPage=Element zasobów
+ResourceCreatedWithSuccess=Zasoby poprawnie utworzone
+RessourceLineSuccessfullyDeleted=Linia zasobów poprawnie usunięta
+RessourceLineSuccessfullyUpdated=Linia zasobów poprawnie uaktualniona
+ResourceLinkedWithSuccess=Zasoby podlinkowane poprawnie
+
+TitleResourceCard=Karta zasobów
+ConfirmDeleteResource=Potwierdz by usunąc te zasoby
+RessourceSuccessfullyDeleted=Zasoby usunięte poprawnie
+DictionaryResourceType=Typ zasobów
+
+SelectResource=Wybierz zasoby
