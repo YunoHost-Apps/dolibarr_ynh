@@ -1,0 +1,15 @@
+set -e
+
+# Retrieve arguments
+domain=$1
+path=$2
+
+# Check domain/path availability
+sudo yunohost app checkurl $domain$path -a noalyss
+if [[ ! $? -eq 0 ]]; then
+    exit 1
+fi
+
+path=${path%/}
+
+sudo yunohost app setting dolibarr version -v "3.8.0"
