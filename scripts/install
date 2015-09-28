@@ -34,3 +34,8 @@ sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/dolibarr.conf
 
 sed -i "s@NAMETOCHANGE@noalyss@g" ../conf/php-fpm.conf
 sudo cp ../conf/noalyss.conf $final_path/include/config.inc.php
+
+# Reload Nginx and regenerate SSOwat conf
+sudo service php5-fpm restart
+sudo service nginx reload
+sudo yunohost app ssowatconf
