@@ -20,7 +20,7 @@ sudo cp -a ../sources/dolibarr/* $final_path
 
 sudo chown -R www-data: $final_path
 
-touch $final_path/dolibarr/conf/conf.php
+touch $final_path/conf/conf.php
 
 if [[ "$path" == "" ]]; then
   sed -i "s@PATHTOCHANGE@/@g" ../conf/nginx.conf
