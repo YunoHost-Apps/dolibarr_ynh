@@ -5,7 +5,7 @@ domain=$1
 path=$2
 
 # Check domain/path availability
-sudo yunohost app checkurl $domain$path -a noalyss
+sudo yunohost app checkurl $domain$path -a dolibarr
 if [[ ! $? -eq 0 ]]; then
     exit 1
 fi
@@ -14,7 +14,7 @@ path=${path%/}
 
 sudo yunohost app setting dolibarr version -v "3.8.0"
 
-final_path=/var/www/noalyss
+final_path=/var/www/dolibarr
 sudo mkdir -p $final_path
 sudo cp -a ../sources/dolibarr/* $final_path
 
@@ -32,8 +32,13 @@ sed -i "s@ALIASTOCHANGE@$final_path/htdocs/@g" ../conf/nginx.conf
 
 sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/dolibarr.conf
 
-sed -i "s@NAMETOCHANGE@noalyss@g" ../conf/php-fpm.conf
-sudo cp ../conf/noalyss.conf $final_path/include/config.inc.php
+sed -i "s@NAMETOCHANGE@ndolibarr@g" ../conf/php-fpm.conf
+
+finalphpconf=/etc/php5/fpm/pool.d/noalyss.conf
+
+sudo cp ../conf/php-fpm.conf $finalphpconf
+sudo chown root: $finalphpconf
+sudo chmod 644 $finalphpconf
 
 # Reload Nginx and regenerate SSOwat conf
 sudo service php5-fpm restart
