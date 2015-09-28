@@ -13,3 +13,11 @@ fi
 path=${path%/}
 
 sudo yunohost app setting dolibarr version -v "3.8.0"
+
+final_path=/var/www/noalyss
+sudo mkdir -p $final_path
+sudo cp -a ../sources/dolibarr/* $final_path
+
+sudo chown -R www-data: $final_path
+
+touch $final_path/dolibarr/conf/conf.php
