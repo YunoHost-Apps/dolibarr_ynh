@@ -31,7 +31,7 @@ sed -i "s@ALIASTOCHANGE@$final_path/htdocs/@g" ../conf/nginx.conf
 
 sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/dolibarr.conf
 
-sed -i "s@NAMETOCHANGE@ndolibarr@g" ../conf/php-fpm.conf
+sed -i "s@NAMETOCHANGE@dolibarr@g" ../conf/php-fpm.conf
 
 finalphpconf=/etc/php5/fpm/pool.d/dolibarr.conf
 
