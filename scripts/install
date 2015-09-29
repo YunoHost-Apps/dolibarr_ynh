@@ -47,3 +47,20 @@ sudo chmod 644 $finalphpconf
 sudo service php5-fpm restart
 sudo service nginx reload
 sudo yunohost app ssowatconf
+
+sudo yunohost app setting noalyss unprotected_uris -v "/"
+sudo yunohost app ssowatconf
+
+curl -kL -H "Host: $domain" -X POST https://127.0.0.1$path/install/setp1.php --data "testpost=ok&action=set&main_dir=%2Fvar%2Fwww%2Fdolibarr%2Fhtdocs&main_data_dir=%2Fvar%2Fwww%2Fdolibarr%2Fdocuments&main_url=https://$domain$path&db_name=dolibarr&db_type=mysqli&db_host=localhost&db_port=&db_prefix=llx_&db_user=dolibarr&db_pass=$db_pwd&selectlang=fr_FR" > /dev/null 2>&1
+
+curl -kL -H "Host: $domain" -X POST https://127.0.0.1$path/install/setp2.php --data "testpost=ok&action=set&dolibarr_main_db_character_set=latin1&dolibarr_main_db_collation=latin1_swedish_ci&selectlang=fr_FR" > /dev/null 2>&1
+
+curl -kL -H "Host: $domain" -X POST https://127.0.0.1$path/install/setp4.php --data "testpost=ok&action=set&selectlang=fr_FR" > /dev/null 2>&1
+
+curl -kL -H "Host: $domain" -X POST https://127.0.0.1$path/install/setp5.php --data "testpost=ok&action=set&login=admin&pass=neutrinet&pass_verif=neutrinet&selectlang=fr_FR" > /dev/null 2>&1
+
+sudo yunohost app setting noalyss unprotected_uris -v ""
+sudo yunohost app ssowatconf
+
+# TODO
+# Attention, pour des raisons de sécurité, afin de bloquer une nouvelle utilisation des outils d'installation/migration, une fois l'installation terminée, il est conseillé de placer dans le répertoire document de Dolibarr un fichier nommé install.lock en lecture seule.
