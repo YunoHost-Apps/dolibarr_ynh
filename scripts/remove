@@ -1,18 +1,29 @@
-set -e
+#!/bin/bash
 
-domain=$(sudo yunohost app setting dolibarr domain)
-root_pwd=$(sudo cat /etc/yunohost/mysql)
+set -u
+app=$YNH_APP_INSTANCE_NAME
 
-db_name=dolibarr
-db_user=dolibarr
+# Source YunoHost helpers
+source /usr/share/yunohost/helpers
 
-mysql -u root -p$root_pwd -e "DROP DATABASE $db_name ; DROP USER $db_user@localhost ;"
+# Retrieve app settings
+domain=$(ynh_app_setting_get "$app" domain)
 
-final_path=/var/www/dolibarr
+# Remove sources
+sudo rm -rf /var/www/$app
 
-sudo rm -rf $final_path
-sudo rm -f /etc/nginx/conf.d/$domain.d/dolibarr.conf
-sudo rm -f /etc/php5/fpm/pool.d/dolibarr.conf
+# Remove nginx configuration file
+sudo rm -f /etc/nginx/conf.d/$domain.d/$app.conf
 
-sudo service php5-fpm restart
+# PHP
+sudo rm -f /etc/php5/fpm/pool.d/$app.conf
+sudo service php5-fpm reload
+
+# MySQL
+dbname=$app
+dbuser=$app
+ynh_mysql_drop_db "$dbname" || true
+ynh_mysql_drop_user "$dbuser" || true
+
+# Reload nginx service
 sudo service nginx reload

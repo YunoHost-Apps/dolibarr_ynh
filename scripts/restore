@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Exit on command errors and treat unset variables as an error
+set -eu
+
+app=$YNH_APP_INSTANCE_NAME
+
+# Source YunoHost helpers
+	source /usr/share/yunohost/helpers
+
+# Retrieve old app settings
+	domain=$(ynh_app_setting_get "$app" domain)
+	path=$(ynh_app_setting_get "$app" path)
+
+# Check domain/path availability
+	sudo yunohost app checkurl "${domain}${path}" -a "$app" \
+		|| ynh_die "Path not available: ${domain}${path}"
+
+# Restore sources & data
+	src_path="/var/www/${app}"
+	sudo cp -a ./sources "$src_path"
+
+# Restore permissions to app files
+	sudo chmod -R 755 $src_path
+	sudo chown -R www-data: $src_path
+
+# MySQL
+	dbname=$app
+	dbuser=$app
+	dbpass=$(ynh_app_setting_get "$app" mysqlpwd)
+	ynh_mysql_create_db "$dbname" "$dbuser" "$dbpass"
+	ynh_mysql_connect_as "$dbuser" "$dbpass" "$dbname" < ./dump.sql
+
+# Restore NGINX configuration
+	sudo cp -a ./nginx.conf "/etc/nginx/conf.d/${domain}.d/${app}.conf"
+
+# PHP
+	sudo cp -a ./php-fpm.conf "/etc/php5/fpm/pool.d/${app}.conf"
+	sudo service php5-fpm reload
+
+# Restart webserver
+	sudo service nginx reload

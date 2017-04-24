@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Exit on command errors and treat unset variables as an error
+set -eu
+
+app=$YNH_APP_INSTANCE_NAME
+
+# Source YunoHost helpers
+	source /usr/share/yunohost/helpers
+
+# Backup sources & data
+	ynh_backup "/var/www/${app}" "sources"
+
+# MySQL
+	dbname=$app
+	dbuser=$app
+	dbpass=$(ynh_app_setting_get "$app" mysqlpwd)
+	mysqldump -u "$dbuser" -p"$dbpass" --no-create-db "$dbname" > ./dump.sql
+
+# Copy NGINX configuration
+	domain=$(ynh_app_setting_get "$app" domain)
+	ynh_backup "/etc/nginx/conf.d/${domain}.d/${app}.conf" "nginx.conf"
+
+# PHP
+	ynh_backup "/etc/php5/fpm/pool.d/${app}.conf" "php-fpm.conf"
