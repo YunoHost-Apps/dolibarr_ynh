@@ -107,7 +107,7 @@ version=$(cat ../sources/version)
 	if [ $user = 1 ];
 	then
 		mysql -u ${dbuser} -p${dbpass} ${dbname} < ../conf/ldap_user.sql
-		sudo sudo -u www-data php php $src_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y
+		sudo sudo -u www-data php $src_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y
 	fi
 
 	# If YNH users should be members, populate the database accordingly, create the member list, and sync members
