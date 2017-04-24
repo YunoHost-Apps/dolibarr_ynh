@@ -1,8 +1,0 @@
-LinkANewFile=เชื่อมโยงไฟล์ใหม่ / เอกสาร
-LinkedFiles=แฟ้มที่เชื่อมโยงและเอกสาร
-NoLinkFound=ไม่มีการเชื่อมโยงลงทะเบียน
-LinkComplete=ไฟล์ที่ได้รับการประสบความสำเร็จในการเชื่อมโยง
-ErrorFileNotLinked=ไฟล์ไม่สามารถเชื่อมโยง
-LinkRemoved=การเชื่อมโยง% s ได้ถูกลบออก
-ErrorFailedToDeleteLink= ล้มเหลวในการลบการเชื่อมโยง <b>'% s'</b>
-ErrorFailedToUpdateLink= ล้มเหลวในการปรับปรุงการเชื่อมโยง <b>'% s'</b>

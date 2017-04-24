@@ -1,66 +1,134 @@
-set -e
+#!/bin/bash
+
+set -eu
+app=$YNH_APP_INSTANCE_NAME
+version=$(cat ../sources/version)
+
+# Source YunoHost helpers
+	source /usr/share/yunohost/helpers
 
 # Retrieve arguments
-domain=$1
-path=$2
+	domain=$YNH_APP_ARG_DOMAIN
+	path=$YNH_APP_ARG_PATH
+	password=$YNH_APP_ARG_PASSWORD
+	is_public=$YNH_APP_ARG_IS_PUBLIC
+	user=$YNH_APP_ARG_USER
+	member=$YNH_APP_ARG_MEMBER
+
+# Correct path: puts a / at the start and nothing at the end
+	if [ "${path:0:1}" != "/" ]; then
+		path="/$path"
+	fi
+	if [ "${path:${#path}-1}" == "/" ] && [ ${#path} -gt 1 ]; then
+		path="${path:0:${#path}-1}"
+	fi
 
 # Check domain/path availability
-sudo yunohost app checkurl $domain$path -a dolibarr
-if [[ ! $? -eq 0 ]]; then
-    exit 1
-fi
+	sudo yunohost app checkurl "${domain}${path}" -a "$app" \
+		|| ynh_die "Path not available: ${domain}${path}"
 
-path=${path%/}
+# Store settings
+	ynh_app_setting_set $app domain $domain
+	ynh_app_setting_set $app is_public $is_public
+	ynh_app_setting_set $app user $user
+	ynh_app_setting_set $app member $member
+	ynh_app_setting_set $app version $version
 
-sudo yunohost app setting dolibarr version -v "3.8.0"
+# Copy source files
+	src_path=/var/www/$app
+	sudo mkdir -p $src_path
+	# Download, unzip and copy source
+	sudo wget -q https://github.com/Dolibarr/dolibarr/archive/${version}.zip -O dolibarr-${version}.zip
+	sudo unzip -qq dolibarr-${version}.zip
+	sudo cp -a dolibarr-${version}/. $src_path
+	# Create necessary files
+	sudo touch $src_path/htdocs/conf/conf.php
+	sudo mkdir -p $src_path/documents
 
-final_path=/var/www/dolibarr
-sudo mkdir -p $final_path
-sudo cp -a ../sources/dolibarr/* $final_path
+# MySQL
+	dbuser=$app
+	dbname=$app
+	dbpass=$(ynh_string_random 12)
+	ynh_app_setting_set "$app" mysqlpwd "$dbpass"
+	ynh_mysql_create_db "$dbname" "$dbuser" "$dbpass"
 
-sudo touch $final_path/htdocs/conf/conf.php
-sudo chown -R www-data: $final_path
+# Modify Nginx configuration file and copy it to Nginx conf directory
+	nginx_conf=../conf/nginx.conf
+	sed -i "s@YNH_WWW_PATH@${path%/}@g" $nginx_conf
+	sed -i "s@YNH_WWW_ALIAS@$src_path/htdocs/@g" $nginx_conf
+	sed -i "s@YNH_WWW_APP@$app@g" $nginx_conf
+	sudo cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
 
-if [[ "$path" == "" ]]; then
-  sed -i "s@PATHTOCHANGE@/@g" ../conf/nginx.conf
-else
-  sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
-fi
+# PHP
+	sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
+	sed -i "s@YNH_WWW_ALIAS@$src_path@g" ../conf/php-fpm.conf
+	finalphpconf=/etc/php5/fpm/pool.d/$app.conf
+	sudo cp ../conf/php-fpm.conf $finalphpconf
+	sudo chown root: $finalphpconf
+	sudo chmod 644 $finalphpconf
+	sudo service php5-fpm reload
 
-sed -i "s@ALIASTOCHANGE@$final_path/htdocs/@g" ../conf/nginx.conf
+# Install parameters
+	sed -i "s@YNH_WWW_ALIAS@$src_path@g" ../sources/install.forced.php
+	sed -i "s@YNH_DBNAME@$dbname@g" ../sources/install.forced.php
+	sed -i "s@YNH_DBUSER@$dbuser@g" ../sources/install.forced.php
+	sed -i "s@YNH_DBPASS@$dbpass@g" ../sources/install.forced.php
+	if [ $member = 1 ];
+	then
+		# If YNH users are members, we must activate the members module
+		sed -i "s@modLdap@modLdap,modAdherent@g" ../sources/install.forced.php
+	fi
+	forcedinstall=$src_path/htdocs/install/install.forced.php
+	sudo cp ../sources/install.forced.php $forcedinstall
 
-sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/dolibarr.conf
+# Set permissions to app files
+	sudo chmod -R 755 $src_path
+	sudo chown -R www-data: $src_path
 
-sed -i "s@NAMETOCHANGE@dolibarr@g" ../conf/php-fpm.conf
+# Reload Nginx
+	sudo service nginx reload
 
-finalphpconf=/etc/php5/fpm/pool.d/dolibarr.conf
+# Install
+	# Disable SSO
+	ynh_app_setting_set "$app" unprotected_uris "/"
+	sudo yunohost app ssowatconf
 
-db_pwd=$(dd if=/dev/urandom bs=1 count=200 2> /dev/null | tr -c -d '[A-Za-z0-9]' | sed -n 's/\(.\{24\}\).*/\1/p')
+	# Install with CURL
+	curl -kL -H "Host: $domain" -X POST https://$domain$path/install/fileconf.php > /dev/null 2>&1
+	curl -kL -H "Host: $domain" -X POST https://$domain$path/install/step1.php --data "testpost=ok&action=set&selectlang=fr_FR" > /dev/null 2>&1
+	curl -kL -H "Host: $domain" -X POST https://$domain$path/install/step2.php --data "testpost=ok&action=set&dolibarr_main_db_character_set=latin1&dolibarr_main_db_collation=latin1_swedish_ci&selectlang=fr_FR" > /dev/null 2>&1
+	curl -kL -H "Host: $domain" -X POST https://$domain$path/install/step4.php --data "testpost=ok&action=set&selectlang=fr_FR" > /dev/null 2>&1
+	curl -kL -H "Host: $domain" -X POST https://$domain$path/install/step5.php --data "testpost=ok&action=set&selectlang=fr_FR&pass=$password&pass_verif=$password" > /dev/null 2>&1
 
-sudo yunohost app initdb dolibarr -p $db_pwd
+	# Populate the LDAP parameters
+	mysql -u ${dbuser} -p${dbpass} ${dbname} < ../conf/ldap.sql
 
-sudo cp ../conf/php-fpm.conf $finalphpconf
-sudo chown root: $finalphpconf
-sudo chmod 644 $finalphpconf
+	# If YNH users should be users, populate the database accordingly and sync users. Set the script as executable by all users to tackle a Hook limitation
+	if [ $user = 1 ];
+	then
+		mysql -u ${dbuser} -p${dbpass} ${dbname} < ../conf/ldap_user.sql
+		sudo sudo -u www-data php php $src_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y
+	fi
 
-# Reload Nginx and regenerate SSOwat conf
-sudo service php5-fpm restart
-sudo service nginx reload
-sudo yunohost app ssowatconf
+	# If YNH users should be members, populate the database accordingly, create the member list, and sync members
+	if [ $member = 1 ];
+	then
+		mysql -u ${dbuser} -p${dbpass} ${dbname} < ../conf/ldap_member.sql
+		sudo sudo -u www-data php $src_path/scripts/members/sync_members_ldap2dolibarr.php commitiferror 1 --server=localhost -y
+	fi
 
-sudo yunohost app setting dolibarr unprotected_uris -v "/"
-sudo yunohost app ssowatconf
+	# Enable SSO if chosen by the user
+	if [ $is_public = 0 ];
+	then
+	  	ynh_app_setting_delete $app unprotected_uris
+		sudo yunohost app ssowatconf
+	fi
 
-curl -kL -H "Host: $domain" -X POST https://127.0.0.1$path/install/setp1.php --data "testpost=ok&action=set&main_dir=%2Fvar%2Fwww%2Fdolibarr%2Fhtdocs&main_data_dir=%2Fvar%2Fwww%2Fdolibarr%2Fdocuments&main_url=https://$domain$path&db_name=dolibarr&db_type=mysqli&db_host=localhost&db_port=&db_prefix=llx_&db_user=dolibarr&db_pass=$db_pwd&selectlang=fr_FR" > /dev/null 2>&1
+# Setup hooks
+	sed -i "s@YNH_APP@$app@g" ../hooks/post_user_create
+	sed -i "s@YNH_USER@$user@g" ../hooks/post_user_create
+	sed -i "s@YNH_MEMBER@$member@g" ../hooks/post_user_create
 
-curl -kL -H "Host: $domain" -X POST https://127.0.0.1$path/install/setp2.php --data "testpost=ok&action=set&dolibarr_main_db_character_set=latin1&dolibarr_main_db_collation=latin1_swedish_ci&selectlang=fr_FR" > /dev/null 2>&1
-
-curl -kL -H "Host: $domain" -X POST https://127.0.0.1$path/install/setp4.php --data "testpost=ok&action=set&selectlang=fr_FR" > /dev/null 2>&1
-
-curl -kL -H "Host: $domain" -X POST https://127.0.0.1$path/install/setp5.php --data "testpost=ok&action=set&login=admin&pass=neutrinet&pass_verif=neutrinet&selectlang=fr_FR" > /dev/null 2>&1
-
-sudo yunohost app setting dolibarr unprotected_uris -v ""
-sudo yunohost app ssowatconf
-
-# TODO
-# Attention, pour des raisons de sécurité, afin de bloquer une nouvelle utilisation des outils d'installation/migration, une fois l'installation terminée, il est conseillé de placer dans le répertoire document de Dolibarr un fichier nommé install.lock en lecture seule.
+	sed -i "s@YNH_APP@$app@g" ../hooks/post_user_delete
+	sed -i "s@YNH_USER@$user@g" ../hooks/post_user_delete
+	sed -i "s@YNH_MEMBER@$member@g" ../hooks/post_user_delete

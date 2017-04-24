@@ -1,0 +1,76 @@
+#!/bin/bash
+
+# Exit on command errors and treat unset variables as an error
+set -eu
+
+app=$YNH_APP_INSTANCE_NAME
+version=$(cat ../sources/version)
+
+# Source YunoHost helpers
+	source /usr/share/yunohost/helpers
+
+# Retrieve app settings
+	domain=$(ynh_app_setting_get "$app" domain)
+	path=$(ynh_app_setting_get "$app" path)
+	is_public=$(ynh_app_setting_get "$app" is_public)
+	old_version=$(ynh_app_setting_get "$app" version)
+
+# Copy source files
+	src_path=/var/www/$app
+	# Download, unzip and copy source
+	sudo wget -q https://github.com/Dolibarr/dolibarr/archive/${version}.zip -O dolibarr-${version}.zip
+	sudo unzip -qq dolibarr-${version}.zip
+	sudo unzip -qq /tmp/dolibarr-${version}.zip
+	sudo cp -a dolibarr-${version}/. $src_path
+
+# Modify Nginx configuration file and copy it to Nginx conf directory
+	nginx_conf=../conf/nginx.conf
+	sed -i "s@YNH_WWW_PATH@${path%/}@g" $nginx_conf
+	sed -i "s@YNH_WWW_ALIAS@$src_path/htdocs/@g" $nginx_conf
+	sed -i "s@YNH_WWW_APP@$app@g" $nginx_conf
+	sudo cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
+
+# PHP
+	sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
+	sed -i "s@YNH_WWW_ALIAS@$src_path@g" ../conf/php-fpm.conf
+	finalphpconf=/etc/php5/fpm/pool.d/$app.conf
+	sudo cp ../conf/php-fpm.conf $finalphpconf
+	sudo chown root: $finalphpconf
+	sudo chmod 644 $finalphpconf
+	sudo service php5-fpm reload
+
+# Set permissions to app files
+	sudo chmod -R 755 $src_path
+	sudo chown -R www-data: $src_path
+
+# Reload nginx service
+	sudo service nginx reload
+
+# Upgrade
+	# Disable SSO
+	ynh_app_setting_set "$app" unprotected_uris "/"
+	sudo yunohost app ssowatconf
+
+	# Remove the lock if it exists
+	lock=$src_path/documents/install.lock
+	[[ -f $lock ]] && sudo rm $lock
+
+	# Upgrade with CURL
+	curl -kL -H "Host: $domain" "https://$domain$path/install/upgrade.php?action=upgrade&versionfrom=$old_version&versionto=$version" > /dev/null 2>&1
+	curl -kL -H "Host: $domain" -X POST "https://$domain$path/install/upgrade2.php?versionfrom=$old_version&versionto=$version" --data "testpost=ok&action=upgrade" > /dev/null 2>&1
+	curl -kL -H "Host: $domain" -X POST "https://$domain$path/install/step5.php?versionfrom=$old_version&versionto=$version" --data "testpost=ok&action=upgrade" > /dev/null 2>&1
+
+	# Recreate the lock
+	sudo touch $lock
+	sudo chmod 444 $lock
+	sudo chown www-data: $lock
+
+	# Enable SSO if chosen by the user
+	if [ $is_public = 0 ];
+	then
+	  	ynh_app_setting_delete $app unprotected_uris
+		sudo yunohost app ssowatconf
+	fi
+
+	# Store the new version
+	ynh_app_setting_set $app version $version
