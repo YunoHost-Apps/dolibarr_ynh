@@ -15,7 +15,7 @@
 	"requirements": {
         "yunohost": ">> 2.4.0"
 	},
-    "multi_instance": false,
+    "multi_instance": true,
 	"services": [
         "nginx",
         "php5-fpm",
@@ -43,39 +43,22 @@
                 "default": "/dolibarr"
             },
 			{
-				"name": "password",
-                "type": "password",
+                "name": "admin",
+                "type": "user",
                 "ask": {
-                    "en": "Choose a strong password for the 'admin' user",
-                    "fr": "Choisissez un mot de passe fort pour l'administrateur 'admin'"
-            	}
-			},
-			{
-                "name": "is_public",
-                "type": "boolean",
-                "ask": {
-                    "en": "Is it a public site?",
-                    "fr": "Est-ce un site public ?"
+                    "en": "Choose an admin user",
+                    "fr": "Choisissez l’administrateur"
                 },
-                "default": false
-			},
-			{
-                "name": "user",
-                "type": "boolean",
-                "ask": {
-                    "en": "Should YunoHost users be users in Dolibarr?",
-                    "fr": "Les utilisateurs YunoHost doivent-ils être des utilisateurs Dolibarr ?"
-                },
-                "default": true
-			},
+                "example": "johndoe"
+            },
 			{
                 "name": "member",
                 "type": "boolean",
                 "ask": {
-                    "en": "Should YunoHost users be draft members in Dolibarr?",
-                    "fr": "Les utilisateurs YunoHost doivent-ils être des adhérents à l'état brouillon dans Dolibarr ?"
+                    "en": "Should YunoHost users also be added as members awaiting approval in Dolibarr?",
+                    "fr": "Les utilisateurs YunoHost doivent-ils aussi être ajoutés comme adhérents en attente de validation dans Dolibarr ?"
                 },
-                "default": true
+                "default": false
 			}
         ]
     }

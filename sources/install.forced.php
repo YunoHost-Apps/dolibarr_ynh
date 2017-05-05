@@ -38,7 +38,7 @@ $force_install_createuser = false;
 //$force_install_databaserootpass = '';
 
 /** @var string Dolibarr super-administrator username */
-$force_install_dolibarrlogin = 'admin';
+$force_install_dolibarrlogin = 'YNH_ADMIN';
 
 /** @var string Enable module(s) (Comma separated class names list) */
 $force_install_module = 'modLdap';

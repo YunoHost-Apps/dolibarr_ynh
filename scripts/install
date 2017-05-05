@@ -10,9 +10,7 @@ version=$(cat ../sources/version)
 # Retrieve arguments
 	domain=$YNH_APP_ARG_DOMAIN
 	path=$YNH_APP_ARG_PATH
-	password=$YNH_APP_ARG_PASSWORD
-	is_public=$YNH_APP_ARG_IS_PUBLIC
-	user=$YNH_APP_ARG_USER
+	admin=$YNH_APP_ARG_ADMIN
 	member=$YNH_APP_ARG_MEMBER
 
 # Correct path: puts a / at the start and nothing at the end
@@ -25,12 +23,15 @@ version=$(cat ../sources/version)
 
 # Check domain/path availability
 	sudo yunohost app checkurl "${domain}${path}" -a "$app" \
-		|| ynh_die "Path not available: ${domain}${path}"
+		|| ynh_die "path not available: ${domain}${path}"
+
+# Check user parameter
+	ynh_user_exists "$admin" \
+	  || ynh_die "The chosen admin user does not exist."
 
 # Store settings
 	ynh_app_setting_set $app domain $domain
-	ynh_app_setting_set $app is_public $is_public
-	ynh_app_setting_set $app user $user
+	ynh_app_setting_set $app admin $admin
 	ynh_app_setting_set $app member $member
 	ynh_app_setting_set $app version $version
 
@@ -73,6 +74,7 @@ version=$(cat ../sources/version)
 	sed -i "s@YNH_DBNAME@$dbname@g" ../sources/install.forced.php
 	sed -i "s@YNH_DBUSER@$dbuser@g" ../sources/install.forced.php
 	sed -i "s@YNH_DBPASS@$dbpass@g" ../sources/install.forced.php
+	sed -i "s@YNH_ADMIN@$admin@g" ../sources/install.forced.php
 	if [ $member = 1 ];
 	then
 		# If YNH users are members, we must activate the members module
@@ -93,6 +95,9 @@ version=$(cat ../sources/version)
 	ynh_app_setting_set "$app" unprotected_uris "/"
 	sudo yunohost app ssowatconf
 
+	# Generate a random password for the admin user (will be ignored because of LDAP)
+	password=$(ynh_string_random 8)
+
 	# Install with CURL
 	curl -kL -H "Host: $domain" -X POST https://$domain$path/install/fileconf.php > /dev/null 2>&1
 	curl -kL -H "Host: $domain" -X POST https://$domain$path/install/step1.php --data "testpost=ok&action=set&selectlang=fr_FR" > /dev/null 2>&1
@@ -102,13 +107,10 @@ version=$(cat ../sources/version)
 
 	# Populate the LDAP parameters
 	mysql -u ${dbuser} -p${dbpass} ${dbname} < ../conf/ldap.sql
-
-	# If YNH users should be users, populate the database accordingly and sync users. Set the script as executable by all users to tackle a Hook limitation
-	if [ $user = 1 ];
-	then
-		mysql -u ${dbuser} -p${dbpass} ${dbname} < ../conf/ldap_user.sql
-		sudo sudo -u www-data php $src_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y
-	fi
+  
+	# Populate the database with YNH users.
+	mysql -u ${dbuser} -p${dbpass} ${dbname} < ../conf/ldap_user.sql
+	sudo sudo -u www-data php $src_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y
 
 	# If YNH users should be members, populate the database accordingly, create the member list, and sync members
 	if [ $member = 1 ];
@@ -117,18 +119,15 @@ version=$(cat ../sources/version)
 		sudo sudo -u www-data php $src_path/scripts/members/sync_members_ldap2dolibarr.php commitiferror 1 --server=localhost -y
 	fi
 
-	# Enable SSO if chosen by the user
-	if [ $is_public = 0 ];
-	then
-	  	ynh_app_setting_delete $app unprotected_uris
-		sudo yunohost app ssowatconf
-	fi
+	# Re-enable SSO if chosen by the user
+	ynh_app_setting_delete $app unprotected_uris
+	sudo yunohost app ssowatconf
+
+# Setup HTTP auth in conf
+	sudo sed -i "s@\$dolibarr_main_authentication='dolibarr';@\$dolibarr_main_authentication='http';@g" $src_path/htdocs/conf/conf.php
 
 # Setup hooks
 	sed -i "s@YNH_APP@$app@g" ../hooks/post_user_create
-	sed -i "s@YNH_USER@$user@g" ../hooks/post_user_create
 	sed -i "s@YNH_MEMBER@$member@g" ../hooks/post_user_create
-
 	sed -i "s@YNH_APP@$app@g" ../hooks/post_user_delete
-	sed -i "s@YNH_USER@$user@g" ../hooks/post_user_delete
 	sed -i "s@YNH_MEMBER@$member@g" ../hooks/post_user_delete

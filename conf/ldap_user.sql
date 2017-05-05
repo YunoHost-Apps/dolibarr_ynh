@@ -8,5 +8,4 @@ REPLACE INTO ynh_const (`name`, `value`, `type`) VALUES
 ('LDAP_FIELD_FIRSTNAME', 'givenName', 'chaine'),
 ('LDAP_FIELD_MAIL', 'mail', 'chaine'),
 ('LDAP_KEY_USERS', 'uid', 'chaine'),
-('LDAP_FIELD_PASSWORD_CRYPTED', 'userPassword', 'chaine'),
 ('LDAP_SYNCHRO_ACTIVE', 'ldap2dolibarr', 'chaine');
