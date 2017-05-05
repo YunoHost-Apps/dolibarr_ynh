@@ -107,7 +107,7 @@ version=$(cat ../sources/version)
 
 	# Populate the LDAP parameters
 	mysql -u ${dbuser} -p${dbpass} ${dbname} < ../conf/ldap.sql
-
+  
 	# Populate the database with YNH users.
 	mysql -u ${dbuser} -p${dbpass} ${dbname} < ../conf/ldap_user.sql
 	sudo sudo -u www-data php $src_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y
