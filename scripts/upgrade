@@ -12,7 +12,6 @@ version=$(cat ../sources/version)
 # Retrieve app settings
 	domain=$(ynh_app_setting_get "$app" domain)
 	path=$(ynh_app_setting_get "$app" path)
-	is_public=$(ynh_app_setting_get "$app" is_public)
 	old_version=$(ynh_app_setting_get "$app" version)
 
 # Copy source files
@@ -65,12 +64,9 @@ version=$(cat ../sources/version)
 	sudo chmod 444 $lock
 	sudo chown www-data: $lock
 
-	# Enable SSO if chosen by the user
-	if [ $is_public = 0 ];
-	then
-	  	ynh_app_setting_delete $app unprotected_uris
-		sudo yunohost app ssowatconf
-	fi
+	# Re-enable SSO
+	ynh_app_setting_delete $app unprotected_uris
+	sudo yunohost app ssowatconf
 
 	# Store the new version
 	ynh_app_setting_set $app version $version

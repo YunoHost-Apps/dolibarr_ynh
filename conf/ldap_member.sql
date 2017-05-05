@@ -5,7 +5,6 @@ REPLACE INTO ynh_const (`name`, `value`, `type`) VALUES
 ('LDAP_MEMBER_FIELD_NAME', 'sn', 'chaine'),
 ('LDAP_MEMBER_FIELD_LOGIN', 'uid', 'chaine'),
 ('LDAP_MEMBER_FIELD_MAIL', 'mail', 'chaine'),
-('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED', 'userPassword', 'chaine'),
 ('LDAP_MEMBER_FILTER', '&(objectClass=posixAccount)', 'chaine'),
 ('LDAP_MEMBER_OBJECT_CLASS', 'organizationalUnit,top', 'chaine'),
 ('LDAP_MEMBER_FIELD_MAIL', 'mail', 'chaine'),
