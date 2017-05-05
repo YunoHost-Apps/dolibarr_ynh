@@ -18,5 +18,6 @@ What does not work yet: see Issues
 
 What works:
 - Install, upgrade, remove, backup, restore
+- Automatic login
 - Sync YNH users with Dolibarr users
 - Sync YNH users with members in Dolibarr
