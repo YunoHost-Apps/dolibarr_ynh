@@ -99,15 +99,15 @@ version=$(cat ../sources/version)
 	password=$(ynh_string_random 8)
 
 	# Install with CURL
-	curl -kL -H "Host: $domain" -X POST https://$domain$path/install/fileconf.php > /dev/null 2>&1
-	curl -kL -H "Host: $domain" -X POST https://$domain$path/install/step1.php --data "testpost=ok&action=set&selectlang=fr_FR" > /dev/null 2>&1
-	curl -kL -H "Host: $domain" -X POST https://$domain$path/install/step2.php --data "testpost=ok&action=set&dolibarr_main_db_character_set=latin1&dolibarr_main_db_collation=latin1_swedish_ci&selectlang=fr_FR" > /dev/null 2>&1
-	curl -kL -H "Host: $domain" -X POST https://$domain$path/install/step4.php --data "testpost=ok&action=set&selectlang=fr_FR" > /dev/null 2>&1
-	curl -kL -H "Host: $domain" -X POST https://$domain$path/install/step5.php --data "testpost=ok&action=set&selectlang=fr_FR&pass=$password&pass_verif=$password" > /dev/null 2>&1
+	curl -kL -H "Host: $domain" --resolve $domain:443:127.0.0.1 -X POST "https://$domain$path/install/fileconf.php" > /dev/null 2>&1
+	curl -kL -H "Host: $domain" --resolve $domain:443:127.0.0.1 -X POST "https://$domain$path/install/step1.php" --data "testpost=ok&action=set&selectlang=fr_FR" > /dev/null 2>&1
+	curl -kL -H "Host: $domain" --resolve $domain:443:127.0.0.1 -X POST "https://$domain$path/install/step2.php" --data "testpost=ok&action=set&dolibarr_main_db_character_set=latin1&dolibarr_main_db_collation=latin1_swedish_ci&selectlang=fr_FR" > /dev/null 2>&1
+	curl -kL -H "Host: $domain" --resolve $domain:443:127.0.0.1 -X POST "https://$domain$path/install/step4.php" --data "testpost=ok&action=set&selectlang=fr_FR" > /dev/null 2>&1
+	curl -kL -H "Host: $domain" --resolve $domain:443:127.0.0.1 -X POST "https://$domain$path/install/step5.php" --data "testpost=ok&action=set&selectlang=fr_FR&pass=$password&pass_verif=$password" > /dev/null 2>&1
 
 	# Populate the LDAP parameters
 	mysql -u ${dbuser} -p${dbpass} ${dbname} < ../conf/ldap.sql
-  
+
 	# Populate the database with YNH users.
 	mysql -u ${dbuser} -p${dbpass} ${dbname} < ../conf/ldap_user.sql
 	sudo sudo -u www-data php $src_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y
@@ -129,5 +129,3 @@ version=$(cat ../sources/version)
 # Setup hooks
 	sed -i "s@YNH_APP@$app@g" ../hooks/post_user_create
 	sed -i "s@YNH_MEMBER@$member@g" ../hooks/post_user_create
-	sed -i "s@YNH_APP@$app@g" ../hooks/post_user_delete
-	sed -i "s@YNH_MEMBER@$member@g" ../hooks/post_user_delete

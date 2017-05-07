@@ -19,7 +19,6 @@ version=$(cat ../sources/version)
 	# Download, unzip and copy source
 	sudo wget -q https://github.com/Dolibarr/dolibarr/archive/${version}.zip -O dolibarr-${version}.zip
 	sudo unzip -qq dolibarr-${version}.zip
-	sudo unzip -qq /tmp/dolibarr-${version}.zip
 	sudo cp -a dolibarr-${version}/. $src_path
 
 # Modify Nginx configuration file and copy it to Nginx conf directory
@@ -55,9 +54,9 @@ version=$(cat ../sources/version)
 	[[ -f $lock ]] && sudo rm $lock
 
 	# Upgrade with CURL
-	curl -kL -H "Host: $domain" "https://$domain$path/install/upgrade.php?action=upgrade&versionfrom=$old_version&versionto=$version" > /dev/null 2>&1
-	curl -kL -H "Host: $domain" -X POST "https://$domain$path/install/upgrade2.php?versionfrom=$old_version&versionto=$version" --data "testpost=ok&action=upgrade" > /dev/null 2>&1
-	curl -kL -H "Host: $domain" -X POST "https://$domain$path/install/step5.php?versionfrom=$old_version&versionto=$version" --data "testpost=ok&action=upgrade" > /dev/null 2>&1
+	curl -kL -H "Host: $domain" --resolve $domain:443:127.0.0.1 "https://$domain$path/install/upgrade.php?action=upgrade&versionfrom=$old_version&versionto=$version" > /dev/null 2>&1
+	curl -kL -H "Host: $domain" --resolve $domain:443:127.0.0.1 -X POST "https://$domain$path/install/upgrade2.php?versionfrom=$old_version&versionto=$version" --data "testpost=ok&action=upgrade" > /dev/null 2>&1
+	curl -kL -H "Host: $domain" --resolve $domain:443:127.0.0.1 -X POST "https://$domain$path/install/step5.php?versionfrom=$old_version&versionto=$version" --data "testpost=ok&action=upgrade" > /dev/null 2>&1
 
 	# Recreate the lock
 	sudo touch $lock
