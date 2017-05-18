@@ -6,6 +6,7 @@ version=$(cat ../sources/version)
 
 # Source YunoHost helpers
 	source /usr/share/yunohost/helpers
+	source ./_extrahelpers
 
 # Retrieve arguments
 	domain=$YNH_APP_ARG_DOMAIN
@@ -42,6 +43,7 @@ version=$(cat ../sources/version)
 	sudo wget -q https://github.com/Dolibarr/dolibarr/archive/${version}.zip -O dolibarr-${version}.zip
 	sudo unzip -qq dolibarr-${version}.zip
 	sudo cp -a dolibarr-${version}/. $src_path
+
 	# Create necessary files
 	sudo touch $src_path/htdocs/conf/conf.php
 	sudo mkdir -p $src_path/documents
@@ -99,11 +101,31 @@ version=$(cat ../sources/version)
 	password=$(ynh_string_random 8)
 
 	# Install with CURL
-	curl -kL -H "Host: $domain" --resolve $domain:443:127.0.0.1 -X POST "https://$domain$path/install/fileconf.php" > /dev/null 2>&1
-	curl -kL -H "Host: $domain" --resolve $domain:443:127.0.0.1 -X POST "https://$domain$path/install/step1.php" --data "testpost=ok&action=set&selectlang=fr_FR" > /dev/null 2>&1
-	curl -kL -H "Host: $domain" --resolve $domain:443:127.0.0.1 -X POST "https://$domain$path/install/step2.php" --data "testpost=ok&action=set&dolibarr_main_db_character_set=latin1&dolibarr_main_db_collation=latin1_swedish_ci&selectlang=fr_FR" > /dev/null 2>&1
-	curl -kL -H "Host: $domain" --resolve $domain:443:127.0.0.1 -X POST "https://$domain$path/install/step4.php" --data "testpost=ok&action=set&selectlang=fr_FR" > /dev/null 2>&1
-	curl -kL -H "Host: $domain" --resolve $domain:443:127.0.0.1 -X POST "https://$domain$path/install/step5.php" --data "testpost=ok&action=set&selectlang=fr_FR&pass=$password&pass_verif=$password" > /dev/null 2>&1
+	ynh_local_curl "/install/fileconf.php"
+
+	ynh_local_curl "/install/step1.php" \
+		"testpost=ok" \
+		"action=set" \
+		"selectlang=fr_FR"
+
+	ynh_local_curl "/install/step2.php" \
+		"testpost=ok" \
+		"action=set" \
+		"dolibarr_main_db_character_set=latin1" \
+		"dolibarr_main_db_collation=latin1_swedish_ci" \
+		"selectlang=fr_FR"
+
+	ynh_local_curl "/install/step4.php" \
+		"testpost=ok" \
+		"action=set" \
+		"selectlang=fr_FR"
+
+	ynh_local_curl "/install/step5.php" \
+		"testpost=ok" \
+		"action=set" \
+		"selectlang=fr_FR" \
+		"pass=$password" \
+		"pass_verif=$password"
 
 	# Populate the LDAP parameters
 	mysql -u ${dbuser} -p${dbpass} ${dbname} < ../conf/ldap.sql

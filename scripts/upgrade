@@ -8,6 +8,7 @@ version=$(cat ../sources/version)
 
 # Source YunoHost helpers
 	source /usr/share/yunohost/helpers
+	source ./_extrahelpers
 
 # Retrieve app settings
 	domain=$(ynh_app_setting_get "$app" domain)
@@ -54,9 +55,22 @@ version=$(cat ../sources/version)
 	[[ -f $lock ]] && sudo rm $lock
 
 	# Upgrade with CURL
-	curl -kL -H "Host: $domain" --resolve $domain:443:127.0.0.1 "https://$domain$path/install/upgrade.php?action=upgrade&versionfrom=$old_version&versionto=$version" > /dev/null 2>&1
-	curl -kL -H "Host: $domain" --resolve $domain:443:127.0.0.1 -X POST "https://$domain$path/install/upgrade2.php?versionfrom=$old_version&versionto=$version" --data "testpost=ok&action=upgrade" > /dev/null 2>&1
-	curl -kL -H "Host: $domain" --resolve $domain:443:127.0.0.1 -X POST "https://$domain$path/install/step5.php?versionfrom=$old_version&versionto=$version" --data "testpost=ok&action=upgrade" > /dev/null 2>&1
+	ynh_local_curl "/install/upgrade.php" \
+		"action=upgrade" \
+		"versionfrom=$old_version" \
+		"versionto=$version"
+
+	ynh_local_curl "/install/upgrade2.php" \
+		"versionfrom=$old_version" \
+		"versionto=$version" \
+		"testpost=ok" \
+		"action=upgrade"
+
+	ynh_local_curl "/install/step5.php" \
+		"versionfrom=$old_version" \
+		"versionto=$version" \
+		"testpost=ok" \
+		"action=upgrade"
 
 	# Recreate the lock
 	sudo touch $lock
