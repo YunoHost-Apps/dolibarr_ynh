@@ -1,7 +1,0 @@
-# Dolibarr language file - Source file is en_US - cron
-FileToLaunchCronJobs=Command line to launch cron jobs
-CronNone=Ninguno
-CronMethod=Método
-CronModule=Módulo
-CronArgs=Parámetros
-CronStatusInactiveBtn=Desactivar
