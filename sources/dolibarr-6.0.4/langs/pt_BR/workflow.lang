@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowDesc=Este módulo é concebido para modificar o comportamento das ações automáticas para aplicação. Por padrão, o fluxo de trabalho está aberto (você pode fazer as coisas na ordem que você quiser). Você pode ativar as ações automáticas que você está interessado.
+ThereIsNoWorkflowToModify=Não há alterações do fluxo de trabalho disponíveis com os módulos ativados.
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Criar automaticamente uma fatura de cliente depois que um contrato é validado

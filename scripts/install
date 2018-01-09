@@ -40,9 +40,10 @@ version=$(cat ../sources/version)
 	src_path=/var/www/$app
 	sudo mkdir -p $src_path
 	# Download, unzip and copy source
-	sudo wget -q https://github.com/Dolibarr/dolibarr/archive/${version}.zip -O dolibarr-${version}.zip
-	sudo unzip -qq dolibarr-${version}.zip
-	sudo cp -a dolibarr-${version}/. $src_path
+	#sudo wget -q https://github.com/Dolibarr/dolibarr/archive/${version}.zip -O dolibarr-${version}.zip
+	#sudo unzip -qq dolibarr-${version}.zip
+
+	sudo cp -a sources/dolibarr-${version}/. $src_path
 
 	# Create necessary files
 	sudo touch $src_path/htdocs/conf/conf.php
