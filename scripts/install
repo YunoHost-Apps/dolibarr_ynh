@@ -45,7 +45,7 @@ ynh_abort_if_errors
 #	sudo yunohost app checkurl "${domain}${path}" -a "$app" \
 #		|| ynh_die "path not available: ${domain}${path}"
 
-	sudo ynh_webpath_register $app $domain $path \
+	ynh_webpath_register $app $domain $path \
 		|| ynh_die "path not available and may be already used : ${domain}${path}"
 
 # Check user parameter
