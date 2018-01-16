@@ -4,9 +4,28 @@ set -eu
 app=$YNH_APP_INSTANCE_NAME
 version=$(cat ../sources/version)
 
-# Source YunoHost helpers
-	source /usr/share/yunohost/helpers
-	source ./_extrahelpers
+## Source YunoHost helpers - old
+#	source /usr/share/yunohost/helpers
+#	source ./_extrahelpers
+
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# MANAGE SCRIPT FAILURE
+#=================================================
+
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
+
+
 
 # Retrieve arguments
 	domain=$YNH_APP_ARG_DOMAIN
