@@ -23,8 +23,11 @@ version=$(cat ../sources/version)
 	fi
 
 # Check domain/path availability
-	sudo yunohost app checkurl "${domain}${path}" -a "$app" \
-		|| ynh_die "path not available: ${domain}${path}"
+#	sudo yunohost app checkurl "${domain}${path}" -a "$app" \
+#		|| ynh_die "path not available: ${domain}${path}"
+
+	sudo ynh_webpath_register $app $domain $path \
+		|| ynh_die "path not available and may be already used : ${domain}${path}"
 
 # Check user parameter
 	ynh_user_exists "$admin" \
