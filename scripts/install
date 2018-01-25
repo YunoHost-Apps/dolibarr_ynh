@@ -126,7 +126,8 @@ ynh_abort_if_errors
 
 	# Install with CURL
 	
-	#ynh_local_curl "/install/fileconf.php"
+	ynh_local_curl "/install/fileconf.php" \
+		"testpost=ok"
 
 	ynh_local_curl "/install/step1.php" \
 		"testpost=ok" \
