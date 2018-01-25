@@ -64,7 +64,7 @@ ynh_abort_if_errors
 
 	# Download, unzip and copy source
 	sudo wget -q https://github.com/Dolibarr/dolibarr/archive/${version}.zip -O dolibarr-${version}.zip
-	sudo unzip -qq dolibarr-${version}.zip
+	sudo unzip -qq dolibarr-${version}.zip || ynh_die "Problem uncompressing dolibarr zip file"
 
 	sudo cp -a dolibarr-${version}/. $src_path
 
