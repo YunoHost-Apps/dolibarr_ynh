@@ -35,20 +35,36 @@ ynh_abort_if_errors
 	admin=$YNH_APP_ARG_ADMIN
 	member=$YNH_APP_ARG_MEMBER
 
+#=================================================
+# CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
+#=================================================
+
+final_path=/var/www/$app
+test ! -e "$final_path" || ynh_die "This path already contains a folder"
+
+# Normalize the url path syntax
+path_url=$(ynh_normalize_url_path $path_url)
+
+# Check web path availability
+ynh_webpath_available $domain $path_url
+# Register (book) web path
+ynh_webpath_register $app $domain $path_url
+
+
 # Correct path: puts a / at the start and nothing at the end
-	if [ "${path:0:1}" != "/" ]; then
-		path="/$path"
-	fi
-	if [ "${path:${#path}-1}" == "/" ] && [ ${#path} -gt 1 ]; then
-		path="${path:0:${#path}-1}"
-	fi
+#	if [ "${path:0:1}" != "/" ]; then
+#		path="/$path"
+#	fi
+#	if [ "${path:${#path}-1}" == "/" ] && [ ${#path} -gt 1 ]; then
+#		path="${path:0:${#path}-1}"
+#	fi
 
 # Check domain/path availability
 #	sudo yunohost app checkurl "${domain}${path}" -a "$app" \
 #		|| ynh_die "path not available: ${domain}${path}"
 
-	ynh_webpath_register $app $domain $path \
-		|| ynh_die "path not available and may be already used : ${domain}${path}"
+#	ynh_webpath_register $app $domain $path \
+#		|| ynh_die "path not available and may be already used : ${domain}${path}"
 
 # Check user parameter
 	ynh_user_exists "$admin" \
