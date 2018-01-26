@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -eu
+#set -eu
+
 app=$YNH_APP_INSTANCE_NAME
 version=$(cat ../sources/version)
 
@@ -125,7 +126,7 @@ ynh_abort_if_errors
 	password=$(ynh_string_random 8)
 
 	# Install with CURL
-	
+
 	ynh_local_curl "/install/fileconf.php" \
 		"testpost=ok"
 
