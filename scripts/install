@@ -99,11 +99,13 @@ ynh_webpath_register $app $domain $path_url
 	ynh_mysql_create_db "$dbname" "$dbuser" "$dbpass"
 
 # Modify Nginx configuration file and copy it to Nginx conf directory
-	nginx_conf=../conf/nginx.conf
-	sed -i "s@__PATH__@${path_url}@g" $nginx_conf
-	sed -i "s@__FINALPATH__@$src_path/htdocs/@g" $nginx_conf
-	sed -i "s@__NAME__@$app@g" $nginx_conf
-	sudo cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
+#	nginx_conf=../conf/nginx.conf
+#	sed -i "s@__PATH__@${path_url}@g" $nginx_conf
+#	sed -i "s@__FINALPATH__@$src_path/htdocs/@g" $nginx_conf
+#	sed -i "s@__NAME__@$app@g" $nginx_conf
+#	sudo cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
+
+	ynh_add_nginx_config
 
 # PHP
 	sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
