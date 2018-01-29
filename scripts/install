@@ -85,8 +85,8 @@ ynh_webpath_register $app $domain $path_url
 	sudo mkdir -p $src_path
 
 	# Download, unzip and copy source - TODO in local (temporarily) to  speed up test process
-	sudo wget -q ftp://10.1.1.110/COMMUNS/INFORMATIQUE/dolibarr/dolibarr-6.0.4.zip -O dolibarr-${version}.zip
-	#sudo wget -q https://github.com/Dolibarr/dolibarr/archive/${version}.zip -O dolibarr-${version}.zip
+	#sudo wget -q ftp://10.1.1.110/COMMUNS/INFORMATIQUE/dolibarr/dolibarr-6.0.4.zip -O dolibarr-${version}.zip
+	sudo wget -q https://github.com/Dolibarr/dolibarr/archive/${version}.zip -O dolibarr-${version}.zip
 	unzip -qq dolibarr-${version}.zip || ynh_die "Problem uncompressing dolibarr zip file"
 
 	sudo cp -a dolibarr-${version}/. $src_path
