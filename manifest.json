@@ -9,8 +9,8 @@
 	"url": "https://www.dolibarr.org/",
     "license": "free",
     "maintainer": {
-        "name": "scith",
-        "url": "https://github.com/scith"
+        "name": "poilou",
+        "url": "https://github.com/labiloute"
     },
 	"requirements": {
         "yunohost": ">> 2.7.0"

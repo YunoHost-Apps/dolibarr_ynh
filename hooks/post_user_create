@@ -5,10 +5,9 @@ user=YNH_USER
 member=YNH_MEMBER
 
 # Sync users
-	sudo sudo -u www-data php $src_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y
+sudo -u www-data php $src_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y
 
 # If YNH users should also be members, sync members
-	if [ $member = 1 ];
-	then
-		sudo sudo -u www-data php $src_path/scripts/members/sync_members_ldap2dolibarr.php commitiferror 1 --server=localhost -y
-	fi
+if [ $member = 1 ] ; then
+	sudo sudo -u www-data php $src_path/scripts/members/sync_members_ldap2dolibarr.php commitiferror 1 --server=localhost -y
+fi
