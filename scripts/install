@@ -30,7 +30,7 @@ ynh_abort_if_errors
 
 # Retrieve arguments
 	domain=$YNH_APP_ARG_DOMAIN
-	path_url=$YNH_APP_ARG_PATH
+	pathurl=$YNH_APP_ARG_PATH
 	#path=$YNH_APP_ARG_PATH
 	admin=$YNH_APP_ARG_ADMIN
 	member=$YNH_APP_ARG_MEMBER
@@ -43,12 +43,12 @@ final_path=/var/www/$app
 test ! -e "$final_path" || ynh_die "This path already contains a folder"
 
 # Normalize the url path syntax
-path_url=$(ynh_normalize_url_path $path_url)
+pathurl=$(ynh_normalize_url_path $pathurl)
 
 # Check web path availability
-ynh_webpath_available $domain $path_url
+ynh_webpath_available $domain $pathurl
 # Register (book) web path
-ynh_webpath_register $app $domain $path_url
+ynh_webpath_register $app $domain $pathurl
 
 
 # Correct path: puts a / at the start and nothing at the end
