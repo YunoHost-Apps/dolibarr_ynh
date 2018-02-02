@@ -1,14 +1,21 @@
 #!/bin/bash
 
-# Exit on command errors and treat unset variables as an error
-set -eu
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source _common.sh
+source /usr/share/yunohost/helpers
+source ./_extrahelpers # Really needed ?
+
+#=================================================
+# LOAD SETTINGS
+#=================================================
 
 app=$YNH_APP_INSTANCE_NAME
 version=$(cat ../sources/version)
-
-# Source YunoHost helpers
-	source /usr/share/yunohost/helpers
-	source ./_extrahelpers
 
 # Retrieve app settings
 	domain=$(ynh_app_setting_get "$app" domain)
