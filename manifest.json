@@ -55,8 +55,8 @@
                 "name": "member",
                 "type": "boolean",
                 "ask": {
-                    "en": "Should YunoHost users also be added as members awaiting approval in Dolibarr?",
-                    "fr": "Les utilisateurs YunoHost doivent-ils aussi être ajoutés comme adhérents en attente de validation dans Dolibarr ?"
+                    "en": "Should YunoHost users also be added as members awaiting approval in Dolibarr? (0=No, 1=Yes)",
+                    "fr": "Les utilisateurs YunoHost doivent-ils aussi être ajoutés comme adhérents en attente de validation dans Dolibarr ? (0=Non, 1=Oui)"
                 },
                 "default": false
 			}
