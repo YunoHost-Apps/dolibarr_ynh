@@ -93,6 +93,11 @@ ynh_webpath_register $app $domain $path_url
 
 	# Create necessary files
 	sudo touch $src_path/htdocs/conf/conf.php
+	sudo echo 'push "
+			$dolibarr_main_url_root_alt='/custom';
+			$dolibarr_main_document_root_alt='/var/www/dolibarr/htdocs/custom';
+			"
+			' >> $src_path/htdocs/conf/conf.php
 	sudo mkdir -p $src_path/documents
 
 # MySQL
