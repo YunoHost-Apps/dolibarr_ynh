@@ -1,13 +1,21 @@
 #!/bin/bash
-app=YNH_APP
-src_path=/var/www/$app
-user=YNH_USER
-member=YNH_MEMBER
-
+app=dolibarr
+src_path=/var/www/dolibarr
+member=1
+                                                                                                                                                                        
 # Sync users
-sudo -u www-data php $src_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y
-
+if sudo php $src_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y; then
+        echo ldap user update ok
+else
+        echo ldap user update ended with error
+fi
+                                                                                                                                                                        
 # If YNH users should also be members, sync members
-if [ $member = 1 ] ; then
-	sudo sudo -u www-data php $src_path/scripts/members/sync_members_ldap2dolibarr.php commitiferror 1 --server=localhost -y
+if [ $member -eq 1 ];
+then
+        if sudo php $src_path/scripts/members/sync_members_ldap2dolibarr.php commitiferror 1 --server=localhost -y; then
+                echo ldap member update ok
+        else
+                echo ldap member update ended with error
+        fi
 fi

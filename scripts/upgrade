@@ -8,88 +8,218 @@
 
 source _common.sh
 source /usr/share/yunohost/helpers
-source ./_extrahelpers # Really needed ?
 
 #=================================================
 # LOAD SETTINGS
 #=================================================
+ynh_script_progression --message="Loading installation settings..." --time --weight=1
 
 app=$YNH_APP_INSTANCE_NAME
-version=$(cat ../sources/version)
 
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+path_url=$(ynh_app_setting_get --app=$app --key=path)
+admin=$(ynh_app_setting_get --app=$app --key=admin)
+is_public=$(ynh_app_setting_get --app=$app --key=is_public)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+src_path=$(ynh_app_setting_get --app=$app --key=src_path)
+language=$(ynh_app_setting_get --app=$app --key=language)
+db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+current_version=$(ynh_app_setting_get --app=$app --key=version)
+update_version=$(ynh_app_upstream_version "../manifest.json")
+datadir=$src_path/documents
+
+#=================================================
+# CHECK VERSION
+#=================================================
+
+### This helper will compare the version of the currently installed app and the version of the upstream package.
+### $upgrade_type can have 2 different values
+### - UPGRADE_APP if the upstream app version has changed
+### - UPGRADE_PACKAGE if only the YunoHost package has changed
+### ynh_check_app_version_changed will stop the upgrade if the app is up to date.
+### UPGRADE_APP should be used to upgrade the core app only if there's an upgrade to do.
+upgrade_type=$(ynh_check_app_version_changed)
+
+#=================================================
+# ENSURE DOWNWARD COMPATIBILITY
+#=================================================
+ynh_script_progression --message="Ensuring downward compatibility..." --time --weight=1
+
+# Fix is_public as a boolean value
+if [ "$is_public" = "Yes" ]; then
+	ynh_app_setting_set --app=$app --key=is_public --value=1
+	is_public=1
+elif [ "$is_public" = "No" ]; then
+	ynh_app_setting_set --app=$app --key=is_public --value=0
+	is_public=0
+fi
+
+# If db_name doesn't exist, create it
+if [ -z "$db_name" ]; then
+	db_name=$(ynh_sanitize_dbid --db_name=$app)
+	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+fi
+
+# If final_path doesn't exist, create it
+if [ -z "$final_path" ]; then
+	src_path=/var/www/$app
+	
+	# Then adjust to dolibarr specificity (app is in htdocs sub-directory)
+	final_path=$src_path/htdocs/
+	
+	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+	ynh_app_setting_set --app=$app --key=src_path --value=$src_path
+fi
+
+#=================================================
+# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
+#=================================================
+ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --time --weight=1
+
+# Backup the current version of the app
+ynh_backup_before_upgrade
+ynh_clean_setup () {
+	# restore it if the upgrade fails
+	ynh_restore_upgradebackup
+}
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
 
-# Retrieve app settings
-	domain=$(ynh_app_setting_get "$app" domain)
-	path=$(ynh_app_setting_get "$app" path)
-	old_version=$(ynh_app_setting_get "$app" version)
+#=================================================
+# CHECK THE PATH
+#=================================================
 
-# Copy source files
-	src_path=/var/www/$app
-	# Download, unzip and copy source
-	sudo wget -q https://github.com/Dolibarr/dolibarr/archive/${version}.zip -O dolibarr-${version}.zip
-	sudo unzip -qq dolibarr-${version}.zip
-	sudo cp -a dolibarr-${version}/. $src_path
+# Normalize the URL path syntax
+# N.B. : this is for app installations before YunoHost 2.7
+# where this value might be something like /foo/ or foo/
+# instead of /foo ....
+# If nobody installed your app before 2.7, then you may
+# safely remove this line
+path_url=$(ynh_normalize_url_path --path_url=$path_url)
 
-# Modify Nginx configuration file and copy it to Nginx conf directory
-	nginx_conf=../conf/nginx.conf
-	sed -i "s@YNH_WWW_PATH@${path%/}@g" $nginx_conf
-	sed -i "s@YNH_WWW_ALIAS@$src_path/htdocs/@g" $nginx_conf
-	sed -i "s@YNH_WWW_APP@$app@g" $nginx_conf
-	sudo cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
+#=================================================
+# STANDARD UPGRADE STEPS
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
 
-# PHP
-	sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
-	sed -i "s@YNH_WWW_ALIAS@$src_path@g" ../conf/php-fpm.conf
-	finalphpconf=/etc/php5/fpm/pool.d/$app.conf
-	sudo cp ../conf/php-fpm.conf $finalphpconf
-	sudo chown root: $finalphpconf
-	sudo chmod 644 $finalphpconf
-	sudo service php5-fpm reload
+if [ "$upgrade_type" == "UPGRADE_APP" ]
+then
+	ynh_script_progression --message="Upgrading source files..." --time --weight=1
 
+	# Download, check integrity, uncompress and patch the source from app.src
+	ynh_setup_source --dest_dir="$src_path"
+fi
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Upgrading nginx web server configuration..." --time --weight=1
+
+# Create a dedicated nginx config
+ynh_add_nginx_config
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Making sure dedicated system user exists..." --time --weight=1
+
+# Create a dedicated user (if not existing)
+ynh_system_user_create --username=$app
+
+#=================================================
+# PHP-FPM CONFIGURATION
+#=================================================
+ynh_script_progression --message="Upgrading php-fpm configuration..." --time --weight=1
+
+# Create a dedicated php-fpm config
+ynh_add_fpm_config
+
+#=================================================
+# SPECIFIC UPGRADE
+#=================================================
+# LAUNCH UPGRADE
+#=================================================
+ynh_script_progression --message="Upgrading app from $current_version to $update_version" --time --weight=1
+
+
+chown -R $app "$src_path"
+
+
+# Remove the lock if it exists
+lock=$src_path/documents/install.lock
+[[ -f $lock ]] && sudo rm $lock
+
+# Upgrade with CURL
+cd $final_path/install/
+if php upgrade.php $current_version $update_version > /var/log/$app/upgrade.html;  then
+	ynh_print_info --message="Step 1 upgrading ended successfully"
+else
+	ynh_print_warn --message="Step 1 upgrading ended with error"
+fi
+if php upgrade2.php $current_version $update_version > /var/log/$app/upgrade2.html; then
+	ynh_print_info --message="Step 2 upgrading ended successfully"
+else
+	ynh_print_warn --message="Step 2 upgrading ended with error"
+fi
+if php step5.php $current_version $update_version > /var/log/$app/upgrade3.html; then
+	ynh_print_info --message="Step 3 upgrading ended successfully"
+else
+	ynh_print_warn --message="Step 3 upgrading ended with error"
+fi
+
+#=================================================
+# STORE THE CONFIG FILE CHECKSUM
+#=================================================
+
+### Verify the checksum of a file, stored by `ynh_store_file_checksum` in the install script.
+### And create a backup of this file if the checksum is different. So the file will be backed up if the admin had modified it.
+ynh_backup_if_checksum_is_different --file="$final_path/conf/conf.php"
+# Recalculate and store the checksum of the file for the next upgrade.
+ynh_store_file_checksum --file="$final_path/conf/conf.php"
+
+#=================================================
+# SETUP LOGROTATE
+#=================================================
+ynh_script_progression --message="Upgrading logrotate configuration..." --time --weight=1
+
+# Use logrotate to manage app-specific logfile(s)
+ynh_use_logrotate --non-append
+
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+# SECURE FILES AND DIRECTORIES
+#=================================================
+
+# Set permissions on app files
 # Set permissions to app files
-	sudo chmod -R 755 $src_path
-	sudo chown -R www-data: $src_path
+chown -R root "$src_path"
+chmod 644 "$final_path/conf/conf.php"
+chown -R $app "$datadir"
+chmod go-w $datadir
 
-# Reload nginx service
-	sudo service nginx reload
+#=================================================
+# SETUP SSOWAT
+#=================================================
+ynh_script_progression --message="Upgrading SSOwat configuration..." --time --weight=1
 
-# Upgrade
-	# Disable SSO
-	ynh_app_setting_set "$app" unprotected_uris "/"
-	sudo yunohost app ssowatconf
+# Make app public if necessary
+if [ $is_public -eq 1 ]
+then
+	# unprotected_uris allows SSO credentials to be passed anyway
+	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
+fi
 
-	# Remove the lock if it exists
-	lock=$src_path/documents/install.lock
-	[[ -f $lock ]] && sudo rm $lock
+#=================================================
+# RELOAD NGINX
+#=================================================
+ynh_script_progression --message="Reloading nginx web server..." --time --weight=1
 
-	# Upgrade with CURL
-	ynh_local_curl "/install/upgrade.php" \
-		"action=upgrade" \
-		"versionfrom=$old_version" \
-		"versionto=$version"
+ynh_systemd_action --service_name=nginx --action=reload
 
-	ynh_local_curl "/install/upgrade2.php" \
-		"versionfrom=$old_version" \
-		"versionto=$version" \
-		"testpost=ok" \
-		"action=upgrade"
+#=================================================
+# END OF SCRIPT
+#=================================================
 
-	ynh_local_curl "/install/step5.php" \
-		"versionfrom=$old_version" \
-		"versionto=$version" \
-		"testpost=ok" \
-		"action=upgrade"
-
-	# Recreate the lock
-	sudo touch $lock
-	sudo chmod 444 $lock
-	sudo chown www-data: $lock
-
-	# Re-enable SSO
-	ynh_app_setting_delete $app unprotected_uris
-	sudo yunohost app ssowatconf
-
-	# Store the new version
-	ynh_app_setting_set $app version $version
+ynh_script_progression --message="Upgrade of $app completed" --time --last
