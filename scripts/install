@@ -55,12 +55,8 @@ ynh_script_progression --message="Validating installation parameters..." --time 
 ### If the app uses nginx as web server (written in HTML/PHP in most cases), the final path should be "/var/www/$app".
 ### If the app provides an internal web server (or uses another application server such as uwsgi), the final path should be "/opt/yunohost/$app"
 final_path=/var/www/$app
-src_path=$final_path
 
 test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
-
-# Then adjust to dolibarr specificity (app is in htdocs sub-directory)
-final_path=/var/www/$app/htdocs/
 
 # Register (book) web path
 ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
@@ -107,15 +103,14 @@ ynh_script_progression --message="Setting up source files..." --time --weight=1
 ### `ynh_setup_source` use the file conf/app.src
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
-ynh_app_setting_set --app=$app --key=src_path --value=$src_path
 
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_script_progression --message="Download source files..." --time --weight=1
-ynh_setup_source --dest_dir="$src_path"
+ynh_setup_source --dest_dir="$final_path"
 
 # Create necessary files
-datadir=$src_path/documents
-touch $final_path/conf/conf.php
+datadir=$final_path/documents
+touch $final_path/htdocs/conf/conf.php
 mkdir -p $datadir
 chmod go-w $datadir
 
@@ -162,7 +157,7 @@ ynh_add_fpm_config
 # PREPARE AND INSTALL APP
 #=================================================
 
-finstall="$final_path/install/install.forced.php"
+finstall="$final_path/htdocs/install/install.forced.php"
 cp ../conf/install.forced.php "$finstall"
 
 # Change variables in Wordpress configuration
@@ -180,7 +175,7 @@ fi
 fhook=../hooks/post_user_create
 ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_file="$fhook"
 ynh_replace_string --match_string="__MEMBER__" --replace_string="$member" --target_file="$fhook"
-ynh_replace_string --match_string="__SRCPATH__" --replace_string="$src_path" --target_file="$fhook"
+ynh_replace_string --match_string="__SRCPATH__" --replace_string="$final_path" --target_file="$fhook"
 
 
 #=================================================
@@ -193,7 +188,7 @@ ynh_replace_string --match_string="__SRCPATH__" --replace_string="$src_path" --t
 ### forms.
 
 # Set right permissions for curl install
-chown -R $app "$src_path"
+chown -R $app "$final_path"
 
 
 # Set the app as temporarily public for curl call
@@ -245,7 +240,7 @@ ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ..
 # Populate the database with YNH users.
 ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ../conf/sql/ldap_user.sql
 
-if php $src_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y; then
+if php $final_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y; then
         ynh_print_info --message="ldap user update ok"
 else
         ynh_print_warn --message="ldap user update ended with error"
@@ -256,7 +251,7 @@ if [ $member -eq 1 ]
 then
 	ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ../conf/sql/ldap_member.sql
 
-	if php $src_path/scripts/members/sync_members_ldap2dolibarr.php commitiferror 1 --server=localhost -y; then
+	if php $final_path/scripts/members/sync_members_ldap2dolibarr.php commitiferror 1 --server=localhost -y; then
                 ynh_print_info --message="ldap member update ok"
         else
                 ynh_print_warn --message="ldap member update ended with error"
@@ -278,7 +273,7 @@ fi
 
 # Setup HTTP auth in conf
 ynh_script_progression --message="configuring config file" --time --weight=4
-ynh_replace_string --match_string="dolibarr_main_authentication='dolibarr'" --replace_string="dolibarr_main_authentication='http'" --target_file="$final_path/conf/conf.php"
+ynh_replace_string --match_string="dolibarr_main_authentication='dolibarr'" --replace_string="dolibarr_main_authentication='http'" --target_file="$final_path/htdocs/conf/conf.php"
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
@@ -289,7 +284,7 @@ ynh_replace_string --match_string="dolibarr_main_authentication='dolibarr'" --re
 ### you can make a backup of this file before modifying it again if the admin had modified it.
 
 # Calculate and store the config file checksum into the app settings
-ynh_store_file_checksum --file="$final_path/conf/conf.php"
+ynh_store_file_checksum --file="$final_path/htdocs/conf/conf.php"
 
 #=================================================
 # ADD A CRON JOB
@@ -308,9 +303,9 @@ touch $cron_path
 ### that really need such authorization.
 
 # Set permissions to app files
-chown -R root "$src_path"
+chown -R root "$final_path"
 chown -R $app "$datadir"
-chmod 644 "$final_path/conf/conf.php"
+chmod 644 "$final_path/htdocs/conf/conf.php"
 
 #=================================================
 # SETUP LOGROTATE
@@ -326,7 +321,7 @@ ynh_script_progression --message="Configuring log rotation..." --time --weight=1
 ###		- And the section "SETUP LOGROTATE" in the upgrade script
 
 # Use logrotate to manage application logfile(s)
-ynh_use_logrotate --logfile="$src_path/documents/dolibarr.log"
+ynh_use_logrotate --logfile="$final_path/documents/dolibarr.log"
 
 #=================================================
 # SETUP SSOWAT

@@ -24,7 +24,6 @@ ynh_script_progression --message="Loading installation settings..." --time --wei
 
 app=$YNH_APP_INSTANCE_NAME
 
-src_path=$(ynh_app_setting_get --app=$app --key=src_path)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
@@ -36,7 +35,7 @@ db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 #=================================================
 ynh_script_progression --message="Backing up the main app directory..." --time --weight=1
 
-ynh_backup --src_path="$src_path"
+ynh_backup --src_path="$final_path"
 
 #=================================================
 # BACKUP THE NGINX CONFIGURATION

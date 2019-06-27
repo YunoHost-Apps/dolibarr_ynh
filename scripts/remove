@@ -21,7 +21,6 @@ port=$(ynh_app_setting_get --app=$app --key=port)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-src_path=$(ynh_app_setting_get --app=$app --key=src_path)
 
 #=================================================
 # STANDARD REMOVE
@@ -58,7 +57,7 @@ ynh_mysql_remove_db --db_user=$db_user --db_name=$db_name
 ynh_script_progression --message="Removing app main directory..." --time --weight=1
 
 # Remove the app directory securely
-ynh_secure_remove --file="$src_path"
+ynh_secure_remove --file="$final_path"
 
 #=================================================
 # REMOVE NGINX CONFIGURATION

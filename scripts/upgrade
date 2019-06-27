@@ -21,12 +21,11 @@ path_url=$(ynh_app_setting_get --app=$app --key=path)
 admin=$(ynh_app_setting_get --app=$app --key=admin)
 is_public=$(ynh_app_setting_get --app=$app --key=is_public)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-src_path=$(ynh_app_setting_get --app=$app --key=src_path)
 language=$(ynh_app_setting_get --app=$app --key=language)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 current_version=$(ynh_app_setting_get --app=$app --key=version)
 update_version=$(ynh_app_upstream_version "../manifest.json")
-datadir=$src_path/documents
+datadir=$final_path/documents
 
 #=================================================
 # CHECK VERSION
@@ -62,13 +61,9 @@ fi
 
 # If final_path doesn't exist, create it
 if [ -z "$final_path" ]; then
-	src_path=/var/www/$app
-	
-	# Then adjust to dolibarr specificity (app is in htdocs sub-directory)
-	final_path=$src_path/htdocs/
+	final_path=/var/www/$app
 	
 	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
-	ynh_app_setting_set --app=$app --key=src_path --value=$src_path
 fi
 
 #=================================================
@@ -108,7 +103,7 @@ then
 	ynh_script_progression --message="Upgrading source files..." --time --weight=1
 
 	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$src_path"
+	ynh_setup_source --dest_dir="$final_path"
 fi
 
 #=================================================
@@ -140,32 +135,34 @@ ynh_add_fpm_config
 #=================================================
 # LAUNCH UPGRADE
 #=================================================
-ynh_script_progression --message="Upgrading app from $current_version to $update_version" --time --weight=1
 
+if [ "$upgrade_type" == "UPGRADE_APP" ]
+then
+	ynh_script_progression --message="Upgrading app from $current_version to $update_version" --time --weight=1
 
-chown -R $app "$src_path"
+	chown -R $app "$final_path"
 
+	# Remove the lock if it exists
+	lock=$final_path/documents/install.lock
+	[[ -f $lock ]] && sudo rm $lock
 
-# Remove the lock if it exists
-lock=$src_path/documents/install.lock
-[[ -f $lock ]] && sudo rm $lock
-
-# Upgrade with CURL
-cd $final_path/install/
-if php upgrade.php $current_version $update_version > /var/log/$app/upgrade.html;  then
-	ynh_print_info --message="Step 1 upgrading ended successfully"
-else
-	ynh_print_warn --message="Step 1 upgrading ended with error"
-fi
-if php upgrade2.php $current_version $update_version > /var/log/$app/upgrade2.html; then
-	ynh_print_info --message="Step 2 upgrading ended successfully"
-else
-	ynh_print_warn --message="Step 2 upgrading ended with error"
-fi
-if php step5.php $current_version $update_version > /var/log/$app/upgrade3.html; then
-	ynh_print_info --message="Step 3 upgrading ended successfully"
-else
-	ynh_print_warn --message="Step 3 upgrading ended with error"
+	# Upgrade with CURL
+	cd $final_path/htdocs/install/
+	if php upgrade.php $current_version $update_version > /var/log/$app/upgrade.html;  then
+		ynh_print_info --message="Step 1 upgrading ended successfully"
+	else
+		ynh_print_warn --message="Step 1 upgrading ended with error"
+	fi
+	if php upgrade2.php $current_version $update_version > /var/log/$app/upgrade2.html; then
+		ynh_print_info --message="Step 2 upgrading ended successfully"
+	else
+		ynh_print_warn --message="Step 2 upgrading ended with error"
+	fi
+	if php step5.php $current_version $update_version > /var/log/$app/upgrade3.html; then
+		ynh_print_info --message="Step 3 upgrading ended successfully"
+	else
+		ynh_print_warn --message="Step 3 upgrading ended with error"
+	fi
 fi
 
 #=================================================
@@ -174,9 +171,9 @@ fi
 
 ### Verify the checksum of a file, stored by `ynh_store_file_checksum` in the install script.
 ### And create a backup of this file if the checksum is different. So the file will be backed up if the admin had modified it.
-ynh_backup_if_checksum_is_different --file="$final_path/conf/conf.php"
+ynh_backup_if_checksum_is_different --file="$final_path/htdocs/conf/conf.php"
 # Recalculate and store the checksum of the file for the next upgrade.
-ynh_store_file_checksum --file="$final_path/conf/conf.php"
+ynh_store_file_checksum --file="$final_path/htdocs/conf/conf.php"
 
 #=================================================
 # SETUP LOGROTATE
@@ -194,8 +191,8 @@ ynh_use_logrotate --non-append
 
 # Set permissions on app files
 # Set permissions to app files
-chown -R root "$src_path"
-chmod 644 "$final_path/conf/conf.php"
+chown -R root "$final_path"
+chmod 644 "$final_path/htdocs/conf/conf.php"
 chown -R $app "$datadir"
 chmod go-w $datadir
 
