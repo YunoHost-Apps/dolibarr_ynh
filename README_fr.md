@@ -1,4 +1,4 @@
-# App exemple pour YunoHost
+# Dolibarr pour YunoHost
 
 [![Integration level](https://dash.yunohost.org/integration/Dolibarr.svg)](https://dash.yunohost.org/appci/app/Dolibarr)  
 [![Install Dolibarr with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=Dolibarr)
