@@ -1,7 +1,7 @@
 #!/bin/bash
-app=dolibarr
-src_path=/var/www/dolibarr
-member=1
+app=__APP__
+src_path=__SRCPATH__
+member=__MEMBER__
                                                                                                                                                                         
 # Sync users
 if sudo php $src_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y; then

@@ -178,8 +178,6 @@ fi
 
 # Setup hooks
 fhook=../hooks/post_user_create
-ynh_replace_string --match_string="__ADMIN__" --replace_string="$admin" --target_file="$fhook"
-
 ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_file="$fhook"
 ynh_replace_string --match_string="__MEMBER__" --replace_string="$member" --target_file="$fhook"
 ynh_replace_string --match_string="__SRCPATH__" --replace_string="$src_path" --target_file="$fhook"
