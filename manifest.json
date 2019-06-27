@@ -38,7 +38,7 @@
                 "type": "path",
                 "ask": {
                     "en": "Choose a path for Dolibarr",
-                    "fr": "Choisissez un chemin pour ynhexample"
+                    "fr": "Choisissez un chemin pour Dolibarr"
                 },
                 "example": "/dolibarr",
                 "default": "/dolibarr"
