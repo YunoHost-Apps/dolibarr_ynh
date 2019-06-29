@@ -31,6 +31,6 @@ Email=
 Notification=none
 ;;; Upgrade options
 	; commit=CommitHash
-		name=Name and date of the commit.
+		name=2 Feb 2018
 		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&
 
