@@ -145,6 +145,8 @@ then
 	# Remove the lock if it exists
 	lock=$final_path/documents/install.lock
 	[[ -f $lock ]] && sudo rm $lock
+	
+	mkdir -p /var/log/$app/
 
 	# Upgrade with CURL
 	cd $final_path/htdocs/install/
