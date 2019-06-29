@@ -82,7 +82,7 @@ fi
 # UPDATE conf file
 #=================================================
 
-ynh_replace_string --match_string="$old_domain$old_path" --replace_string="$new_domain$new_path" --target_file="$final_path/conf/conf.php"
+ynh_replace_string --match_string="$old_domain$old_path" --replace_string="$new_domain$new_path" --target_file="$final_path/htdocs/conf/conf.php"
 
 #=================================================
 # GENERIC FINALISATION
