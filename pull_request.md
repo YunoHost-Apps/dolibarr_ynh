@@ -9,4 +9,4 @@
 - [ ] Tested with Package_check.
 - [ ] Fix or enhancement tested.
 - [ ] Upgrade from last version tested.
-- [  Can be reviewed and tested.
+- [ ] Can be reviewed and tested.

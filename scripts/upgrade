@@ -144,12 +144,15 @@ then
 
 	# Remove the lock if it exists
 	lock=$final_path/documents/install.lock
-	[[ -f $lock ]] && sudo rm $lock
+	if -f $lock
+	then
+		ynh_secure_remove $lock
+	fi
 	
 	mkdir -p /var/log/$app/
 
 	# Upgrade with CURL
-	cd $final_path/htdocs/install/
+	pushd $final_path/htdocs/install/
 	if php upgrade.php $current_version $update_version > /var/log/$app/upgrade.html;  then
 		ynh_print_info --message="Step 1 upgrading ended successfully"
 	else
@@ -165,6 +168,7 @@ then
 	else
 		ynh_print_warn --message="Step 3 upgrading ended with error"
 	fi
+	popd
 fi
 
 #=================================================
