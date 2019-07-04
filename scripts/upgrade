@@ -144,7 +144,7 @@ then
 
 	# Remove the lock if it exists
 	lock=$final_path/documents/install.lock
-	if -f $lock
+	if [ -f $lock ]
 	then
 		ynh_secure_remove $lock
 	fi
