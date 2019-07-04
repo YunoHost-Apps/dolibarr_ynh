@@ -8,7 +8,7 @@
     },
     "version": "9.0.3~ynh1",
     "url": "https://www.dolibarr.org/",
-    "license": "free",
+    "license": "GPL-3.0-or-later",
     "maintainer": {
         "name": "mastereur",
         "url": "https://github.com/mastereur"
