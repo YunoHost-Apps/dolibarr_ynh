@@ -68,12 +68,6 @@ ynh_script_progression --message="Backing up logrotate configuration..." --time 
 ynh_backup --src_path="/etc/logrotate.d/$app"
 
 #=================================================
-# BACKUP A CRON FILE
-#=================================================
-
-ynh_backup --src_path="/etc/cron.d/$app"
-
-#=================================================
 # END OF SCRIPT
 #=================================================
 

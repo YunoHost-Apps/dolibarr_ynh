@@ -27,33 +27,13 @@ member=$YNH_APP_ARG_MEMBER
 is_public=0
 
 
-### If it's a multi-instance app, meaning it can be installed several times independently
-### The id of the app as stated in the manifest is available as $YNH_APP_ID
-### The instance number is available as $YNH_APP_INSTANCE_NUMBER (equals "1", "2", ...)
-### The app instance name is available as $YNH_APP_INSTANCE_NAME
-###    - the first time the app is installed, YNH_APP_INSTANCE_NAME = ynhexample
-###    - the second time the app is installed, YNH_APP_INSTANCE_NAME = ynhexample__2
-###    - ynhexample__{N} for the subsequent installations, with N=3,4, ...
-### The app instance name is probably what interests you most, since this is
-### guaranteed to be unique. This is a good unique identifier to define installation path,
-### db names, ...
 app=$YNH_APP_INSTANCE_NAME
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
-### About --weight and --time
-### ynh_script_progression will show to your final users the progression of each scripts.
-### In order to do that, --weight will represent the relative time of execution compared to the other steps in the script.
-### --time is a packager option, it will show you the execution time since the previous call.
-### This option should be removed before releasing your app.
-### Use the execution time, given by --time, to estimate the weight of a step.
-### A common way to do it is to set a weight equal to the execution time in second +1.
-### The execution time is given for the duration since the previous call. So the weight should be applied to this previous call.
-ynh_script_progression --message="Validating installation parameters..." --time --weight=1
+ynh_script_progression --message="Validating installation parameters..." --weight=1
 
-### If the app uses nginx as web server (written in HTML/PHP in most cases), the final path should be "/var/www/$app".
-### If the app provides an internal web server (or uses another application server such as uwsgi), the final path should be "/opt/yunohost/$app"
 final_path=/var/www/$app
 
 test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
@@ -79,15 +59,6 @@ ynh_app_setting_set --app=$app --key=version --value=$(ynh_app_upstream_version 
 #=================================================
 ynh_script_progression --message="Creating a MySQL database..." --time --weight=1
 
-### Use these lines if you need a database for the application.
-### `ynh_mysql_setup_db` will create a database, an associated user and a ramdom password.
-### The password will be stored as 'mysqlpwd' into the app settings,
-### and will be available as $db_pwd
-### If you're not using these lines:
-###		- Remove the section "BACKUP THE MYSQL DATABASE" in the backup script
-###		- Remove also the section "REMOVE THE MYSQL DATABASE" in the remove script
-###		- As well as the section "RESTORE THE MYSQL DATABASE" in the restore script
-
 db_name=$(ynh_sanitize_dbid --db_name=$app)
 db_user=$db_name
 ynh_app_setting_set --app=$app --key=db_name --value=$db_name
@@ -97,10 +68,6 @@ ynh_mysql_setup_db --db_user=$db_user --db_name=$db_name
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 ynh_script_progression --message="Setting up source files..." --time --weight=1
-
-### `ynh_setup_source` is used to install an app from a zip or tar.gz file,
-### downloaded from an upstream source, like a git repository.
-### `ynh_setup_source` use the file conf/app.src
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 
@@ -119,8 +86,6 @@ chmod go-w $datadir
 #=================================================
 ynh_script_progression --message="Configuring nginx web server..." --time --weight=1
 
-### `ynh_add_nginx_config` will use the file conf/nginx.conf
-
 # Create a dedicated nginx config
 ynh_add_nginx_config
 
@@ -136,17 +101,6 @@ ynh_system_user_create --username=$app
 # PHP-FPM CONFIGURATION
 #=================================================
 ynh_script_progression --message="Configuring php-fpm..." --time --weight=1
-
-### `ynh_add_fpm_config` is used to set up a PHP config.
-### You can remove it if your app doesn't use PHP.
-### `ynh_add_fpm_config` will use the files conf/php-fpm.conf
-### If you're not using these lines:
-###		- You can remove these files in conf/.
-###		- Remove the section "BACKUP THE PHP-FPM CONFIGURATION" in the backup script
-###		- Remove also the section "REMOVE PHP-FPM CONFIGURATION" in the remove script
-###		- As well as the section "RESTORE THE PHP-FPM CONFIGURATION" in the restore script
-###		With the reload at the end of the script.
-###		- And the section "PHP-FPM CONFIGURATION" in the upgrade script
 
 # Create a dedicated php-fpm config
 ynh_add_fpm_config
@@ -182,13 +136,8 @@ ynh_replace_string --match_string="__SRCPATH__" --replace_string="$final_path" -
 # SETUP APPLICATION WITH CURL
 #=================================================
 
-### Use these lines only if the app installation needs to be finalized through
-### web forms. We generally don't want to ask the final user,
-### so we're going to use curl to automatically fill the fields and submit the
-### forms.
-
 # Set right permissions for curl install
-chown -R $app "$final_path"
+chown -R $app: "$final_path"
 
 
 # Set the app as temporarily public for curl call
@@ -268,9 +217,6 @@ fi
 # MODIFY A CONFIG FILE
 #=================================================
 
-### `ynh_replace_string` is used to replace a string in a file.
-### (It's compatible with sed regular expressions syntax)
-
 # Setup HTTP auth in conf
 ynh_script_progression --message="configuring config file" --time --weight=4
 ynh_replace_string --match_string="dolibarr_main_authentication='dolibarr'" --replace_string="dolibarr_main_authentication='http'" --target_file="$final_path/htdocs/conf/conf.php"
@@ -279,18 +225,8 @@ ynh_replace_string --match_string="dolibarr_main_authentication='dolibarr'" --re
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
 
-### `ynh_store_file_checksum` is used to store the checksum of a file.
-### That way, during the upgrade script, by using `ynh_backup_if_checksum_is_different`,
-### you can make a backup of this file before modifying it again if the admin had modified it.
-
 # Calculate and store the config file checksum into the app settings
 ynh_store_file_checksum --file="$final_path/htdocs/conf/conf.php"
-
-#=================================================
-# ADD A CRON JOB
-#=================================================
-cron_path=/etc/cron.d/$app
-touch $cron_path
 
 #=================================================
 # GENERIC FINALIZATION
@@ -298,27 +234,15 @@ touch $cron_path
 # SECURE FILES AND DIRECTORIES
 #=================================================
 
-### For security reason, any app should set the permissions to root: before anything else.
-### Then, if write authorization is needed, any access should be given only to directories
-### that really need such authorization.
-
 # Set permissions to app files
-chown -R root "$final_path"
-chown -R $app "$datadir"
+chown -R root: "$final_path"
+chown -R $app: "$datadir"
 chmod 644 "$final_path/htdocs/conf/conf.php"
 
 #=================================================
 # SETUP LOGROTATE
 #=================================================
-ynh_script_progression --message="Configuring log rotation..." --time --weight=1
-
-### `ynh_use_logrotate` is used to configure a logrotate configuration for the logs of this app.
-### Use this helper only if there is effectively a log file for this app.
-### If you're not using this helper:
-###		- Remove the section "BACKUP LOGROTATE" in the backup script
-###		- Remove also the section "REMOVE LOGROTATE CONFIGURATION" in the remove script
-###		- As well as the section "RESTORE THE LOGROTATE CONFIGURATION" in the restore script
-###		- And the section "SETUP LOGROTATE" in the upgrade script
+ynh_script_progression --message="Configuring log rotation..." --weight=1
 
 # Use logrotate to manage application logfile(s)
 ynh_use_logrotate --logfile="$final_path/documents/dolibarr.log"

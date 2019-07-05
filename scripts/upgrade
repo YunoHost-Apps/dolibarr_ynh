@@ -31,12 +31,6 @@ datadir=$final_path/documents
 # CHECK VERSION
 #=================================================
 
-### This helper will compare the version of the currently installed app and the version of the upstream package.
-### $upgrade_type can have 2 different values
-### - UPGRADE_APP if the upstream app version has changed
-### - UPGRADE_PACKAGE if only the YunoHost package has changed
-### ynh_check_app_version_changed will stop the upgrade if the app is up to date.
-### UPGRADE_APP should be used to upgrade the core app only if there's an upgrade to do.
 upgrade_type=$(ynh_check_app_version_changed)
 
 #=================================================
@@ -140,7 +134,7 @@ if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
 	ynh_script_progression --message="Upgrading app from $current_version to $update_version" --time --weight=1
 
-	chown -R $app "$final_path"
+	chown -R $app: "$final_path"
 
 	# Remove the lock if it exists
 	lock=$final_path/documents/install.lock
@@ -175,8 +169,6 @@ fi
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
 
-### Verify the checksum of a file, stored by `ynh_store_file_checksum` in the install script.
-### And create a backup of this file if the checksum is different. So the file will be backed up if the admin had modified it.
 ynh_backup_if_checksum_is_different --file="$final_path/htdocs/conf/conf.php"
 # Recalculate and store the checksum of the file for the next upgrade.
 ynh_store_file_checksum --file="$final_path/htdocs/conf/conf.php"
@@ -197,10 +189,10 @@ ynh_use_logrotate --non-append
 
 # Set permissions on app files
 # Set permissions to app files
-chown -R root "$final_path"
+chown -R root: "$final_path"
 chmod 644 "$final_path/htdocs/conf/conf.php"
 mkdir -p "$datadir"
-chown -R $app "$datadir"
+chown -R $app: "$datadir"
 chmod go-w $datadir
 
 #=================================================
