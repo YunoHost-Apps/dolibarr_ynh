@@ -44,7 +44,7 @@ ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
-ynh_script_progression --message="Storing installation settings..." --time --weight=1
+ynh_script_progression --message="Storing installation settings..." --weight=2
 
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
@@ -57,7 +57,7 @@ ynh_app_setting_set --app=$app --key=version --value=$(ynh_app_upstream_version 
 #=================================================
 # CREATE A MYSQL DATABASE
 #=================================================
-ynh_script_progression --message="Creating a MySQL database..." --time --weight=1
+ynh_script_progression --message="Creating a MySQL database..." --weight=1
 
 db_name=$(ynh_sanitize_dbid --db_name=$app)
 db_user=$db_name
@@ -67,12 +67,12 @@ ynh_mysql_setup_db --db_user=$db_user --db_name=$db_name
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Setting up source files..." --time --weight=1
+ynh_script_progression --message="Setting up source files..." --weight=1
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_script_progression --message="Download source files..." --time --weight=1
+ynh_script_progression --message="Download source files..." --weight=70
 ynh_setup_source --dest_dir="$final_path"
 
 # Create necessary files
@@ -84,7 +84,7 @@ chmod go-w $datadir
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring nginx web server..." --time --weight=1
+ynh_script_progression --message="Configuring nginx web server..." --weight=1
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
@@ -92,7 +92,7 @@ ynh_add_nginx_config
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_script_progression --message="Configuring system user..." --time --weight=1
+ynh_script_progression --message="Configuring system user..." --weight=2
 
 # Create a system user
 ynh_system_user_create --username=$app
@@ -100,7 +100,7 @@ ynh_system_user_create --username=$app
 #=================================================
 # PHP-FPM CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring php-fpm..." --time --weight=1
+ynh_script_progression --message="Configuring php-fpm..." --weight=2
 
 # Create a dedicated php-fpm config
 ynh_add_fpm_config
@@ -141,7 +141,7 @@ chown -R $app: "$final_path"
 
 
 # Set the app as temporarily public for curl call
-ynh_script_progression --message="Configuring SSOwat..." --time --weight=1
+ynh_script_progression --message="Configuring SSOwat..." --weight=1
 ynh_app_setting_set --app=$app --key=skipped_uris --value="/"
 # Reload SSOwat config
 yunohost app ssowatconf
@@ -150,23 +150,23 @@ yunohost app ssowatconf
 ynh_systemd_action --service_name=nginx --action=reload
 
 # Installation with curl
-ynh_script_progression --message="Finalizing installation..." --time --weight=1
+ynh_script_progression --message="Finalizing installation..." --weight=1
 
-ynh_script_progression --message="Generate fileconf" --time --weight=3
+ynh_script_progression --message="Generate fileconf" --weight=1
 ynh_local_curl "/install/fileconf.php" \
 		"testpost=ok"
 	
-ynh_script_progression --message="installation - step 1" --time --weight=3
+ynh_script_progression --message="installation - step 1" --weight=3
 ynh_local_curl "/install/step1.php" \
 		"testpost=ok" \
 		"action=set"
 		
-ynh_script_progression --message="installation - step 2 (may take a while)..." --time --weight=3
+ynh_script_progression --message="installation - step 2 (may take a while)..." --weight=72
 ynh_local_curl "/install/step2.php" \
 		"testpost=ok" \
 		"action=set"
 
-ynh_script_progression --message="installation - step 4" --time --weight=3
+ynh_script_progression --message="installation - step 4" --weight=3
 ynh_local_curl "/install/step4.php" \
 		"testpost=ok" \
 		"action=set"
@@ -174,14 +174,14 @@ ynh_local_curl "/install/step4.php" \
 # Generate a random password for the admin user (will be ignored because of LDAP)
 password=$(ynh_string_random 8)
 
-ynh_script_progression --message="installation - step 5" --time --weight=3
+ynh_script_progression --message="installation - step 5" --weight=4
 ynh_local_curl "/install/step5.php" \
 		"testpost=ok" \
 		"action=set" \
 		"pass=$password" \
 		"pass_verif=$password"
 
-ynh_script_progression --message="configuring ldap" --time --weight=3
+ynh_script_progression --message="configuring ldap" --weight=1
 
 # Populate the LDAP parameters
 ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ../conf/sql/ldap.sql
@@ -218,7 +218,7 @@ fi
 #=================================================
 
 # Setup HTTP auth in conf
-ynh_script_progression --message="configuring config file" --time --weight=4
+ynh_script_progression --message="configuring config file" --weight=1
 ynh_replace_string --match_string="dolibarr_main_authentication='dolibarr'" --replace_string="dolibarr_main_authentication='http'" --target_file="$final_path/htdocs/conf/conf.php"
 
 #=================================================
@@ -250,7 +250,7 @@ ynh_use_logrotate --logfile="$final_path/documents/dolibarr.log"
 #=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_script_progression --message="Configuring SSOwat..." --time --weight=1
+ynh_script_progression --message="Configuring SSOwat..." --weight=1
 
 # Make app public if necessary
 if [ $is_public -eq 1 ]
@@ -262,7 +262,7 @@ fi
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading nginx web server..." --time --weight=1
+ynh_script_progression --message="Reloading nginx web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 
@@ -270,4 +270,4 @@ ynh_systemd_action --service_name=nginx --action=reload
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Installation of $app completed" --time --last
+ynh_script_progression --message="Installation of $app completed" --last
