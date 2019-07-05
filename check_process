@@ -1,13 +1,9 @@
-# See here for more information
-# https://github.com/YunoHost/package_check#syntax-check_process-file
-
-# Move this file from check_process.default to check_process when you have filled it.
-
 ;; Test complet
 	; Manifest
 		domain="domain.tld"	(DOMAIN)
 		path="/path"	(PATH)
 		admin="john"	(USER)
+		member=0
 	; Checks
 		pkg_linter=1
 		setup_sub_dir=1
@@ -16,21 +12,29 @@
 		setup_private=0
 		setup_public=0
 		upgrade=1
-		upgrade=1	from_commit=aced370f33a988d878be6434f1803ea68affe41a
+		upgrade=1	from_commit=db509c6cf5d5836d1b71a4e35658f3f5cab63e2b
 		backup_restore=1
 		multi_instance=1
-		# This test is no longer necessary since the version 2.7 (PR: https://github.com/YunoHost/yunohost/pull/304), you can still do it if your app could be installed with this version.
-		# incorrect_path=1
 		port_already_use=0
 		change_url=1
+;; Test member to true
+	; Manifest
+		domain="domain.tld"	(DOMAIN)
+		path="/path"	(PATH)
+		admin="john"	(USER)
+		member=0
+	; Checks
+		setup_sub_dir=1
+		setup_root=1
+		upgrade=1
+		backup_restore=1
 ;;; Levels
-	# If the level 5 (Package linter) is forced to 1. Please add justifications here.
 	Level 5=auto
 ;;; Options
 Email=
 Notification=none
 ;;; Upgrade options
 	; commit=CommitHash
-		name=2 Feb 2018
-		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&
+		name=4 Jul 2019
+		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&member=0&
 
