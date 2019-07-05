@@ -35,6 +35,6 @@ Email=
 Notification=none
 ;;; Upgrade options
 	; commit=CommitHash
-		name=4 Jul 2019
-		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&member=0&
+		name=5 Jul 2019
+		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&
 
