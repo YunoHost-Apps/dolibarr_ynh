@@ -25,25 +25,6 @@ final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 #=================================================
 # STANDARD REMOVE
 #=================================================
-# REMOVE SERVICE FROM ADMIN PANEL
-#=================================================
-
-# Remove a service from the admin panel, added by `yunohost service add`
-if ynh_exec_warn_less yunohost service status $app >/dev/null
-then
-	ynh_script_progression --message="Removing $app service..." --weight=1
-	yunohost service remove $app
-fi
-
-#=================================================
-# STOP AND REMOVE SERVICE
-#=================================================
-ynh_script_progression --message="Stopping and removing the systemd service..." --weight=1
-
-# Remove the dedicated systemd config
-ynh_remove_systemd_config
-
-#=================================================
 # REMOVE THE MYSQL DATABASE
 #=================================================
 ynh_script_progression --message="Removing the MySQL database..." --weight=9
