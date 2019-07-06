@@ -1,14 +1,5 @@
 #!/bin/bash
 
-#set -eu
-
-app=$YNH_APP_INSTANCE_NAME
-version=$(cat ../sources/version)
-
-## Source YunoHost helpers - old
-#	source /usr/share/yunohost/helpers
-#	source ./_extrahelpers
-
 #=================================================
 # GENERIC START
 #=================================================
@@ -25,180 +16,258 @@ source /usr/share/yunohost/helpers
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
 
+#=================================================
+# RETRIEVE ARGUMENTS FROM THE MANIFEST
+#=================================================
 
-################
+domain=$YNH_APP_ARG_DOMAIN
+path_url=$YNH_APP_ARG_PATH
+admin=$YNH_APP_ARG_ADMIN
+member=$YNH_APP_ARG_MEMBER
+is_public=0
 
-# Retrieve arguments
-	domain=$YNH_APP_ARG_DOMAIN
-	path_url=$YNH_APP_ARG_PATH
-	#path=$YNH_APP_ARG_PATH
-	admin=$YNH_APP_ARG_ADMIN
-	member=$YNH_APP_ARG_MEMBER
+
+app=$YNH_APP_INSTANCE_NAME
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
+ynh_script_progression --message="Validating installation parameters..." --weight=1
 
-# First test base directory
 final_path=/var/www/$app
-test ! -e "$final_path" || ynh_die "This path already contains a folder"
 
-# Then adjust to dolibarr specificity (app is in htdocs sub-directory)
-final_path=/var/www/$app/htdocs/
+test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
 
-# Normalize the url path syntax
-path_url=$(ynh_normalize_url_path $path_url)
-
-# Check web path availability
-ynh_webpath_available $domain $path_url
 # Register (book) web path
-ynh_webpath_register $app $domain $path_url
+ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
+
+#=================================================
+# STORE SETTINGS FROM MANIFEST
+#=================================================
+ynh_script_progression --message="Storing installation settings..." --weight=2
+
+ynh_app_setting_set --app=$app --key=domain --value=$domain
+ynh_app_setting_set --app=$app --key=path --value=$path_url
+ynh_app_setting_set --app=$app --key=admin --value=$admin
+ynh_app_setting_set --app=$app --key=is_public --value=$is_public
+ynh_app_setting_set --app=$app --key=version --value=$(ynh_app_upstream_version "../manifest.json")
+
+#=================================================
+# STANDARD MODIFICATIONS
+#=================================================
+# CREATE A MYSQL DATABASE
+#=================================================
+ynh_script_progression --message="Creating a MySQL database..." --weight=1
+
+db_name=$(ynh_sanitize_dbid --db_name=$app)
+db_user=$db_name
+ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+ynh_mysql_setup_db --db_user=$db_user --db_name=$db_name
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+ynh_script_progression --message="Setting up source files..." --weight=1
+
+ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+
+# Download, check integrity, uncompress and patch the source from app.src
+ynh_script_progression --message="Download source files..." --weight=70
+ynh_setup_source --dest_dir="$final_path"
+
+# Create necessary files
+datadir=$final_path/documents
+touch $final_path/htdocs/conf/conf.php
+mkdir -p $datadir
+chmod go-w $datadir
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Configuring nginx web server..." --weight=1
+
+# Create a dedicated nginx config
+ynh_add_nginx_config
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Configuring system user..." --weight=2
+
+# Create a system user
+ynh_system_user_create --username=$app
+
+#=================================================
+# PHP-FPM CONFIGURATION
+#=================================================
+ynh_script_progression --message="Configuring php-fpm..." --weight=2
+
+# Create a dedicated php-fpm config
+ynh_add_fpm_config
+
+#=================================================
+# SPECIFIC SETUP
+#=================================================
+# PREPARE AND INSTALL APP
+#=================================================
+
+finstall="$final_path/htdocs/install/install.forced.php"
+cp ../conf/install.forced.php "$finstall"
+
+# Change variables in Wordpress configuration
+ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$finstall"
+ynh_replace_string --match_string="__DB_USER__" --replace_string="$db_user" --target_file="$finstall"
+ynh_replace_string --match_string="__DB_PWD__" --replace_string="$db_pwd" --target_file="$finstall"
+ynh_replace_string --match_string="__ADMIN__" --replace_string="$admin" --target_file="$finstall"
+if [ $member -eq 1 ]
+then
+	# If YNH users are members, we must activate the members module
+	ynh_replace_string --match_string="modLdap" --replace_string="modLdap,modAdherent" --target_file="$finstall"
+fi
+
+# Setup hooks
+fhook=../hooks/post_user_create
+ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_file="$fhook"
+ynh_replace_string --match_string="__MEMBER__" --replace_string="$member" --target_file="$fhook"
+ynh_replace_string --match_string="__SRCPATH__" --replace_string="$final_path" --target_file="$fhook"
 
 
-# Correct path: puts a / at the start and nothing at the end
-#	if [ "${path:0:1}" != "/" ]; then
-#		path="/$path"
-#	fi
-#	if [ "${path:${#path}-1}" == "/" ] && [ ${#path} -gt 1 ]; then
-#		path="${path:0:${#path}-1}"
-#	fi
+#=================================================
+# SETUP APPLICATION WITH CURL
+#=================================================
 
-# Check domain/path availability
-#	sudo yunohost app checkurl "${domain}${path}" -a "$app" \
-#		|| ynh_die "path not available: ${domain}${path}"
+# Set right permissions for curl install
+chown -R $app: "$final_path"
 
-#	ynh_webpath_register $app $domain $path \
-#		|| ynh_die "path not available and may be already used : ${domain}${path}"
 
-# Check user parameter
-	ynh_user_exists "$admin" \
-	  || ynh_die "The chosen admin user does not exist."
-
-# Store settings
-	ynh_app_setting_set $app domain $domain
-	ynh_app_setting_set $app admin $admin
-	ynh_app_setting_set $app member $member
-	ynh_app_setting_set $app version $version
-
-# Copy source files
-	src_path=/var/www/$app
-	sudo mkdir -p $src_path
-
-	# Download, unzip and copy source - TODO in local (temporarily) to  speed up test process
-	#sudo wget -q ftp://10.1.1.110/COMMUNS/INFORMATIQUE/dolibarr/dolibarr-6.0.4.zip -O dolibarr-${version}.zip
-	sudo wget -q https://github.com/Dolibarr/dolibarr/archive/${version}.zip -O dolibarr-${version}.zip
-	unzip -qq dolibarr-${version}.zip || ynh_die "Problem uncompressing dolibarr zip file"
-
-	sudo cp -a dolibarr-${version}/. $src_path
-
-	# Create necessary files
-	sudo touch $src_path/htdocs/conf/conf.php
-	sudo mkdir -p $src_path/documents
-
-# MySQL
-	dbuser=$app
-	dbname=$app
-	dbpass=$(ynh_string_random 12)
-	ynh_app_setting_set "$app" mysqlpwd "$dbpass"
-	ynh_mysql_create_db "$dbname" "$dbuser" "$dbpass"
-
-# Modify Nginx configuration file and copy it to Nginx conf directory
-#	nginx_conf=../conf/nginx.conf
-#	sed -i "s@__PATH__@${path_url}@g" $nginx_conf
-#	sed -i "s@__FINALPATH__@$src_path/htdocs/@g" $nginx_conf
-#	sed -i "s@__NAME__@$app@g" $nginx_conf
-#	sudo cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
-
-	ynh_add_nginx_config
-
-# PHP
-	sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
-	sed -i "s@YNH_WWW_ALIAS@$src_path@g" ../conf/php-fpm.conf
-	finalphpconf=/etc/php5/fpm/pool.d/$app.conf
-	sudo cp ../conf/php-fpm.conf $finalphpconf
-	sudo chown root: $finalphpconf
-	sudo chmod 644 $finalphpconf
-	sudo service php5-fpm reload
-
-# Install parameters
-	sed -i "s@YNH_WWW_ALIAS@$src_path@g" ../sources/install.forced.php
-	sed -i "s@YNH_DBNAME@$dbname@g" ../sources/install.forced.php
-	sed -i "s@YNH_DBUSER@$dbuser@g" ../sources/install.forced.php
-	sed -i "s@YNH_DBPASS@$dbpass@g" ../sources/install.forced.php
-	sed -i "s@YNH_ADMIN@$admin@g" ../sources/install.forced.php
-	if [ $member = 1 ];
-	then
-		# If YNH users are members, we must activate the members module
-		sed -i "s@modLdap@modLdap,modAdherent@g" ../sources/install.forced.php
-	fi
-	forcedinstall=$src_path/htdocs/install/install.forced.php
-	sudo cp ../sources/install.forced.php $forcedinstall
-
-# Set permissions to app files
-	sudo chmod -R 755 $src_path
-	sudo chown -R www-data: $src_path
+# Set the app as temporarily public for curl call
+ynh_script_progression --message="Configuring SSOwat..." --weight=1
+ynh_app_setting_set --app=$app --key=skipped_uris --value="/"
+# Reload SSOwat config
+yunohost app ssowatconf
 
 # Reload Nginx
-	sudo service nginx reload
+ynh_systemd_action --service_name=nginx --action=reload
 
-# Install
-	# Disable SSO
-	ynh_app_setting_set "$app" unprotected_uris "/"
-	sudo yunohost app ssowatconf
+# Installation with curl
+ynh_script_progression --message="Finalizing installation..." --weight=1
 
-	# Generate a random password for the admin user (will be ignored because of LDAP)
-	password=$(ynh_string_random 8)
-
-	# Install with CURL
-
-	ynh_local_curl "/install/fileconf.php" \
+ynh_script_progression --message="Generate fileconf" --weight=1
+ynh_local_curl "/install/fileconf.php" \
 		"testpost=ok"
+	
+ynh_script_progression --message="installation - step 1" --weight=3
+ynh_local_curl "/install/step1.php" \
+		"testpost=ok" \
+		"action=set"
+		
+ynh_script_progression --message="installation - step 2 (may take a while)..." --weight=72
+ynh_local_curl "/install/step2.php" \
+		"testpost=ok" \
+		"action=set"
 
-	ynh_local_curl "/install/step1.php" \
+ynh_script_progression --message="installation - step 4" --weight=3
+ynh_local_curl "/install/step4.php" \
+		"testpost=ok" \
+		"action=set"
+		
+# Generate a random password for the admin user (will be ignored because of LDAP)
+password=$(ynh_string_random 8)
+
+ynh_script_progression --message="installation - step 5" --weight=4
+ynh_local_curl "/install/step5.php" \
 		"testpost=ok" \
 		"action=set" \
-		"selectlang=fr_FR"
-
-	ynh_local_curl "/install/step2.php" \
-		"testpost=ok" \
-		"action=set" \
-		"dolibarr_main_db_character_set=latin1" \
-		"dolibarr_main_db_collation=latin1_swedish_ci" \
-		"selectlang=fr_FR"
-
-	ynh_local_curl "/install/step4.php" \
-		"testpost=ok" \
-		"action=set" \
-		"selectlang=fr_FR"
-
-	ynh_local_curl "/install/step5.php" \
-		"testpost=ok" \
-		"action=set" \
-		"selectlang=fr_FR" \
 		"pass=$password" \
 		"pass_verif=$password"
 
-	# Populate the LDAP parameters
-	mysql -u ${dbuser} -p${dbpass} ${dbname} < ../conf/ldap.sql
+ynh_script_progression --message="configuring ldap" --weight=1
 
-	# Populate the database with YNH users.
-	mysql -u ${dbuser} -p${dbpass} ${dbname} < ../conf/ldap_user.sql
-	sudo sudo -u www-data php $src_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y
+# Populate the LDAP parameters
+ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ../conf/sql/ldap.sql
 
-	# If YNH users should be members, populate the database accordingly, create the member list, and sync members
-	if [ $member = 1 ];
-	then
-		mysql -u ${dbuser} -p${dbpass} ${dbname} < ../conf/ldap_member.sql
-		sudo sudo -u www-data php $src_path/scripts/members/sync_members_ldap2dolibarr.php commitiferror 1 --server=localhost -y
+# Populate the database with YNH users.
+ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ../conf/sql/ldap_user.sql
+
+if php $final_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y; then
+        ynh_print_info --message="ldap user update ok"
+else
+        ynh_print_warn --message="ldap user update ended with error"
+fi
+
+# If YNH users should be members, populate the database accordingly, create the member list, and sync members
+if [ $member -eq 1 ]
+then
+	ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ../conf/sql/ldap_member.sql
+
+	if php $final_path/scripts/members/sync_members_ldap2dolibarr.php commitiferror 1 --server=localhost -y; then
+                ynh_print_info --message="ldap member update ok"
+        else
+                ynh_print_warn --message="ldap member update ended with error"
 	fi
+fi
 
-	# Re-enable SSO if chosen by the user
-	ynh_app_setting_delete $app unprotected_uris
-	sudo yunohost app ssowatconf
+# Remove the public access
+if [ $is_public -eq 0 ]
+then
+	ynh_app_setting_delete --app=$app --key=skipped_uris
+fi
+
+#=================================================
+# MODIFY A CONFIG FILE
+#=================================================
 
 # Setup HTTP auth in conf
-	sudo sed -i "s@\$dolibarr_main_authentication='dolibarr';@\$dolibarr_main_authentication='http';@g" $src_path/htdocs/conf/conf.php
+ynh_script_progression --message="configuring config file" --weight=1
+ynh_replace_string --match_string="dolibarr_main_authentication='dolibarr'" --replace_string="dolibarr_main_authentication='http'" --target_file="$final_path/htdocs/conf/conf.php"
 
-# Setup hooks
-	sed -i "s@YNH_APP@$app@g" ../hooks/post_user_create
-	sed -i "s@YNH_MEMBER@$member@g" ../hooks/post_user_create
+#=================================================
+# STORE THE CONFIG FILE CHECKSUM
+#=================================================
+
+# Calculate and store the config file checksum into the app settings
+ynh_store_file_checksum --file="$final_path/htdocs/conf/conf.php"
+
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+# SECURE FILES AND DIRECTORIES
+#=================================================
+
+# Set permissions to app files
+chown -R root: "$final_path"
+chown -R $app: "$datadir"
+chmod 644 "$final_path/htdocs/conf/conf.php"
+
+#=================================================
+# SETUP LOGROTATE
+#=================================================
+ynh_script_progression --message="Configuring log rotation..." --weight=1
+
+# Use logrotate to manage application logfile(s)
+ynh_use_logrotate --logfile="$final_path/documents/dolibarr.log"
+
+#=================================================
+# SETUP SSOWAT
+#=================================================
+ynh_script_progression --message="Configuring SSOwat..." --weight=1
+
+# Make app public if necessary
+if [ $is_public -eq 1 ]
+then
+	# unprotected_uris allows SSO credentials to be passed anyway.
+	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
+fi
+
+#=================================================
+# RELOAD NGINX
+#=================================================
+ynh_script_progression --message="Reloading nginx web server..." --weight=1
+
+ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Installation of $app completed" --last

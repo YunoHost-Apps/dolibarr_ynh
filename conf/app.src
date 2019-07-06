@@ -1,0 +1,6 @@
+SOURCE_URL=https://github.com/Dolibarr/dolibarr/archive/9.0.3.tar.gz
+SOURCE_SUM=bb5ed317a545bc3ffb9a3e2f28ed22ddb7376e12a5eddcc5eda6a3ae0bfb720e
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=tar.gz
+SOURCE_IN_SUBDIR=true
+SOURCE_FILENAME=

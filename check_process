@@ -1,36 +1,40 @@
-;; Test Dolibarr
-    auto_remove=1
-    ; Manifest
-        domain="domain.tld"    	(DOMAIN)
-        path="/dolibarr"    	(PATH)
-		admin="homer" 			(USER)
-		member="1"
-    ; Checks
-        pkg_linter=1
-        setup_sub_dir=1
-        setup_root=1
-        setup_nourl=0
-        setup_private=1
-        setup_public=0
-        upgrade=1
-        backup_restore=1
-        multi_instance=1
-        wrong_user=1
-        wrong_path=1
-        incorrect_path=1
-        corrupt_source=0
-        fail_download_source=0
-        port_already_use=0
-        final_path_already_use=0
+;; Test complet
+	; Manifest
+		domain="domain.tld"	(DOMAIN)
+		path="/path"	(PATH)
+		admin="john"	(USER)
+		member=0
+	; Checks
+		pkg_linter=1
+		setup_sub_dir=1
+		setup_root=1
+		setup_nourl=0
+		setup_private=0
+		setup_public=0
+		upgrade=1
+		upgrade=1	from_commit=244f3cbdf29d6c694154ec08cead5e27d35c26fc
+		backup_restore=1
+		multi_instance=1
+		port_already_use=0
+		change_url=1
+;; Test member to true
+	; Manifest
+		domain="domain.tld"	(DOMAIN)
+		path="/path"	(PATH)
+		admin="john"	(USER)
+		member=0
+	; Checks
+		setup_sub_dir=1
+		setup_root=1
+		upgrade=1
+		backup_restore=1
 ;;; Levels
-    Level 1=auto
-    Level 2=auto
-    Level 3=auto
-    Level 4=1
-# LDAP is integrated with HTTP auth
-    Level 5=auto
-    Level 6=auto
-    Level 7=auto
-    Level 8=0
-    Level 9=0
-	Level 10=0
+	Level 5=auto
+;;; Options
+Email=
+Notification=none
+;;; Upgrade options
+	; commit=CommitHash
+		name=5 Jul 2019
+		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&
+
