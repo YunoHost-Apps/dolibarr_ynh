@@ -1,7 +1,7 @@
 # Dolibarr pour YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/Dolibarr.svg)](https://dash.yunohost.org/appci/app/Dolibarr)  
-[![Install Dolibarr with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=Dolibarr)
+[![Integration level](https://dash.yunohost.org/integration/dolibarr.svg)](https://dash.yunohost.org/appci/app/dolibarr)  
+[![Install Dolibarr with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=dolibarr)
 
 *[Read this readme in english.](./README.md)* 
 
@@ -38,9 +38,9 @@ L'application peut être utilisée par plusieurs utilisateurs.
 
 #### Supported architectures
 
-* x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/Dolibarr%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/Dolibarr/)
-* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/Dolibarr%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/Dolibarr/)
-* Jessie x86-64b - [![Build Status](https://ci-stretch.nohost.me/ci/logs/Dolibarr%20%28Apps%29.svg)](https://ci-stretch.nohost.me/ci/apps/Dolibarr/)
+* x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/dolibarr%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/dolibarr/)
+* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/dolibarr%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/dolibarr/)
+* Jessie x86-64b - [![Build Status](https://ci-stretch.nohost.me/ci/logs/dolibarr%20%28Apps%29.svg)](https://ci-stretch.nohost.me/ci/apps/dolibarr/)
 
 ## Limitations
 
@@ -53,7 +53,7 @@ La suppression d'un compte n'est pas prise en compte dans Dolibarr.
 
 ## Liens
 
- * Signaler un bug: https://github.com/YunoHost-Apps/Dolibarr_ynh/issues
+ * Signaler un bug: https://github.com/YunoHost-Apps/dolibarr_ynh/issues
  * Site de l'application: https://www.dolibarr.fr
  * Dépôt de l'application principale: Lien vers le dépôt officiel de l'application principale
  * Site web YunoHost: https://yunohost.org/
@@ -64,11 +64,11 @@ Informations pour les développeurs
 ----------------
 
 **Seulement si vous voulez utiliser une branche de test pour le codage, au lieu de fusionner directement dans la banche principale.**
-Merci de faire vos pull request sur la [branche testing](https://github.com/YunoHost-Apps/Dolibarr_ynh/tree/testing).
+Merci de faire vos pull request sur la [branche testing](https://github.com/YunoHost-Apps/dolibarr_ynh/tree/testing).
 
 Pour essayer la branche testing, procédez comme suit.
 ```
-sudo yunohost app install https://github.com/YunoHost-Apps/Dolibarr_ynh/tree/testing --debug
+sudo yunohost app install https://github.com/YunoHost-Apps/dolibarr_ynh/tree/testing --debug
 ou
-sudo yunohost app upgrade Dolibarr -u https://github.com/YunoHost-Apps/Dolibarr_ynh/tree/testing --debug
+sudo yunohost app upgrade dolibarr -u https://github.com/YunoHost-Apps/dolibarr_ynh/tree/testing --debug
 ```
