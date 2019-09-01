@@ -162,6 +162,9 @@ then
 	else
 		ynh_print_warn --message="Step 3 upgrading ended with error"
 	fi
+	
+	ynh_app_setting_set --app=$app --key=version --value=$update_version
+
 	popd
 fi
 
