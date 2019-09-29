@@ -6,7 +6,7 @@
         "en": "Dolibarr ERP & CRM is a modern and easy to use web software to manage your business (contacts, invoices, orders, products, stocks, agenda, emailings, etc...).",
         "fr": "Dolibarr ERP & CRM est un logiciel moderne de gestion de votre activité professionnelle ou associative (contacts, factures, commandes, stocks, agenda, etc...)."
     },
-    "version": "10.0.2~ynh2",
+    "version": "10.0.2~ynh3",
     "url": "https://www.dolibarr.org/",
     "license": "GPL-3.0-or-later",
     "maintainer": {
