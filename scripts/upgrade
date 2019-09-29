@@ -45,6 +45,9 @@ if [ "$is_public" = "Yes" ]; then
 elif [ "$is_public" = "No" ]; then
 	ynh_app_setting_set --app=$app --key=is_public --value=0
 	is_public=0
+else
+	ynh_app_setting_set --app=$app --key=is_public --value=0
+	is_public=0
 fi
 
 # If db_name doesn't exist, create it
