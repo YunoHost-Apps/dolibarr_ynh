@@ -5,8 +5,10 @@
 - *easier yunohost integration*
 
 ## PR Status
-- [ ] Code finished.
+- [X] Code finished.
 - [ ] Tested with Package_check.
 - [ ] Fix or enhancement tested.
-- [ ] Upgrade from last version tested.
-- [ ] Can be reviewed and tested.
+- [X] Upgrade from last version tested.
+- [X] Can be reviewed and tested.
+- [X] Upgrade php version
+- [X] Update dependancies
