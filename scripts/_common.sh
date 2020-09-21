@@ -10,7 +10,7 @@
 
 YNH_PHP_VERSION="7.3"
 
-pkg_dependencies="php${YNH_PHP_VERSION}-curl php${YNH_PHP_VERSION}-xml php${YNH_PHP_VERSION}-gd php${YNH_PHP_VERSION}-zip php${YNH_PHP_VERSION}-intl"
+pkg_dependencies="php${YNH_PHP_VERSION}-curl php${YNH_PHP_VERSION}-xml php${YNH_PHP_VERSION}-gd php${YNH_PHP_VERSION}-zip php${YNH_PHP_VERSION}-intl php${YNH_PHP_VERSION}-mbstring"
 
 #=================================================
 # EXPERIMENTAL HELPERS
