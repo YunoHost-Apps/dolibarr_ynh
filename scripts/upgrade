@@ -59,7 +59,6 @@ fi
 # If final_path doesn't exist, create it
 if [ -z "$final_path" ]; then
 	final_path=/var/www/$app
-	
 	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 fi
 
@@ -125,7 +124,7 @@ ynh_system_user_create --username=$app
 ynh_script_progression --message="Upgrading php-fpm configuration..." --weight=2
 
 # Create a dedicated php-fpm config
-ynh_add_fpm_config
+ynh_add_fpm_config --phpversion=$YNH_PHP_VERSION --package="$extra_php_dependencies"
 
 #=================================================
 # SPECIFIC UPGRADE
