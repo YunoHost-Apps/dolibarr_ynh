@@ -14,7 +14,7 @@
         "url": "https://github.com/mastereur"
     },
     "requirements": {
-        "yunohost": ">= 3.5"
+        "yunohost": ">= 3.8.0"
     },
     "multi_instance": true,
     "services": [
