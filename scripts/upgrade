@@ -25,7 +25,7 @@ language=$(ynh_app_setting_get --app=$app --key=language)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 current_version=$(ynh_app_setting_get --app=$app --key=version)
 update_version=$(ynh_app_upstream_version "../manifest.json")
-datadir=$final_path/documents
+datadir=$final_path/documents/
 
 fpm_footprint=$(ynh_app_setting_get --app=$app --key=fpm_footprint)
 fpm_usage=$(ynh_app_setting_get --app=$app --key=fpm_usage)
@@ -123,7 +123,7 @@ fi
 ynh_script_progression --message="Upgrading nginx web server configuration..." --weight=1
 
 # Create a dedicated nginx config
-ynh_add_nginx_config
+ynh_add_nginx_config YNH_PHP_VERSION
 
 #=================================================
 # CREATE DEDICATED USER
@@ -138,13 +138,15 @@ ynh_system_user_create --username=$app
 #=================================================
 ynh_script_progression --message="Upgrading php-fpm configuration..." --weight=2
 
+# Delete old static pool.d conf
+old_php_version=7.0
+if [ -f "/etc/php/$old_php_version/fpm/pool.d/$app.conf" ]; then
+	ynh_secure_remove --file="/etc/php/$old_php_version/fpm/pool.d/$app.conf"
+fi
+
 # Create a dedicated php-fpm config
 ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint --phpversion=$YNH_PHP_VERSION --package="$extra_php_dependencies"
 
-# Delete existing ini configuration file (backward compatibility)
-if [ -f /etc/php/$YNH_PHP_VERSION/fpm/conf.d/20-$app.ini ]; then
-	ynh_secure_remove --file=/etc/php/$YNH_PHP_VERSION/fpm/conf.d/20-$app.ini
-fi
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -213,7 +215,6 @@ ynh_use_logrotate --non-append
 #=================================================
 
 # Set permissions on app files
-# Set permissions to app files
 chown -R root: "$final_path"
 chmod 644 "$final_path/htdocs/conf/conf.php"
 mkdir -p "$datadir"
