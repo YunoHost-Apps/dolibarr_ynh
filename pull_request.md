@@ -6,7 +6,7 @@
 
 ## PR Status
 - [X] Code finished.
-- [ ] Tested with Package_check.
+- [X] Tested with Package_check.
 - [X] Fix or enhancement tested.
 - [X] Upgrade from last version tested.
 - [X] Can be reviewed and tested.
