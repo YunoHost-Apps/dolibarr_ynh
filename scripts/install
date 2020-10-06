@@ -35,7 +35,6 @@ app=$YNH_APP_INSTANCE_NAME
 ynh_script_progression --message="Validating installation parameters..." --weight=1
 
 final_path=/var/www/$app
-
 test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
 
 # Register (book) web path
@@ -78,8 +77,6 @@ ynh_setup_source --dest_dir="$final_path"
 # Create necessary files
 datadir=$final_path/documents
 touch $final_path/htdocs/conf/conf.php
-mkdir -p $datadir
-chmod go-w $datadir
 
 #=================================================
 # NGINX CONFIGURATION
@@ -100,10 +97,10 @@ ynh_system_user_create --username=$app
 #=================================================
 # PHP-FPM CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring php-fpm..." --weight=2
+ynh_script_progression --message="Configuring php-fpm and install dependencies..." --weight=2
 
 # Create a dedicated php-fpm config
-ynh_add_fpm_config
+ynh_add_fpm_config --usage=medium --footprint=medium --phpversion=$YNH_PHP_VERSION --package="$extra_php_dependencies"
 
 #=================================================
 # SPECIFIC SETUP
@@ -234,10 +231,12 @@ ynh_store_file_checksum --file="$final_path/htdocs/conf/conf.php"
 # SECURE FILES AND DIRECTORIES
 #=================================================
 
-# Set permissions to app files
+# Set permissions on app files
 chown -R root: "$final_path"
-chown -R $app: "$datadir"
 chmod 644 "$final_path/htdocs/conf/conf.php"
+mkdir -p "$datadir"
+chown -R $app: "$datadir"
+chmod go-w $datadir
 
 #=================================================
 # SETUP LOGROTATE
@@ -255,8 +254,7 @@ ynh_script_progression --message="Configuring SSOwat..." --weight=1
 # Make app public if necessary
 if [ $is_public -eq 1 ]
 then
-	# unprotected_uris allows SSO credentials to be passed anyway.
-	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
+	ynh_permission_update --permission "main" --add "visitors"
 fi
 
 #=================================================
