@@ -215,7 +215,7 @@ ynh_use_logrotate --non-append
 #=================================================
 
 # Set permissions on app files
-chown -R root: "$final_path"
+chown -R $app: "$final_path"
 chmod 644 "$final_path/htdocs/conf/conf.php"
 mkdir -p "$datadir"
 chown -R $app: "$datadir"
