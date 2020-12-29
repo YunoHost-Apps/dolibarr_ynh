@@ -215,7 +215,7 @@ ynh_use_logrotate --non-append
 #=================================================
 
 # Set permissions on app files
-chown -R root: "$final_path"
+chown -R $app: "$final_path"
 chmod 644 "$final_path/htdocs/conf/conf.php"
 mkdir -p "$datadir"
 chown -R $app: "$datadir"
@@ -232,6 +232,8 @@ then
 	# unprotected_uris allows SSO credentials to be passed anyway
 	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
 fi
+
+ynh_permission_create --permission "public access" --url "/public/" --allowed "visitors"
 
 #=================================================
 # RELOAD NGINX
