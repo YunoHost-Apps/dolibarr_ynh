@@ -26,7 +26,6 @@ admin=$YNH_APP_ARG_ADMIN
 member=$YNH_APP_ARG_MEMBER
 is_public=0
 
-
 app=$YNH_APP_INSTANCE_NAME
 
 #=================================================
@@ -100,7 +99,7 @@ ynh_system_user_create --username=$app
 ynh_script_progression --message="Configuring php-fpm and install dependencies..." --weight=2
 
 # Create a dedicated php-fpm config
-ynh_add_fpm_config --usage=medium --footprint=medium --phpversion=$YNH_PHP_VERSION --package="$extra_php_dependencies"
+ynh_add_fpm_config --usage=medium --footprint=medium --package="$extra_php_dependencies"
 
 #=================================================
 # SPECIFIC SETUP
@@ -139,11 +138,10 @@ chown -R $app: "$final_path"
 
 # Set the app as temporarily public for curl call
 ynh_script_progression --message="Configuring SSOwat..." --weight=1
-ynh_app_setting_set --app=$app --key=skipped_uris --value="/"
-# Reload SSOwat config
-yunohost app ssowatconf
+# Set the app as temporarily public for cURL call
+ynh_permission_update --permission "main" --add "visitors"
 
-# Reload Nginx
+# Reload NGINX
 ynh_systemd_action --service_name=nginx --action=reload
 
 # Installation with curl
@@ -251,10 +249,10 @@ ynh_use_logrotate --logfile="$final_path/documents/dolibarr.log"
 #=================================================
 ynh_script_progression --message="Configuring SSOwat..." --weight=1
 
-# Make app public if necessary
-if [ $is_public -eq 1 ]
+# Make app public if necessary or protect it
+if [ $is_public -eq 0 ]
 then
-	ynh_permission_update --permission "main" --add "visitors"
+	ynh_permission_update --permission "main" --remove "visitors"
 fi
 
 ynh_permission_create --permission "public access" --url "/public/" --allowed "visitors"

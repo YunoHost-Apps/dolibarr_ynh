@@ -29,6 +29,7 @@ datadir=$final_path/documents/
 
 fpm_footprint=$(ynh_app_setting_get --app=$app --key=fpm_footprint)
 fpm_usage=$(ynh_app_setting_get --app=$app --key=fpm_usage)
+phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 
 #=================================================
 # CHECK VERSION
@@ -92,18 +93,6 @@ ynh_clean_setup () {
 ynh_abort_if_errors
 
 #=================================================
-# CHECK THE PATH
-#=================================================
-
-# Normalize the URL path syntax
-# N.B. : this is for app installations before YunoHost 2.7
-# where this value might be something like /foo/ or foo/
-# instead of /foo ....
-# If nobody installed your app before 2.7, then you may
-# safely remove this line
-path_url=$(ynh_normalize_url_path --path_url=$path_url)
-
-#=================================================
 # STANDARD UPGRADE STEPS
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -123,7 +112,7 @@ fi
 ynh_script_progression --message="Upgrading nginx web server configuration..." --weight=1
 
 # Create a dedicated nginx config
-ynh_add_nginx_config YNH_PHP_VERSION
+ynh_add_nginx_config
 
 #=================================================
 # CREATE DEDICATED USER
@@ -145,8 +134,7 @@ if [ -f "/etc/php/$old_php_version/fpm/pool.d/$app.conf" ]; then
 fi
 
 # Create a dedicated php-fpm config
-ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint --phpversion=$YNH_PHP_VERSION --package="$extra_php_dependencies"
-
+ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint --package="$extra_php_dependencies"
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -171,17 +159,17 @@ then
 
 	# Upgrade with CURL
 	pushd $final_path/htdocs/install/
-	if php upgrade.php $current_version $update_version > /var/log/$app/upgrade.html;  then
+	if php$phpversion upgrade.php $current_version $update_version > /var/log/$app/upgrade.html;  then
 		ynh_print_info --message="Step 1 upgrading ended successfully"
 	else
 		ynh_print_warn --message="Step 1 upgrading ended with error"
 	fi
-	if php upgrade2.php $current_version $update_version > /var/log/$app/upgrade2.html; then
+	if php$phpversion upgrade2.php $current_version $update_version > /var/log/$app/upgrade2.html; then
 		ynh_print_info --message="Step 2 upgrading ended successfully"
 	else
 		ynh_print_warn --message="Step 2 upgrading ended with error"
 	fi
-	if php step5.php $current_version $update_version > /var/log/$app/upgrade3.html; then
+	if php$phpversion step5.php $current_version $update_version > /var/log/$app/upgrade3.html; then
 		ynh_print_info --message="Step 3 upgrading ended successfully"
 	else
 		ynh_print_warn --message="Step 3 upgrading ended with error"
@@ -220,20 +208,6 @@ chmod 644 "$final_path/htdocs/conf/conf.php"
 mkdir -p "$datadir"
 chown -R $app: "$datadir"
 chmod go-w $datadir
-
-#=================================================
-# SETUP SSOWAT
-#=================================================
-ynh_script_progression --message="Upgrading SSOwat configuration..." --weight=1
-
-# Make app public if necessary
-if [ $is_public -eq 1 ]
-then
-	# unprotected_uris allows SSO credentials to be passed anyway
-	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
-fi
-
-ynh_permission_create --permission "public access" --url "/public/" --allowed "visitors"
 
 #=================================================
 # RELOAD NGINX
