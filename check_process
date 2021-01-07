@@ -3,7 +3,7 @@
 		domain="domain.tld"	(DOMAIN)
 		path="/path"	(PATH)
 		admin="john"	(USER)
-		member=1
+		member=0
 	; Checks
 		pkg_linter=1
 		setup_sub_dir=1
