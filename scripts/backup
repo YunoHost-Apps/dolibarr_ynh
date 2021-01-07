@@ -44,14 +44,14 @@ ynh_backup --src_path="$final_path"
 #=================================================
 # BACKUP THE NGINX CONFIGURATION
 #=================================================
-ynh_print_info --message="Backing up nginx web server configuration..."
+ynh_print_info --message="Backing up NGINX web server configuration..."
 
 ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 
 #=================================================
 # BACKUP THE PHP-FPM CONFIGURATION
 #=================================================
-ynh_print_info --message="Backing up php-fpm configuration..."
+ynh_print_info --message="Backing up PHP-FPM configuration..."
 
 ynh_backup --src_path="/etc/php/$phpversion/fpm/pool.d/$app.conf"
 

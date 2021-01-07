@@ -80,7 +80,7 @@ touch $final_path/htdocs/conf/conf.php
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring nginx web server..." --weight=1
+ynh_script_progression --message="Configuring NGINX web server..." --weight=1
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
@@ -96,7 +96,7 @@ ynh_system_user_create --username=$app
 #=================================================
 # PHP-FPM CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring php-fpm and install dependencies..." --weight=2
+ynh_script_progression --message="Configuring PHP-FPM and install dependencies..." --weight=2
 
 # Create a dedicated php-fpm config
 ynh_add_fpm_config --usage=medium --footprint=medium --package="$extra_php_dependencies"
@@ -127,14 +127,12 @@ ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_fil
 ynh_replace_string --match_string="__MEMBER__" --replace_string="$member" --target_file="$fhook"
 ynh_replace_string --match_string="__SRCPATH__" --replace_string="$final_path" --target_file="$fhook"
 
-
 #=================================================
 # SETUP APPLICATION WITH CURL
 #=================================================
 
 # Set right permissions for curl install
 chown -R $app: "$final_path"
-
 
 # Set the app as temporarily public for curl call
 ynh_script_progression --message="Configuring SSOwat..." --weight=1
@@ -176,7 +174,7 @@ ynh_local_curl "/install/step5.php" \
 		"pass=$password" \
 		"pass_verif=$password"
 
-ynh_script_progression --message="configuring ldap" --weight=1
+ynh_script_progression --message="configuring LDAP" --weight=1
 
 # Populate the LDAP parameters
 ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ../conf/sql/ldap.sql
@@ -185,9 +183,9 @@ ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ..
 ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ../conf/sql/ldap_user.sql
 
 if php $final_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y; then
-        ynh_print_info --message="ldap user update ok"
+        ynh_print_info --message="LDAP user update ok"
 else
-        ynh_print_warn --message="ldap user update ended with error"
+        ynh_print_warn --message="LDAP user update ended with error"
 fi
 
 # If YNH users should be members, populate the database accordingly, create the member list, and sync members
@@ -196,9 +194,9 @@ then
 	ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ../conf/sql/ldap_member.sql
 
 	if php $final_path/scripts/members/sync_members_ldap2dolibarr.php commitiferror 1 --server=localhost -y; then
-                ynh_print_info --message="ldap member update ok"
+                ynh_print_info --message="LDAP member update ok"
         else
-                ynh_print_warn --message="ldap member update ended with error"
+                ynh_print_warn --message="LDAP member update ended with error"
 	fi
 fi
 
@@ -260,7 +258,7 @@ ynh_permission_create --permission "public access" --url "/public/" --allowed "v
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading nginx web server..." --weight=1
+ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 
