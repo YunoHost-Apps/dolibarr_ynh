@@ -135,9 +135,9 @@ ynh_replace_string --match_string="__SRCPATH__" --replace_string="$final_path" -
 chown -R $app: "$final_path"
 
 # Set the app as temporarily public for curl call
-ynh_script_progression --message="Configuring SSOwat..." --weight=1
+ynh_script_progression --message="Configuring permissions..." --weight=1
 # Set the app as temporarily public for cURL call
-ynh_permission_update --permission "main" --add "visitors"
+ynh_permission_update --permission="main" --add="visitors"
 
 # Reload NGINX
 ynh_systemd_action --service_name=nginx --action=reload
@@ -200,12 +200,6 @@ then
 	fi
 fi
 
-# Remove the public access
-if [ $is_public -eq 0 ]
-then
-	ynh_app_setting_delete --app=$app --key=skipped_uris
-fi
-
 #=================================================
 # MODIFY A CONFIG FILE
 #=================================================
@@ -245,12 +239,12 @@ ynh_use_logrotate --logfile="$final_path/documents/dolibarr.log"
 #=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_script_progression --message="Configuring SSOwat..." --weight=1
+ynh_script_progression --message="Configuring permissions..." --weight=1
 
 # Make app public if necessary or protect it
 if [ $is_public -eq 0 ]
 then
-	ynh_permission_update --permission "main" --remove "visitors"
+	ynh_permission_update --permission="main" --remove="visitors"
 fi
 
 ynh_permission_create --permission "public access" --url "/public/" --allowed "visitors"

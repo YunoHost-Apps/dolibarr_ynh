@@ -37,21 +37,18 @@ ynh_print_info --message="Declaring files to be backed up..."
 #=================================================
 # BACKUP THE APP MAIN DIR
 #=================================================
-ynh_print_info --message="Backing up the main app directory..."
 
 ynh_backup --src_path="$final_path"
 
 #=================================================
 # BACKUP THE NGINX CONFIGURATION
 #=================================================
-ynh_print_info --message="Backing up NGINX web server configuration..."
 
 ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 
 #=================================================
 # BACKUP THE PHP-FPM CONFIGURATION
 #=================================================
-ynh_print_info --message="Backing up PHP-FPM configuration..."
 
 ynh_backup --src_path="/etc/php/$phpversion/fpm/pool.d/$app.conf"
 
@@ -60,7 +57,6 @@ ynh_backup --src_path="/etc/php/$phpversion/fpm/pool.d/$app.conf"
 #=================================================
 # BACKUP LOGROTATE
 #=================================================
-ynh_print_info --message="Backing up logrotate configuration..."
 
 ynh_backup --src_path="/etc/logrotate.d/$app"
 

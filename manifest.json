@@ -6,7 +6,7 @@
         "en": "Manage the various aspects of your business or association.",
         "fr": "Gérez les différents aspects de votre activité pro ou associative."
     },
-    "version": "12.0.3~ynh3",
+    "version": "13.0.0~ynh1",
     "url": "https://www.dolibarr.org/",
     "license": "GPL-3.0-or-later",
     "maintainer": {
@@ -14,7 +14,7 @@
         "url": "https://github.com/mastereur"
     },
     "requirements": {
-        "yunohost": ">= 3.8.1"
+        "yunohost": ">= 4.0.0"
     },
     "multi_instance": true,
     "services": [
