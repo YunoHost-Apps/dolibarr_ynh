@@ -28,8 +28,6 @@
 		setup_root=1
 		upgrade=1
 		backup_restore=1
-;;; Levels
-	Level 5=auto
 ;;; Options
 Email=
 Notification=none
@@ -37,4 +35,3 @@ Notification=none
 	; commit=CommitHash
 		name=5 Jul 2019
 		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&
-
