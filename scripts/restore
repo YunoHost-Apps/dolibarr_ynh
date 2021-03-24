@@ -73,9 +73,12 @@ ynh_system_user_create --username=$app
 #=================================================
 ynh_print_info --message="Reconfiguring PHP-FPM..."
 
+# Restore the file first, so it can have a backup if different
 ynh_restore_file --origin_path="/etc/php/$phpversion/fpm/pool.d/$app.conf"
 
-ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint --package="$extra_php_dependencies"
+# Recreate a dedicated php-fpm config
+ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint --phpversion=$phpversion --package="$extra_php_dependencies"
+
 
 #=================================================
 # SPECIFIC RESTORATION
@@ -112,8 +115,8 @@ chmod go-w $datadir
 #=================================================
 ynh_script_progression --message="Reloading NGINX web server and PHP-FPM..." --weight=1
 
-ynh_systemd_action --service_name=php$phpversion-fpm --action=reload
 ynh_systemd_action --service_name=nginx --action=reload
+ynh_systemd_action --service_name=php$phpversion-fpm --action=reload
 
 #=================================================
 # END OF SCRIPT

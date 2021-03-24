@@ -78,14 +78,6 @@ datadir=$final_path/documents
 touch $final_path/htdocs/conf/conf.php
 
 #=================================================
-# NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Configuring NGINX web server..." --weight=1
-
-# Create a dedicated nginx config
-ynh_add_nginx_config
-
-#=================================================
 # CREATE DEDICATED USER
 #=================================================
 ynh_script_progression --message="Configuring system user..." --weight=2
@@ -99,7 +91,23 @@ ynh_system_user_create --username=$app
 ynh_script_progression --message="Configuring PHP-FPM and install dependencies..." --weight=2
 
 # Create a dedicated php-fpm config
-ynh_add_fpm_config --usage=medium --footprint=medium --package="$extra_php_dependencies"
+ynh_add_fpm_config --usage=medium --footprint=medium --phpversion=$YNH_PHP_VERSION --package="$extra_php_dependencies"
+
+# Used by ynh_add_nginx_config
+phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
+
+# If phpversion doesn't exist, create it
+if [ -z "$phpversion" ]; then
+    phpversion="$YNH_PHP_VERSION"
+fi
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Configuring NGINX web server..." --weight=1
+
+# Create a dedicated nginx config
+ynh_add_nginx_config
 
 #=================================================
 # SPECIFIC SETUP
