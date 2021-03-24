@@ -213,6 +213,16 @@ ynh_script_progression --message="Upgrading logrotate configuration..." --weight
 ynh_use_logrotate --non-append
 
 #=================================================
+# UPDATE THE HOOK FILE FOR USER CREATE
+#=================================================
+
+# Set system group in hooks
+fhook=../hooks/post_user_create
+ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_file="$fhook"
+ynh_replace_string --match_string="__MEMBER__" --replace_string="$member" --target_file="$fhook"
+ynh_replace_string --match_string="__SRCPATH__" --replace_string="$final_path" --target_file="$fhook"
+
+#=================================================
 # GENERIC FINALIZATION
 #=================================================
 # SECURE FILES AND DIRECTORIES

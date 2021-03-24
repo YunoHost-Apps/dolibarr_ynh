@@ -118,7 +118,7 @@ ynh_add_nginx_config
 finstall="$final_path/htdocs/install/install.forced.php"
 cp ../conf/install.forced.php "$finstall"
 
-# Change variables in Wordpress configuration
+# Change variables in Dolibarr configuration
 ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$finstall"
 ynh_replace_string --match_string="__DB_USER__" --replace_string="$db_user" --target_file="$finstall"
 ynh_replace_string --match_string="__DB_PWD__" --replace_string="$db_pwd" --target_file="$finstall"
@@ -129,7 +129,9 @@ then
 	ynh_replace_string --match_string="modLdap" --replace_string="modLdap,modAdherent" --target_file="$finstall"
 fi
 
-# Setup hooks
+#=================================================
+# CONFIGURE THE HOOK FILE FOR USER CREATE
+#=================================================
 fhook=../hooks/post_user_create
 ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_file="$fhook"
 ynh_replace_string --match_string="__MEMBER__" --replace_string="$member" --target_file="$fhook"
