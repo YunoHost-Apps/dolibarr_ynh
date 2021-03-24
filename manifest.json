@@ -3,10 +3,10 @@
     "id": "dolibarr",
     "packaging_format": 1,
     "description": {
-        "en": "Manage the various aspects of your business or association (contacts, invoices, orders, stocks, agenda, etc...).",
-        "fr": "Gérez les différents aspects de votre activité pro ou associative (contacts, factures, commandes, stocks, agenda, etc...)."
+        "en": "Manage the various aspects of your business or association.",
+        "fr": "Gérez les différents aspects de votre activité pro ou associative."
     },
-    "version": "12.0.4~ynh1",
+    "version": "12.0.5~ynh1",
     "url": "https://www.dolibarr.org/",
     "license": "GPL-3.0-or-later",
     "maintainer": {
@@ -14,12 +14,12 @@
         "url": "https://github.com/mastereur"
     },
     "requirements": {
-        "yunohost": ">= 3.8.0"
+        "yunohost": ">= 4.0.0"
     },
     "multi_instance": true,
     "services": [
         "nginx",
-        "php7.0-fpm",
+        "php7.3-fpm",
         "mysql"
     ],
     "arguments": {
@@ -56,8 +56,8 @@
                 "name": "member",
                 "type": "boolean",
                 "ask": {
-                    "en": "Should YunoHost users also be added as members awaiting approval in Dolibarr?",
-                    "fr": "Les utilisateurs YunoHost doivent-ils aussi être ajoutés comme adhérents en attente de validation dans Dolibarr ?"
+                    "en": "Add YunoHost users as members waiting for validation in Dolibarr ? (Useful mainly for associations)",
+                    "fr": "Ajouter les utilisateurs YunoHost comme adhérents en attente de validation dans Dolibarr ? (Utile pour les associations)"
                 },
                 "default": false
 			}

@@ -18,7 +18,6 @@ extra_php_dependencies="php${YNH_PHP_VERSION}-mysql \
 						php${YNH_PHP_VERSION}-xml \
 						php${YNH_PHP_VERSION}-fileinfo"
 
-
 #=================================================
 # PERSONAL HELPERS
 #=================================================
