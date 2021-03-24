@@ -20,6 +20,7 @@ domain=$(ynh_app_setting_get --app=$app --key=domain)
 path_url=$(ynh_app_setting_get --app=$app --key=path)
 admin=$(ynh_app_setting_get --app=$app --key=admin)
 is_public=$(ynh_app_setting_get --app=$app --key=is_public)
+member=$(ynh_app_setting_get --app=$app --key=member)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 language=$(ynh_app_setting_get --app=$app --key=language)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
@@ -211,6 +212,16 @@ ynh_script_progression --message="Upgrading logrotate configuration..." --weight
 
 # Use logrotate to manage app-specific logfile(s)
 ynh_use_logrotate --non-append
+
+#=================================================
+# UPDATE THE HOOK FILE FOR USER CREATE
+#=================================================
+
+# Set system group in hooks
+fhook=../hooks/post_user_create
+ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_file="$fhook"
+ynh_replace_string --match_string="__MEMBER__" --replace_string="$member" --target_file="$fhook"
+ynh_replace_string --match_string="__SRCPATH__" --replace_string="$final_path" --target_file="$fhook"
 
 #=================================================
 # GENERIC FINALIZATION

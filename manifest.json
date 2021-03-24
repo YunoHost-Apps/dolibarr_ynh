@@ -6,7 +6,7 @@
         "en": "Manage the various aspects of your business or association.",
         "fr": "Gérez les différents aspects de votre activité pro ou associative."
     },
-    "version": "12.0.5~ynh1",
+    "version": "13.0.2~ynh1",
     "url": "https://www.dolibarr.org/",
     "license": "GPL-3.0-or-later",
     "maintainer": {
@@ -51,16 +51,7 @@
                     "fr": "Choisissez l’administrateur"
                 },
                 "example": "johndoe"
-            },
-			{
-                "name": "member",
-                "type": "boolean",
-                "ask": {
-                    "en": "Add YunoHost users as members waiting for validation in Dolibarr ? (Useful mainly for associations)",
-                    "fr": "Ajouter les utilisateurs YunoHost comme adhérents en attente de validation dans Dolibarr ? (Utile pour les associations)"
-                },
-                "default": false
-			}
+            }
         ]
     }
 }
