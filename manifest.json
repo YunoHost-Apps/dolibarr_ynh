@@ -51,16 +51,7 @@
                     "fr": "Choisissez l’administrateur"
                 },
                 "example": "johndoe"
-            },
-			{
-                "name": "member",
-                "type": "boolean",
-                "ask": {
-                    "en": "Add YunoHost users as members waiting for validation in Dolibarr ? (Useful mainly for associations)",
-                    "fr": "Ajouter les utilisateurs YunoHost comme adhérents en attente de validation dans Dolibarr ? (Utile pour les associations)"
-                },
-                "default": false
-			}
+            }
         ]
     }
 }

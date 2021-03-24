@@ -23,7 +23,7 @@ ynh_abort_if_errors
 domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
 admin=$YNH_APP_ARG_ADMIN
-member=$YNH_APP_ARG_MEMBER
+member=0
 is_public=0
 
 app=$YNH_APP_INSTANCE_NAME
@@ -48,6 +48,7 @@ ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=admin --value=$admin
 ynh_app_setting_set --app=$app --key=is_public --value=$is_public
+ynh_app_setting_set --app=$app --key=member --value=$member
 ynh_app_setting_set --app=$app --key=version --value=$(ynh_app_upstream_version "../manifest.json")
 
 #=================================================
@@ -123,11 +124,6 @@ ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --ta
 ynh_replace_string --match_string="__DB_USER__" --replace_string="$db_user" --target_file="$finstall"
 ynh_replace_string --match_string="__DB_PWD__" --replace_string="$db_pwd" --target_file="$finstall"
 ynh_replace_string --match_string="__ADMIN__" --replace_string="$admin" --target_file="$finstall"
-if [ $member -eq 1 ]
-then
-	# If YNH users are members, we must activate the members module
-	ynh_replace_string --match_string="modLdap" --replace_string="modLdap,modAdherent" --target_file="$finstall"
-fi
 
 #=================================================
 # CONFIGURE THE HOOK FILE FOR USER CREATE
@@ -196,18 +192,6 @@ if php $final_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --ser
         ynh_print_info --message="LDAP user update ok"
 else
         ynh_print_warn --message="LDAP user update ended with error"
-fi
-
-# If YNH users should be members, populate the database accordingly, create the member list, and sync members
-if [ $member -eq 1 ]
-then
-	ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ../conf/sql/ldap_member.sql
-
-	if php $final_path/scripts/members/sync_members_ldap2dolibarr.php commitiferror 1 --server=localhost -y; then
-                ynh_print_info --message="LDAP member update ok"
-        else
-                ynh_print_warn --message="LDAP member update ended with error"
-	fi
 fi
 
 #=================================================
