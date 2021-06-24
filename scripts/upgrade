@@ -84,10 +84,6 @@ if [ -z "$phpversion" ]; then
     phpversion="$YNH_PHP_VERSION"
 fi
 
-if ! ynh_permission_exists --permission "public_space"; then
-	ynh_permission_create --permission "public_space" --url "/public/" --allowed "visitors"
-fi
-
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
