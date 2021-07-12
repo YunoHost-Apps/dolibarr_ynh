@@ -163,17 +163,17 @@ ynh_local_curl "/install/fileconf.php" \
 ynh_script_progression --message="installation - step 1" --weight=3
 ynh_local_curl "/install/step1.php" \
 		"testpost=ok" \
-		"action=set" > /var/log/$app/insatall1.html
+		"action=set" > /var/log/$app/install1.html
 		
 ynh_script_progression --message="installation - step 2 (may take a while)..." --weight=72
 ynh_local_curl "/install/step2.php" \
 		"testpost=ok" \
-		"action=set" > /var/log/$app/insatall2.html
+		"action=set" > /var/log/$app/install2.html
 
 ynh_script_progression --message="installation - step 4" --weight=3
 ynh_local_curl "/install/step4.php" \
 		"testpost=ok" \
-		"action=set" > /var/log/$app/insatall3.html
+		"action=set" > /var/log/$app/install3.html
 		
 # Generate a random password for the admin user (will be ignored because of LDAP)
 password=$(ynh_string_random 8)
@@ -183,7 +183,7 @@ ynh_local_curl "/install/step5.php" \
 		"testpost=ok" \
 		"action=set" \
 		"pass=$password" \
-		"pass_verif=$password" > /var/log/$app/insatall4.html
+		"pass_verif=$password" > /var/log/$app/install4.html
 
 ynh_script_progression --message="configuring LDAP" --weight=1
 
