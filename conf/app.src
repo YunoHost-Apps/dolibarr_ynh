@@ -1,5 +1,5 @@
-SOURCE_URL=https://github.com/Dolibarr/dolibarr/archive/13.0.3.tar.gz
-SOURCE_SUM=67d7c52c865ab5ea6a6d03ca3c23c82ed6e19cc2ff6d85788197fea81ebc9781
+SOURCE_URL=https://github.com/Dolibarr/dolibarr/archive/13.0.4.tar.gz
+SOURCE_SUM=92bcfe7bd72e40b6fe9c40105bad9c67c61b23a9c78de5f03fd05d1e95959304
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true
