@@ -63,6 +63,8 @@ db_user=$db_name
 ynh_app_setting_set --app=$app --key=db_name --value=$db_name
 ynh_mysql_setup_db --db_user=$db_user --db_name=$db_name
 
+ynh_mysql_execute_as_root --sql="ALTER DATABASE $db_name charset=utf8"
+
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
@@ -149,6 +151,9 @@ ynh_permission_update --permission="main" --add="visitors"
 ynh_systemd_action --service_name=nginx --action=reload
 
 # Installation with curl
+
+mkdir -p /var/log/$app/
+
 ynh_script_progression --message="Finalizing installation..." --weight=1
 
 ynh_script_progression --message="Generate fileconf" --weight=1
@@ -158,17 +163,17 @@ ynh_local_curl "/install/fileconf.php" \
 ynh_script_progression --message="installation - step 1" --weight=3
 ynh_local_curl "/install/step1.php" \
 		"testpost=ok" \
-		"action=set"
+		"action=set" > /var/log/$app/install1.html
 		
 ynh_script_progression --message="installation - step 2 (may take a while)..." --weight=72
 ynh_local_curl "/install/step2.php" \
 		"testpost=ok" \
-		"action=set"
+		"action=set" > /var/log/$app/install2.html
 
 ynh_script_progression --message="installation - step 4" --weight=3
 ynh_local_curl "/install/step4.php" \
 		"testpost=ok" \
-		"action=set"
+		"action=set" > /var/log/$app/install3.html
 		
 # Generate a random password for the admin user (will be ignored because of LDAP)
 password=$(ynh_string_random 8)
@@ -178,7 +183,7 @@ ynh_local_curl "/install/step5.php" \
 		"testpost=ok" \
 		"action=set" \
 		"pass=$password" \
-		"pass_verif=$password"
+		"pass_verif=$password" > /var/log/$app/install4.html
 
 ynh_script_progression --message="configuring LDAP" --weight=1
 

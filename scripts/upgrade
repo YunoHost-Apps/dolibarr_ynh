@@ -169,19 +169,36 @@ then
 	fi
 	
 	mkdir -p /var/log/$app/
-
+	
 	# Upgrade with CURL
+	
+	# Set the app as temporarily public for cURL call
+	ynh_permission_update --permission="main" --add="visitors"
+		
 	pushd $final_path/htdocs/install/
 	if php$phpversion upgrade.php $current_version $update_version > /var/log/$app/upgrade.html;  then
 		ynh_print_info --message="Step 1 upgrading ended successfully"
 	else
 		ynh_print_warn --message="Step 1 upgrading ended with error"
 	fi
+	
 	if php$phpversion upgrade2.php $current_version $update_version > /var/log/$app/upgrade2.html; then
 		ynh_print_info --message="Step 2 upgrading ended successfully"
 	else
 		ynh_print_warn --message="Step 2 upgrading ended with error"
 	fi
+	
+	charset=$(mysql -ss -N -e "SELECT default_character_set_name FROM information_schema.SCHEMATA WHERE schema_name = '$db_name'")
+	if [ "$charset" != "utf8" ]
+	then
+		ynh_script_progression --message="Changing Database charset to utf8" --weight=5
+		
+		ynh_mysql_execute_as_root --database=$db_name --sql="ALTER DATABASE $db_name charset=utf8"
+				
+		ynh_local_curl  "/install/repair.php" \
+				"force_utf8_on_tables=confirmed" > /var/log/$app/repair.html
+	fi
+	
 	if php$phpversion step5.php $current_version $update_version > /var/log/$app/upgrade3.html; then
 		ynh_print_info --message="Step 3 upgrading ended successfully"
 	else
@@ -191,6 +208,12 @@ then
 	ynh_app_setting_set --app=$app --key=version --value=$update_version
 
 	popd
+	
+	if [ $is_public -eq 0 ]
+	then
+		ynh_permission_update --permission="main" --remove="visitors"
+	fi
+	
 fi
 
 #=================================================
