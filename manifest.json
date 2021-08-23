@@ -6,7 +6,7 @@
         "en": "Manage the various aspects of your business or association.",
         "fr": "Gérez les différents aspects de votre activité pro ou associative."
     },
-    "version": "14.0.0~ynh1",
+    "version": "14.0.1~ynh1",
     "url": "https://www.dolibarr.org/",
     "license": "GPL-3.0-or-later",
     "maintainer": {
