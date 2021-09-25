@@ -24,7 +24,7 @@ domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
 admin=$YNH_APP_ARG_ADMIN
 member=0
-is_public=0
+#is_public=0
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -47,7 +47,7 @@ ynh_script_progression --message="Storing installation settings..." --weight=2
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=admin --value=$admin
-ynh_app_setting_set --app=$app --key=is_public --value=$is_public
+#ynh_app_setting_set --app=$app --key=is_public --value=$is_public
 ynh_app_setting_set --app=$app --key=member --value=$member
 ynh_app_setting_set --app=$app --key=version --value=$(ynh_app_upstream_version "../manifest.json")
 
@@ -192,6 +192,9 @@ else
         ynh_print_warn --message="LDAP user update ended with error"
 fi
 
+# Remove the public access
+ynh_permission_update --permission="main" --remove="visitors"
+
 #=================================================
 # MODIFY A CONFIG FILE
 #=================================================
@@ -235,12 +238,6 @@ ynh_use_logrotate --logfile="$final_path/documents/dolibarr.log"
 # SETUP SSOWAT
 #=================================================
 ynh_script_progression --message="Configuring permissions..." --weight=1
-
-# Make app public if necessary or protect it
-if [ $is_public -eq 0 ]
-then
-	ynh_permission_update --permission="main" --remove="visitors"
-fi
 
 # Create the public space permission if needed
 if ! ynh_permission_exists --permission "public_space"; then
