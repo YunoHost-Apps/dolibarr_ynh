@@ -19,7 +19,6 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 path_url=$(ynh_app_setting_get --app=$app --key=path)
 admin=$(ynh_app_setting_get --app=$app --key=admin)
-is_public=$(ynh_app_setting_get --app=$app --key=is_public)
 member=$(ynh_app_setting_get --app=$app --key=member)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 language=$(ynh_app_setting_get --app=$app --key=language)
@@ -203,10 +202,7 @@ then
 
 	popd
 	
-	if [ $is_public -eq 0 ]
-	then
-		ynh_permission_update --permission="main" --remove="visitors"
-	fi
+	ynh_permission_update --permission="main" --remove="visitors"
 fi
 
 #=================================================
