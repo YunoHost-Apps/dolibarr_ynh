@@ -118,7 +118,7 @@ ynh_add_nginx_config
 # PREPARE AND INSTALL APP
 #=================================================
 
-ynh_add_config --template="/conf/install.forced.php" --destination="$final_path/htdocs/install/install.forced.php"
+ynh_add_config --template="../conf/install.forced.php" --destination="$final_path/htdocs/install/install.forced.php"
 
 #=================================================
 # CONFIGURE THE HOOK FILE FOR USER CREATE
