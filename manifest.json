@@ -3,11 +3,19 @@
     "id": "dolibarr",
     "packaging_format": 1,
     "description": {
-        "en": "Manage the various aspects of your business or association.",
-        "fr": "Gérez les différents aspects de votre activité pro ou associative."
+        "en": "Manage the various aspects of your business or association",
+        "fr": "Gérez les différents aspects de votre activité pro ou associative"
     },
     "version": "14.0.2~ynh1",
     "url": "https://www.dolibarr.org/",
+    "upstream": {
+        "license": "GPL-3.0-or-later",
+        "website": "https://www.dolibarr.org/",
+        "demo": "https://www.dolibarr.org/onlinedemo",
+        "admindoc": "https://www.dolibarr.org/documentation-home",
+        "userdoc": "https://www.dolibarr.org/#features",
+        "code": "https://github.com/Dolibarr/dolibarr"
+    },
     "license": "GPL-3.0-or-later",
     "maintainer": {
         "name": "mastereur",
