@@ -39,21 +39,23 @@ phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 upgrade_type=$(ynh_check_app_version_changed)
 
 #=================================================
+# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
+#=================================================
+ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=11
+
+# Backup the current version of the app
+ynh_backup_before_upgrade
+ynh_clean_setup () {
+	# restore it if the upgrade fails
+	ynh_restore_upgradebackup
+}
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
+#=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
-
-# Fix is_public as a boolean value
-if [ "$is_public" = "Yes" ]; then
-	ynh_app_setting_set --app=$app --key=is_public --value=1
-	is_public=1
-elif [ "$is_public" = "No" ]; then
-	ynh_app_setting_set --app=$app --key=is_public --value=0
-	is_public=0
-else
-	ynh_app_setting_set --app=$app --key=is_public --value=0
-	is_public=0
-fi
 
 # If db_name doesn't exist, create it
 if [ -z "$db_name" ]; then
@@ -79,24 +81,24 @@ if [ -z "$fpm_usage" ]; then
 	ynh_app_setting_set --app=$app --key=fpm_usage --value=$fpm_usage
 fi
 
-# If phpversion doesn't exist, create it
-if [ -z "$phpversion" ]; then
-    phpversion="$YNH_PHP_VERSION"
+# Cleaning legacy permissions
+if ynh_legacy_permissions_exists; then
+	ynh_legacy_permissions_delete_all
+
+	ynh_app_setting_delete --app=$app --key=is_public
+fi
+
+if ! ynh_permission_exists --permission "public_space"; then
+	ynh_permission_create --permission "public_space" --url "/public/" --allowed "visitors"
 fi
 
 #=================================================
-# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
+# CREATE DEDICATED USER
 #=================================================
-ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=11
+ynh_script_progression --message="Making sure dedicated system user exists..." --weight=1
 
-# Backup the current version of the app
-ynh_backup_before_upgrade
-ynh_clean_setup () {
-	# restore it if the upgrade fails
-	ynh_restore_upgradebackup
-}
-# Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
+# Create a dedicated user (if not existing)
+ynh_system_user_create --username=$app --home_dir="$final_path"
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -121,33 +123,25 @@ ynh_script_progression --message="Upgrading NGINX web server configuration..." -
 ynh_add_nginx_config
 
 #=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Making sure dedicated system user exists..." --weight=1
-
-# Create a dedicated user (if not existing)
-ynh_system_user_create --username=$app
-
-#=================================================
 # PHP-FPM CONFIGURATION
 #=================================================
 ynh_script_progression --message="Upgrading PHP-FPM configuration..." --weight=2
 
 # If php has changed, remove the old fpm config file
-if [ "$phpversion" != $YNH_PHP_VERSION ]
-then
-    ynh_backup_if_checksum_is_different --file="/etc/php/$phpversion/fpm/pool.d/$app.conf"
-    ynh_secure_remove --file="/etc/php/$phpversion/fpm/pool.d/$app.conf"
-    if [ -f /etc/php/$phpversion/fpm/conf.d/20-$app.ini ]; then
-        ynh_secure_remove --file="/etc/php/$phpversion/fpm/conf.d/20-$app.ini"
-    fi
-    ynh_systemd_action --service_name="php${phpversion}-fpm" --action=reload
+# if [ "$phpversion" != $YNH_PHP_VERSION ]
+# then
+#     ynh_backup_if_checksum_is_different --file="/etc/php/$phpversion/fpm/pool.d/$app.conf"
+#     ynh_secure_remove --file="/etc/php/$phpversion/fpm/pool.d/$app.conf"
+#     if [ -f /etc/php/$phpversion/fpm/conf.d/20-$app.ini ]; then
+#         ynh_secure_remove --file="/etc/php/$phpversion/fpm/conf.d/20-$app.ini"
+#     fi
+#     ynh_systemd_action --service_name="php${phpversion}-fpm" --action=reload
     
-    phpversion="$YNH_PHP_VERSION"
-fi
+#     phpversion="$YNH_PHP_VERSION"
+# fi
 
 # Recreate a dedicated PHP-FPM config
-ynh_add_fpm_config --phpversion=$phpversion --usage=$fpm_usage --footprint=$fpm_footprint --package="$extra_php_dependencies"
+ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint --package="$extra_php_dependencies"
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -213,7 +207,6 @@ then
 	then
 		ynh_permission_update --permission="main" --remove="visitors"
 	fi
-	
 fi
 
 #=================================================
@@ -223,6 +216,7 @@ fi
 ynh_backup_if_checksum_is_different --file="$final_path/htdocs/conf/conf.php"
 # Recalculate and store the checksum of the file for the next upgrade.
 ynh_store_file_checksum --file="$final_path/htdocs/conf/conf.php"
+chmod 644 "$final_path/htdocs/conf/conf.php"
 
 #=================================================
 # SETUP LOGROTATE
@@ -253,28 +247,16 @@ chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
 chown -R $app:www-data "$final_path"
 
-chmod 644 "$final_path/htdocs/conf/conf.php"
 mkdir -p "$datadir"
 chown -R $app: "$datadir"
 chmod go-w $datadir
 
 #=================================================
-# SETUP SSOWAT
-#=================================================
-ynh_script_progression --message="Upgrading SSOwat configuration..." --weight=1
-
-# Create the public space permission if needed
-if ! ynh_permission_exists --permission "public_space"; then
-	ynh_permission_create --permission "public_space" --url "/public/" --allowed "visitors"
-fi
-
-#=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server and PHP-FPM..."
+ynh_script_progression --message="Reloading NGINX web server and PHP-FPM..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
-ynh_systemd_action --service_name="php${phpversion}-fpm" --action=reload
 
 #=================================================
 # END OF SCRIPT

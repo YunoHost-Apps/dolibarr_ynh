@@ -52,6 +52,14 @@ ynh_app_setting_set --app=$app --key=member --value=$member
 ynh_app_setting_set --app=$app --key=version --value=$(ynh_app_upstream_version "../manifest.json")
 
 #=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Configuring system user..." --weight=2
+
+# Create a system user
+ynh_system_user_create --username=$app --home_dir="$final_path"
+
+#=================================================
 # STANDARD MODIFICATIONS
 #=================================================
 # CREATE A MYSQL DATABASE
@@ -81,28 +89,13 @@ datadir=$final_path/documents
 touch $final_path/htdocs/conf/conf.php
 
 #=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Configuring system user..." --weight=2
-
-# Create a system user
-ynh_system_user_create --username=$app
-
-#=================================================
 # PHP-FPM CONFIGURATION
 #=================================================
 ynh_script_progression --message="Configuring PHP-FPM and install dependencies..." --weight=2
 
 # Create a dedicated php-fpm config
-ynh_add_fpm_config --usage=medium --footprint=medium --phpversion=$YNH_PHP_VERSION --package="$extra_php_dependencies"
-
-# Used by ynh_add_nginx_config
+ynh_add_fpm_config --usage=medium --footprint=medium --package="$extra_php_dependencies"
 phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
-
-# If phpversion doesn't exist, create it
-if [ -z "$phpversion" ]; then
-    phpversion="$YNH_PHP_VERSION"
-fi
 
 #=================================================
 # NGINX CONFIGURATION
@@ -117,6 +110,7 @@ ynh_add_nginx_config
 #=================================================
 # PREPARE AND INSTALL APP
 #=================================================
+ynh_script_progression --message="Adding a configuration file..." --weight=1
 
 ynh_add_config --template="../conf/install.forced.php" --destination="$final_path/htdocs/install/install.forced.php"
 
