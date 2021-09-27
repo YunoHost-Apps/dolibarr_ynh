@@ -1,6 +1,6 @@
 #!/bin/bash
 app=__APP__
-src_path=__SRCPATH__
+src_path=__FINALPATH__
 member=__MEMBER__
                                                                                                                                                                         
 # Sync users
