@@ -24,7 +24,7 @@ domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
 admin=$YNH_APP_ARG_ADMIN
 member=0
-is_public=0
+#is_public=0
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -47,9 +47,17 @@ ynh_script_progression --message="Storing installation settings..." --weight=2
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=admin --value=$admin
-ynh_app_setting_set --app=$app --key=is_public --value=$is_public
+#ynh_app_setting_set --app=$app --key=is_public --value=$is_public
 ynh_app_setting_set --app=$app --key=member --value=$member
 ynh_app_setting_set --app=$app --key=version --value=$(ynh_app_upstream_version "../manifest.json")
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Configuring system user..." --weight=2
+
+# Create a system user
+ynh_system_user_create --username=$app --home_dir="$final_path"
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -81,28 +89,13 @@ datadir=$final_path/documents
 touch $final_path/htdocs/conf/conf.php
 
 #=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Configuring system user..." --weight=2
-
-# Create a system user
-ynh_system_user_create --username=$app
-
-#=================================================
 # PHP-FPM CONFIGURATION
 #=================================================
 ynh_script_progression --message="Configuring PHP-FPM and install dependencies..." --weight=2
 
 # Create a dedicated php-fpm config
-ynh_add_fpm_config --usage=medium --footprint=medium --phpversion=$YNH_PHP_VERSION --package="$extra_php_dependencies"
-
-# Used by ynh_add_nginx_config
+ynh_add_fpm_config --usage=medium --footprint=medium --package="$extra_php_dependencies"
 phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
-
-# If phpversion doesn't exist, create it
-if [ -z "$phpversion" ]; then
-    phpversion="$YNH_PHP_VERSION"
-fi
 
 #=================================================
 # NGINX CONFIGURATION
@@ -117,15 +110,9 @@ ynh_add_nginx_config
 #=================================================
 # PREPARE AND INSTALL APP
 #=================================================
+ynh_script_progression --message="Adding a configuration file..." --weight=1
 
-finstall="$final_path/htdocs/install/install.forced.php"
-cp ../conf/install.forced.php "$finstall"
-
-# Change variables in Dolibarr configuration
-ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$finstall"
-ynh_replace_string --match_string="__DB_USER__" --replace_string="$db_user" --target_file="$finstall"
-ynh_replace_string --match_string="__DB_PWD__" --replace_string="$db_pwd" --target_file="$finstall"
-ynh_replace_string --match_string="__ADMIN__" --replace_string="$admin" --target_file="$finstall"
+ynh_add_config --template="../conf/install.forced.php" --destination="$final_path/htdocs/install/install.forced.php"
 
 #=================================================
 # CONFIGURE THE HOOK FILE FOR USER CREATE
@@ -133,7 +120,7 @@ ynh_replace_string --match_string="__ADMIN__" --replace_string="$admin" --target
 fhook=../hooks/post_user_create
 ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_file="$fhook"
 ynh_replace_string --match_string="__MEMBER__" --replace_string="$member" --target_file="$fhook"
-ynh_replace_string --match_string="__SRCPATH__" --replace_string="$final_path" --target_file="$fhook"
+ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path" --target_file="$fhook"
 
 #=================================================
 # SETUP APPLICATION WITH CURL
@@ -199,6 +186,9 @@ else
         ynh_print_warn --message="LDAP user update ended with error"
 fi
 
+# Remove the public access
+ynh_permission_update --permission="main" --remove="visitors"
+
 #=================================================
 # MODIFY A CONFIG FILE
 #=================================================
@@ -221,7 +211,10 @@ ynh_store_file_checksum --file="$final_path/htdocs/conf/conf.php"
 #=================================================
 
 # Set permissions on app files
-chown -R $app: "$final_path"
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:www-data "$final_path"
+
 chmod 644 "$final_path/htdocs/conf/conf.php"
 mkdir -p "$datadir"
 chown -R $app: "$datadir"
@@ -239,12 +232,6 @@ ynh_use_logrotate --logfile="$final_path/documents/dolibarr.log"
 # SETUP SSOWAT
 #=================================================
 ynh_script_progression --message="Configuring permissions..." --weight=1
-
-# Make app public if necessary or protect it
-if [ $is_public -eq 0 ]
-then
-	ynh_permission_update --permission="main" --remove="visitors"
-fi
 
 # Create the public space permission if needed
 if ! ynh_permission_exists --permission "public_space"; then
