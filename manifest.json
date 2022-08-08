@@ -14,7 +14,8 @@
         "demo": "https://www.dolibarr.org/onlinedemo",
         "admindoc": "https://www.dolibarr.org/documentation-home",
         "userdoc": "https://www.dolibarr.org/#features",
-        "code": "https://github.com/Dolibarr/dolibarr"
+        "code": "https://github.com/Dolibarr/dolibarr",
+        "cpe": "cpe:2.3:a:dolibarr:dolibarr"
     },
     "license": "GPL-3.0-or-later",
     "maintainer": {
@@ -31,7 +32,7 @@
         "mysql"
     ],
     "arguments": {
-        "install" : [
+        "install": [
             {
                 "name": "domain",
                 "type": "domain"
