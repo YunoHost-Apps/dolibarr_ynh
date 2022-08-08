@@ -19,6 +19,7 @@ Dolibarr ERP & CRM is a modern software for managing your professional or associ
 
 **Shipped version:** 15.0.2~ynh1
 
+
 **Demo:** https://www.dolibarr.org/onlinedemo
 
 ## Screenshots
