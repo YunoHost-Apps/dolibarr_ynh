@@ -52,6 +52,8 @@ ynh_clean_setup () {
 ynh_abort_if_errors
 
 #=================================================
+# STANDARD UPGRADE STEPS
+#=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
@@ -87,8 +89,14 @@ if ynh_legacy_permissions_exists; then
 	ynh_app_setting_delete --app=$app --key=is_public
 fi
 
+# Create a permission if needed
 if ! ynh_permission_exists --permission "public_space"; then
 	ynh_permission_create --permission "public_space" --url "/public/" --allowed "visitors"
+fi
+
+# Delete existing ini configuration file (backward compatibility)
+if [ -f /etc/php/$YNH_PHP_VERSION/fpm/conf.d/20-$app.ini ]; then
+    ynh_secure_remove --file=/etc/php/$YNH_PHP_VERSION/fpm/conf.d/20-$app.ini
 fi
 
 #=================================================
@@ -100,23 +108,25 @@ ynh_script_progression --message="Making sure dedicated system user exists..." -
 ynh_system_user_create --username=$app --home_dir="$final_path"
 
 #=================================================
-# STANDARD UPGRADE STEPS
+# UPGRADE DEPENDENCIES
 #=================================================
-# DOWNLOAD, CHECK AND UNPACK SOURCE
-#=================================================
+ynh_script_progression --message="Upgrading dependencies..." --weight=1
 
-if [ "$upgrade_type" == "UPGRADE_APP" ]
-then
-	ynh_script_progression --message="Upgrading source files..." --weight=70
-
-	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$final_path"
-fi
+ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
 ynh_script_progression --message="Upgrading NGINX web server configuration..." --weight=1
+
+ynh_backup_if_checksum_is_different --file="/etc/nginx/conf.d/$domain.d/$app.conf"
+
+# Delete current NGINX configuration to be able to check if .well-known is already served.
+ynh_remove_nginx_config
+ynh_app_setting_delete --app=$app --key="checksum__etc_nginx_conf.d_$domain.d_$app.conf"
+
+# Wait untils NGINX has fully reloaded
+ynh_systemd_action --service_name=nginx --action=reload --line_match="Reloaded" --log_path="systemd"
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
@@ -129,86 +139,143 @@ ynh_script_progression --message="Upgrading PHP-FPM configuration..." --weight=2
 # If php has changed, remove the old fpm config file
 # if [ "$phpversion" != $YNH_PHP_VERSION ]
 # then
-#     ynh_backup_if_checksum_is_different --file="/etc/php/$phpversion/fpm/pool.d/$app.conf"
-#     ynh_secure_remove --file="/etc/php/$phpversion/fpm/pool.d/$app.conf"
-#     if [ -f /etc/php/$phpversion/fpm/conf.d/20-$app.ini ]; then
-#         ynh_secure_remove --file="/etc/php/$phpversion/fpm/conf.d/20-$app.ini"
-#     fi
-#     ynh_systemd_action --service_name="php${phpversion}-fpm" --action=reload
+    # ynh_backup_if_checksum_is_different --file="/etc/php/$phpversion/fpm/pool.d/$app.conf"
+    # ynh_secure_remove --file="/etc/php/$phpversion/fpm/pool.d/$app.conf"
+    # if [ -f /etc/php/$phpversion/fpm/conf.d/20-$app.ini ]; then
+        # ynh_secure_remove --file="/etc/php/$phpversion/fpm/conf.d/20-$app.ini"
+    # fi
+    # ynh_systemd_action --service_name="php${phpversion}-fpm" --action=reload
     
-#     phpversion="$YNH_PHP_VERSION"
+    # phpversion="$YNH_PHP_VERSION"
 # fi
 
 # Recreate a dedicated PHP-FPM config
-ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint --package="$extra_php_dependencies"
+ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint
+phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
 
 #=================================================
 # SPECIFIC UPGRADE
 #=================================================
-# LAUNCH UPGRADE
+# MAKE SEQUENTIAL UPGRADES FROM EACH MAJOR
+# VERSION TO THE NEXT ONE
 #=================================================
-
 if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
-	ynh_script_progression --message="Upgrading app from $current_version to $update_version" --weight=3
+	ynh_script_progression --message="Upgrading source files..." --weight=60
 
-	chown -R $app: "$final_path"
+	# Load the last available version
+    source upgrade.d/upgrade.last.sh
+    last_version=$next_version
 
-	# Remove the lock if it exists
-	lock=$final_path/documents/install.lock
-	if [ -f $lock ]
-	then
-		ynh_secure_remove $lock
-	fi
+	last_major_version=${last_version%%.*}
+
+	# While the current version is not the last version, do an upgrade
+    while [ "$last_version" != "$current_version" ]
+    do
 	
-	mkdir -p /var/log/$app/
-	
-	# Upgrade with CURL
-	
-	# Set the app as temporarily public for cURL call
-	ynh_permission_update --permission="main" --add="visitors"
+		# The major version is the first part of the version number
+        current_major_version=${current_version%%.*}
+
+        if [ ! -f upgrade.d/upgrade.$current_major_version.sh ]; then
+            source upgrade.d/upgrade.last.sh
+        else
+            source upgrade.d/upgrade.$current_major_version.sh
+        fi
 		
-	pushd $final_path/htdocs/install/
-	if php$phpversion upgrade.php $current_version $update_version > /var/log/$app/upgrade.html;  then
-		ynh_print_info --message="Step 1 upgrading ended successfully"
-	else
-		ynh_print_warn --message="Step 1 upgrading ended with error"
-	fi
+		# If the current version has the same major version than the next one,
+        # then it's the last upgrade to do
+        # We also cover the case where the last version is the first of the current major version series
+        # (e.g. 20.0.0 is the latest version)
+        if [[ ("$last_major_version" -eq "$current_major_version") || ( ("$last_major_version" -eq "$((current_major_version+1))") && ("$next_version" == "$last_version") ) ]]; then
+            current_major_version=last
+        fi
+	
+		# Load the value for this version
+        source upgrade.d/upgrade.$current_major_version.sh
 
-	ynh_exec_fully_quiet sleep 5
-
-	if php$phpversion upgrade2.php $current_version $update_version > /var/log/$app/upgrade2.html; then
-		ynh_print_info --message="Step 2 upgrading ended successfully"
-	else
-		ynh_print_warn --message="Step 2 upgrading ended with error"
-	fi
-
-	ynh_exec_fully_quiet sleep 5
-
-	charset=$(mysql -ss -N -e "SELECT default_character_set_name FROM information_schema.SCHEMATA WHERE schema_name = '$db_name'")
-	if [ "$charset" != "utf8" ]
-	then
-		ynh_script_progression --message="Changing Database charset to utf8" --weight=5
+		ynh_print_info --message="Upgrading app from $current_version to $next_version"
 		
-		ynh_mysql_execute_as_root --database=$db_name --sql="ALTER DATABASE $db_name charset=utf8"
-				
-		ynh_local_curl  "/install/repair.php" \
-				"force_utf8_on_tables=confirmed" > /var/log/$app/repair.html
-	fi
+		# Create an app.src for this version of Dolibarr
+        cat > ../conf/app.src << EOF
+SOURCE_URL=https://github.com/Dolibarr/dolibarr/archive/$next_version.tar.gz
+SOURCE_SUM=$dolibarr_source_sha256
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=tar.bz2
+SOURCE_IN_SUBDIR=true
+EOF
 
-	ynh_exec_fully_quiet sleep 5
-
-	if php$phpversion step5.php $current_version $update_version > /var/log/$app/upgrade3.html; then
-		ynh_print_info --message="Step 3 upgrading ended successfully"
-	else
-		ynh_print_warn --message="Step 3 upgrading ended with error"
-	fi
 	
-	ynh_app_setting_set --app=$app --key=version --value=$update_version
+		# Download, check integrity, uncompress and patch the source from app.src
+		ynh_setup_source --dest_dir="$final_path"
 
-	popd
-	
-	ynh_permission_update --permission="main" --remove="visitors"
+		chown -R $app: "$final_path"
+
+		# Remove the lock if it exists
+		lock=$final_path/documents/install.lock
+		if [ -f $lock ]
+		then
+			ynh_secure_remove $lock
+		fi
+		
+		mkdir -p /var/log/$app/
+		
+		# Upgrade with CURL
+		
+		# Set the app as temporarily public for cURL call
+		if ! ynh_permission_has_user --permission "main" --user="visitors"; then
+			ynh_permission_update --permission="main" --add="visitors"
+		fi
+			
+		
+		charset=$(mysql -ss -N -e "SELECT default_character_set_name FROM information_schema.SCHEMATA WHERE schema_name = '$db_name'")
+		if [ "$charset" != "utf8" ]
+		then
+			ynh_print_info --message="Changing Database charset to utf8"
+			
+			ynh_mysql_execute_as_root --database=$db_name --sql="ALTER DATABASE $db_name charset=utf8"
+					
+			ynh_local_curl  "/install/repair.php" \
+					"force_utf8_on_tables=confirmed" > /var/log/$app/repair.html
+		fi
+
+		ynh_exec_fully_quiet sleep 5
+
+		pushd $final_path/htdocs/install/
+		
+		if php$phpversion upgrade.php $current_version $next_version > /var/log/$app/upgrade.html;  then
+			ynh_print_info --message="Step 1 upgrading ended successfully"
+		else
+			ynh_die --message="Step 1 upgrading ended with error"
+		fi
+
+		ynh_exec_fully_quiet sleep 5
+
+		if php$phpversion upgrade2.php $current_version $next_version > /var/log/$app/upgrade2.html; then
+			ynh_print_info --message="Step 2 upgrading ended successfully"
+		else
+			ynh_die --message="Step 2 upgrading ended with error"
+		fi
+
+		ynh_exec_fully_quiet sleep 5
+
+		if php$phpversion step5.php $current_version $next_version > /var/log/$app/upgrade3.html; then
+			ynh_print_info --message="Step 3 upgrading ended successfully"
+		else
+			ynh_die  --message="Step 3 upgrading ended with error"
+		fi
+		
+
+		popd
+		
+		ynh_permission_update --permission="main" --remove="visitors"
+		
+		# Get the new current version number
+        current_version=$next_version
+        current_major_version=${current_version%%.*}
+		
+		done
+		
+		ynh_app_setting_set --app=$app --key=version --value=$update_version
 fi
 
 #=================================================
@@ -229,20 +296,11 @@ ynh_script_progression --message="Upgrading logrotate configuration..." --weight
 ynh_use_logrotate --non-append
 
 #=================================================
-# UPDATE THE HOOK FILE FOR USER CREATE
-#=================================================
-
-# Set system group in hooks
-fhook=../hooks/post_user_create
-ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_file="$fhook"
-ynh_replace_string --match_string="__MEMBER__" --replace_string="$member" --target_file="$fhook"
-ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path" --target_file="$fhook"
-
-#=================================================
 # GENERIC FINALIZATION
 #=================================================
 # SECURE FILES AND DIRECTORIES
 #=================================================
+ynh_script_progression --message="Configuring permissions..." --weight=1
 
 # Set permissions on app files
 chmod 750 "$final_path"
@@ -256,7 +314,7 @@ chmod go-w $datadir
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server and PHP-FPM..." --weight=1
+ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 
