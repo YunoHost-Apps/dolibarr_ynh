@@ -52,6 +52,15 @@ ynh_app_setting_set --app=$app --key=member --value=$member
 ynh_app_setting_set --app=$app --key=version --value=$(ynh_app_upstream_version "../manifest.json")
 
 #=================================================
+# STANDARD MODIFICATIONS
+#=================================================
+# INSTALL DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Installing dependencies..." --weight=1
+
+ynh_install_app_dependencies $pkg_dependencies
+
+#=================================================
 # CREATE DEDICATED USER
 #=================================================
 ynh_script_progression --message="Configuring system user..." --weight=2
@@ -59,8 +68,6 @@ ynh_script_progression --message="Configuring system user..." --weight=2
 # Create a system user
 ynh_system_user_create --username=$app --home_dir="$final_path"
 
-#=================================================
-# STANDARD MODIFICATIONS
 #=================================================
 # CREATE A MYSQL DATABASE
 #=================================================
@@ -91,11 +98,11 @@ touch $final_path/htdocs/conf/conf.php
 #=================================================
 # PHP-FPM CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring PHP-FPM and install dependencies..." --weight=2
+ynh_script_progression --message="Configuring PHP-FPM" --weight=2
 
 # Create a dedicated php-fpm config
-ynh_add_fpm_config --usage=medium --footprint=medium --package="$extra_php_dependencies"
-phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
+ynh_add_fpm_config --phpversion=$phpversion --usage=$fpm_usage --footprint=$fpm_footprint
+phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
 
 #=================================================
 # NGINX CONFIGURATION
@@ -115,24 +122,16 @@ ynh_script_progression --message="Adding a configuration file..." --weight=1
 ynh_add_config --template="../conf/install.forced.php" --destination="$final_path/htdocs/install/install.forced.php"
 
 #=================================================
-# CONFIGURE THE HOOK FILE FOR USER CREATE
-#=================================================
-fhook=../hooks/post_user_create
-ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_file="$fhook"
-ynh_replace_string --match_string="__MEMBER__" --replace_string="$member" --target_file="$fhook"
-ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path" --target_file="$fhook"
-
-#=================================================
 # SETUP APPLICATION WITH CURL
 #=================================================
 
 # Set right permissions for curl install
 chown -R $app: "$final_path"
 
-# Set the app as temporarily public for curl call
-ynh_script_progression --message="Configuring permissions..." --weight=1
 # Set the app as temporarily public for cURL call
-ynh_permission_update --permission="main" --add="visitors"
+if ! ynh_permission_has_user --permission "main" --user="visitors"; then
+	ynh_permission_update --permission="main" --add="visitors"
+fi
 
 # Reload NGINX
 ynh_systemd_action --service_name=nginx --action=reload
@@ -190,10 +189,10 @@ ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ..
 # Populate the database with YNH users.
 ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ../conf/sql/ldap_user.sql
 
-if php $final_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y; then
+if php$phpversion $final_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y; then
         ynh_print_info --message="LDAP user update ok"
 else
-        ynh_print_warn --message="LDAP user update ended with error"
+        ynh_print_info --message="LDAP user update ended with error"
 fi
 
 # Remove the public access
@@ -208,6 +207,14 @@ ynh_script_progression --message="configuring config file" --weight=1
 ynh_replace_string --match_string="dolibarr_main_authentication='dolibarr'" --replace_string="dolibarr_main_authentication='http'" --target_file="$final_path/htdocs/conf/conf.php"
 
 #=================================================
+# CONFIGURE THE HOOK FILE FOR USER CREATE
+#=================================================
+fhook=../hooks/post_user_create
+ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_file="$fhook"
+ynh_replace_string --match_string="__MEMBER__" --replace_string="$member" --target_file="$fhook"
+ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path" --target_file="$fhook"
+
+#=================================================
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
 
@@ -219,6 +226,7 @@ ynh_store_file_checksum --file="$final_path/htdocs/conf/conf.php"
 #=================================================
 # SECURE FILES AND DIRECTORIES
 #=================================================
+ynh_script_progression --message="Configuring permissions..." --weight=1
 
 # Set permissions on app files
 chmod 750 "$final_path"

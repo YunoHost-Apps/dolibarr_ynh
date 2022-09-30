@@ -46,10 +46,12 @@ test ! -d $final_path \
 #=================================================
 # STANDARD RESTORATION STEPS
 #=================================================
-# RESTORE THE NGINX CONFIGURATION
+# RECREATE THE DEDICATED USER
 #=================================================
+ynh_script_progression --message="Recreating the dedicated system user..." --weight=3
 
-ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
+# Create the dedicated user (if not existing)
+ynh_system_user_create --username=$app
 
 #=================================================
 # RESTORE THE APP MAIN DIR
@@ -59,12 +61,14 @@ ynh_script_progression --message="Restoring the app main directory..." --weight=
 ynh_restore_file --origin_path="$final_path"
 
 #=================================================
-# RECREATE THE DEDICATED USER
+# SPECIFIC RESTORATION
 #=================================================
-ynh_script_progression --message="Recreating the dedicated system user..." --weight=3
+# REINSTALL DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Reinstalling dependencies..." --weight=1
 
-# Create the dedicated user (if not existing)
-ynh_system_user_create --username=$app
+# Define and install dependencies
+ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # RESTORE THE PHP-FPM CONFIGURATION
@@ -75,11 +79,14 @@ ynh_print_info --message="Reconfiguring PHP-FPM..."
 ynh_restore_file --origin_path="/etc/php/$phpversion/fpm/pool.d/$app.conf"
 
 # Recreate a dedicated php-fpm config
-ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint --phpversion=$phpversion --package="$extra_php_dependencies"
-
+ynh_add_fpm_config --phpversion=$phpversion --usage=$fpm_usage --footprint=$fpm_footprint
 
 #=================================================
-# SPECIFIC RESTORATION
+# RESTORE THE NGINX CONFIGURATION
+#=================================================
+
+ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
+
 #=================================================
 # RESTORE THE MYSQL DATABASE
 #=================================================
@@ -92,12 +99,14 @@ ynh_mysql_connect_as --user=$db_user --password=$db_pwd --database=$db_name < ./
 #=================================================
 # RESTORE THE LOGROTATE CONFIGURATION
 #=================================================
+ynh_script_progression --message="Restoring the logrotate configuration..." --weight=1
 
 ynh_restore_file --origin_path="/etc/logrotate.d/$app"
 
 #=================================================
 # SECURE FILES AND DIRECTORIES
 #=================================================
+ynh_script_progression --message="Configuring permissions..." --weight=1
 
 # Set permissions on app files
 chmod 750 "$final_path"
