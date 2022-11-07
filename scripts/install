@@ -114,9 +114,16 @@ touch $final_path/htdocs/conf/conf.php
 #=================================================
 ynh_script_progression --message="Configuring PHP-FPM" --weight=2
 
+fpm_footprint="medium"
+fpm_usage="medium"
+
+ynh_app_setting_set --app=$app --key=fpm_footprint --value=$fpm_footprint
+ynh_app_setting_set --app=$app --key=fpm_usage --value=$fpm_usage
+
 # Create a dedicated php-fpm config
 ynh_add_fpm_config --phpversion=$phpversion --usage=$fpm_usage --footprint=$fpm_footprint
-phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
+# Used by ynh_add_nginx_config
+phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
 
 #=================================================
 # NGINX CONFIGURATION
