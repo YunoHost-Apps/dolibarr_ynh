@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Target version of the Dolibarr update
-next_version="16.0.0"
+next_version="16.0.1"
 
 # Dolibarr tarball checksum
-dolibarr_source_sha256="76a642d74cd3e4fe86fdeccffacd0fa2b22a398dc03e7ad92edb34d033b17b2f"
+dolibarr_source_sha256="f3614cf7b08c80d1aed4ebe0434008b2b03867d12b85df45b682c217ecb16573"

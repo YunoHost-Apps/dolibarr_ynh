@@ -85,6 +85,19 @@ ynh_mysql_execute_as_root --sql="ALTER DATABASE $db_name charset=utf8"
 #=================================================
 ynh_script_progression --message="Setting up source files..." --weight=1
 
+
+# Load the last available version
+source upgrade.d/upgrade.last.sh
+
+# Create an app.src for the last version of nextcloud
+cat > ../conf/app.src << EOF
+SOURCE_URL=https://github.com/Dolibarr/dolibarr/archive/$next_version.tar.gz
+SOURCE_SUM=$dolibarr_source_sha256
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=tar.bz2
+SOURCE_IN_SUBDIR=true
+EOF
+
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 
 # Download, check integrity, uncompress and patch the source from app.src
