@@ -29,7 +29,7 @@ datadir=$final_path/documents/
 
 fpm_footprint=$(ynh_app_setting_get --app=$app --key=fpm_footprint)
 fpm_usage=$(ynh_app_setting_get --app=$app --key=fpm_usage)
-phpversion=$(ynh_app_setting_get --app="$app" --key=phpversion)
+phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
 
 #=================================================
 # CHECK VERSION
