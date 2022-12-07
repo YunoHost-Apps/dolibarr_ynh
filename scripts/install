@@ -23,7 +23,7 @@ ynh_abort_if_errors
 domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
 admin=$YNH_APP_ARG_ADMIN
-member=0
+#member=0
 #is_public=0
 phpversion=$YNH_PHP_VERSION
 
@@ -49,7 +49,7 @@ ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=admin --value=$admin
 #ynh_app_setting_set --app=$app --key=is_public --value=$is_public
-ynh_app_setting_set --app=$app --key=member --value=$member
+#ynh_app_setting_set --app=$app --key=member --value=$member
 ynh_app_setting_set --app=$app --key=version --value=$(ynh_app_upstream_version "../manifest.json")
 
 #=================================================
@@ -232,7 +232,7 @@ ynh_replace_string --match_string="dolibarr_main_authentication='dolibarr'" --re
 #=================================================
 fhook=../hooks/post_user_create
 ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_file="$fhook"
-ynh_replace_string --match_string="__MEMBER__" --replace_string="$member" --target_file="$fhook"
+#ynh_replace_string --match_string="__MEMBER__" --replace_string="$member" --target_file="$fhook"
 ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path" --target_file="$fhook"
 
 #=================================================
@@ -250,6 +250,12 @@ ynh_store_file_checksum --file="$final_path/htdocs/conf/conf.php"
 ynh_script_progression --message="Configuring permissions..." --weight=1
 
 # Set permissions on app files
+if [ ! -f "$datadir/install.lock" ]; then
+	echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$datadir/install.lock"
+	chown $app:$app "$datadir/install.lock"
+	chmod 440 "$datadir/install.lock"
+fi
+
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
 chown -R $app:www-data "$final_path"
