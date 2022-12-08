@@ -274,6 +274,12 @@ EOF
 		
 		done
 		
+		if php$phpversion $final_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y; then
+				ynh_print_info --message="LDAP user update ok"
+		else
+				ynh_print_info --message="LDAP user update ended with error"
+		fi
+		
 		ynh_app_setting_set --app=$app --key=version --value=$update_version
 fi
 
