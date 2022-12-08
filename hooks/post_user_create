@@ -1,21 +1,21 @@
 #!/bin/bash
-app=__APP__
-src_path=__FINALPATH__
-member=__MEMBER__
+app="$(basename $0 | cut -d- -f 2-)" # Extract the app name from the script name, which is supposed to be something like "50-app_id"
+src_path=$(yunohost app setting $app final_path)
+# member=__MEMBER__
                                                                                                                                                                         
 # Sync users
-if sudo php $src_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y; then
+if sudo php "$src_path/scripts/user/sync_users_ldap2dolibarr.php" commitiferror --server=localhost -y; then
         echo ldap user update ok
 else
         echo ldap user update ended with error
 fi
                                                                                                                                                                         
 # If YNH users should also be members, sync members
-if [ $member -eq 1 ];
-then
-        if sudo php $src_path/scripts/members/sync_members_ldap2dolibarr.php commitiferror 1 --server=localhost -y; then
-                echo ldap member update ok
-        else
-                echo ldap member update ended with error
-        fi
-fi
+# if [ $member -eq 1 ];
+# then
+        # if sudo php "$src_path/scripts/members/sync_members_ldap2dolibarr.php" commitiferror 1 --server=localhost -y; then
+                # echo ldap member update ok
+        # else
+                # echo ldap member update ended with error
+        # fi
+# fi
