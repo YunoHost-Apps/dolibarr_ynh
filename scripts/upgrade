@@ -19,7 +19,6 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 path_url=$(ynh_app_setting_get --app=$app --key=path)
 admin=$(ynh_app_setting_get --app=$app --key=admin)
-member=$(ynh_app_setting_get --app=$app --key=member)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 language=$(ynh_app_setting_get --app=$app --key=language)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
@@ -275,6 +274,12 @@ EOF
 		
 		done
 		
+		if php$phpversion $final_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y; then
+				ynh_print_info --message="LDAP user update ok"
+		else
+				ynh_print_info --message="LDAP user update ended with error"
+		fi
+		
 		ynh_app_setting_set --app=$app --key=version --value=$update_version
 fi
 
@@ -303,6 +308,12 @@ ynh_use_logrotate --non-append
 ynh_script_progression --message="Configuring permissions..." --weight=1
 
 # Set permissions on app files
+if [ ! -f "$datadir/install.lock" ]; then
+	echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$datadir/install.lock"
+	chown $app:$app "$datadir/install.lock"
+	chmod 440 "$datadir/install.lock"
+fi
+
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
 chown -R $app:www-data "$final_path"
