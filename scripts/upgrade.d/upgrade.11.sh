@@ -4,4 +4,4 @@
 next_version="12.0.5"
 
 # Dolibarr tarball checksum
-dolibarr_source_sha256="ba9b636b95caeba72106ae6a61f25654e113817759e69a6a30ed510882d0f309"
+dolibarr_source_sha256="b60b124ebcd294375f6200cc0683449e475b5dec687f8317b820fc8ec1413d21"
