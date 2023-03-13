@@ -5,7 +5,8 @@ It shall NOT be edited by hand.
 
 # Dolibarr for YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/dolibarr.svg)](https://dash.yunohost.org/appci/app/dolibarr) ![Working status](https://ci-apps.yunohost.org/ci/badges/dolibarr.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/dolibarr.maintain.svg)  
+[![Integration level](https://dash.yunohost.org/integration/dolibarr.svg)](https://dash.yunohost.org/appci/app/dolibarr) ![Working status](https://ci-apps.yunohost.org/ci/badges/dolibarr.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/dolibarr.maintain.svg)
+
 [![Install Dolibarr with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=dolibarr)
 
 *[Lire ce readme en français.](./README_fr.md)*
