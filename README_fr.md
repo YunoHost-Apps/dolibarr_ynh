@@ -5,32 +5,33 @@ It shall NOT be edited by hand.
 
 # Dolibarr pour YunoHost
 
-[![Niveau d'intégration](https://dash.yunohost.org/integration/dolibarr.svg)](https://dash.yunohost.org/appci/app/dolibarr) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/dolibarr.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/dolibarr.maintain.svg)  
+[![Niveau d’intégration](https://dash.yunohost.org/integration/dolibarr.svg)](https://dash.yunohost.org/appci/app/dolibarr) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/dolibarr.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/dolibarr.maintain.svg)
+
 [![Installer Dolibarr avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=dolibarr)
 
 *[Read this readme in english.](./README.md)*
 
-> *Ce package vous permet d'installer Dolibarr rapidement et simplement sur un serveur YunoHost.
-Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour savoir comment l'installer et en profiter.*
+> *Ce package vous permet d’installer Dolibarr rapidement et simplement sur un serveur YunoHost.
+Si vous n’avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour savoir comment l’installer et en profiter.*
 
-## Vue d'ensemble
+## Vue d’ensemble
 
 Dolibarr ERP & CRM est un logiciel moderne de gestion de votre activité professionnelle ou associative (contacts, factures, commandes, stocks, agenda, etc.).
 
-**Version incluse :** 16.0.4~ynh1
+**Version incluse :** 16.0.4~ynh1
 
 **Démo :** https://www.dolibarr.org/onlinedemo
 
-## Captures d'écran
+## Captures d’écran
 
-![Capture d'écran de Dolibarr](./doc/screenshots/screenshot.jpg)
+![Capture d’écran de Dolibarr](./doc/screenshots/screenshot.jpg)
 
 ## Documentations et ressources
 
-* Site officiel de l'app : <https://www.dolibarr.org/>
+* Site officiel de l’app : <https://www.dolibarr.org/>
 * Documentation officielle utilisateur : <https://www.dolibarr.org/#features>
-* Documentation officielle de l'admin : <https://www.dolibarr.org/documentation-home>
-* Dépôt de code officiel de l'app : <https://github.com/Dolibarr/dolibarr>
+* Documentation officielle de l’admin : <https://www.dolibarr.org/documentation-home>
+* Dépôt de code officiel de l’app : <https://github.com/Dolibarr/dolibarr>
 * Documentation YunoHost pour cette app : <https://yunohost.org/app_dolibarr>
 * Signaler un bug : <https://github.com/YunoHost-Apps/dolibarr_ynh/issues>
 
@@ -46,4 +47,4 @@ ou
 sudo yunohost app upgrade dolibarr -u https://github.com/YunoHost-Apps/dolibarr_ynh/tree/testing --debug
 ```
 
-**Plus d'infos sur le packaging d'applications :** <https://yunohost.org/packaging_apps>
+**Plus d’infos sur le packaging d’applications :** <https://yunohost.org/packaging_apps>
