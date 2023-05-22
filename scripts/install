@@ -14,6 +14,8 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 member=0
+fpm_footprint="medium"
+fpm_usage="medium"
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
@@ -22,6 +24,8 @@ ynh_script_progression --message="Storing installation settings..." --weight=2
 
 ynh_app_setting_set --app=$app --key=member --value=$member
 ynh_app_setting_set --app=$app --key=version --value=$(ynh_app_upstream_version "../manifest.json")
+ynh_app_setting_set --app=$app --key=fpm_footprint --value=$fpm_footprint
+ynh_app_setting_set --app=$app --key=fpm_usage --value=$fpm_usage
 
 #=================================================
 # CREATE A MYSQL DATABASE
@@ -60,14 +64,8 @@ touch $install_dir/htdocs/conf/conf.php
 #=================================================
 ynh_script_progression --message="Configuring PHP-FPM" --weight=2
 
-fpm_footprint="medium"
-fpm_usage="medium"
-
-ynh_app_setting_set --app=$app --key=fpm_footprint --value=$fpm_footprint
-ynh_app_setting_set --app=$app --key=fpm_usage --value=$fpm_usage
-
 # Create a dedicated php-fpm config
-ynh_add_fpm_config --phpversion=$phpversion --usage=$fpm_usage --footprint=$fpm_footprint
+ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint
 
 #=================================================
 # NGINX CONFIGURATION

@@ -29,15 +29,15 @@ upgrade_type=$(ynh_check_app_version_changed)
 ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
 
 # If fpm_footprint doesn't exist, create it
-if [ -z "$fpm_footprint" ]; then
-	fpm_footprint=medium
-	ynh_app_setting_set --app=$app --key=fpm_footprint --value=$fpm_footprint
+if [ -z "${fpm_footprint:-}" ]; then
+    fpm_footprint=low
+    ynh_app_setting_set --app=$app --key=fpm_footprint --value=$fpm_footprint
 fi
 
 # If fpm_usage doesn't exist, create it
-if [ -z "$fpm_usage" ]; then
-	fpm_usage=medium
-	ynh_app_setting_set --app=$app --key=fpm_usage --value=$fpm_usage
+if [ -z "${fpm_usage:-}" ]; then
+    fpm_usage=low
+    ynh_app_setting_set --app=$app --key=fpm_usage --value=$fpm_usage
 fi
 
 # Delete existing ini configuration file (backward compatibility)
