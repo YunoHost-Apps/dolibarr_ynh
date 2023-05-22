@@ -12,23 +12,8 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
-#REMOVEME? ynh_script_progression --message="Loading installation settings..." --weight=2
 
-#REMOVEME? app=$YNH_APP_INSTANCE_NAME
-
-#REMOVEME? domain=$(ynh_app_setting_get --app=$app --key=domain)
-#REMOVEME? path=$(ynh_app_setting_get --app=$app --key=path)
-#REMOVEME? admin=$(ynh_app_setting_get --app=$app --key=admin)
-#REMOVEME? #REMOVEME? install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
-#REMOVEME? language=$(ynh_app_setting_get --app=$app --key=language)
-#REMOVEME? db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-#REMOVEME? current_version=$(ynh_app_setting_get --app=$app --key=version)
 update_version=$(ynh_app_upstream_version "../manifest.json")
-#REMOVEME? data_dir=$install_dir/documents/
-
-#REMOVEME? fpm_footprint=$(ynh_app_setting_get --app=$app --key=fpm_footprint)
-#REMOVEME? fpm_usage=$(ynh_app_setting_get --app=$app --key=fpm_usage)
-#REMOVEME? phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
 
 #=================================================
 # CHECK VERSION
@@ -37,37 +22,11 @@ update_version=$(ynh_app_upstream_version "../manifest.json")
 upgrade_type=$(ynh_check_app_version_changed)
 
 #=================================================
-# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
-#=================================================
-#REMOVEME? ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=11
-
-# Backup the current version of the app
-#REMOVEME? ynh_backup_before_upgrade
-#REMOVEME? ynh_clean_setup () {
-	# restore it if the upgrade fails
-#REMOVEME? 	ynh_restore_upgradebackup
-}
-# Exit if an error occurs during the execution of the script
-#REMOVEME? ynh_abort_if_errors
-
-#=================================================
 # STANDARD UPGRADE STEPS
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
-
-# If db_name doesn't exist, create it
-if [ -z "$db_name" ]; then
-	db_name=$(ynh_sanitize_dbid --db_name=$app)
-#REMOVEME? 	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-fi
-
-# If install_dir doesn't exist, create it
-if [ -z "$install_dir" ]; then
-#REMOVEME? 	install_dir=/var/www/$app
-#REMOVEME? 	ynh_app_setting_set --app=$app --key=install_dir --value=$install_dir
-fi
 
 # If fpm_footprint doesn't exist, create it
 if [ -z "$fpm_footprint" ]; then
@@ -81,37 +40,10 @@ if [ -z "$fpm_usage" ]; then
 	ynh_app_setting_set --app=$app --key=fpm_usage --value=$fpm_usage
 fi
 
-# Cleaning legacy permissions
-#REMOVEME? if ynh_legacy_permissions_exists; then
-#REMOVEME? 	ynh_legacy_permissions_delete_all
-
-	ynh_app_setting_delete --app=$app --key=is_public
-fi
-
-# Create a permission if needed
-#REMOVEME? if ! ynh_permission_exists --permission "public_space"; then
-#REMOVEME? 	ynh_permission_create --permission "public_space" --url "/public/" --allowed "visitors"
-fi
-
 # Delete existing ini configuration file (backward compatibility)
 if [ -f /etc/php/$YNH_PHP_VERSION/fpm/conf.d/20-$app.ini ]; then
     ynh_secure_remove --file=/etc/php/$YNH_PHP_VERSION/fpm/conf.d/20-$app.ini
 fi
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-#REMOVEME? ynh_script_progression --message="Making sure dedicated system user exists..." --weight=1
-
-# Create a dedicated user (if not existing)
-#REMOVEME? ynh_system_user_create --username=$app --home_dir="$install_dir"
-
-#=================================================
-# UPGRADE DEPENDENCIES
-#=================================================
-#REMOVEME? ynh_script_progression --message="Upgrading dependencies..." --weight=1
-
-#REMOVEME? ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # NGINX CONFIGURATION
@@ -125,7 +57,7 @@ ynh_remove_nginx_config
 ynh_app_setting_delete --app=$app --key="checksum__etc_nginx_conf.d_$domain.d_$app.conf"
 
 # Wait untils NGINX has fully reloaded
-#REMOVEME? ynh_systemd_action --service_name=nginx --action=reload --line_match="Reloaded" --log_path="systemd"
+ynh_systemd_action --service_name=nginx --action=reload --line_match="Reloaded" --log_path="systemd"
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
@@ -150,7 +82,6 @@ ynh_script_progression --message="Upgrading PHP-FPM configuration..." --weight=2
 
 # Recreate a dedicated PHP-FPM config
 ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint
-#REMOVEME? phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -220,12 +151,6 @@ EOF
 		
 		# Upgrade with CURL
 		
-		# Set the app as temporarily public for cURL call
-		if ! ynh_permission_has_user --permission "main" --user="visitors"; then
-#REMOVEME? 			ynh_permission_update --permission="main" --add="visitors"
-		fi
-			
-		
 		charset=$(mysql -ss -N -e "SELECT default_character_set_name FROM information_schema.SCHEMATA WHERE schema_name = '$db_name'")
 		if [ "$charset" != "utf8" ]
 		then
@@ -240,33 +165,29 @@ EOF
 		ynh_exec_fully_quiet sleep 5
 
 		pushd $install_dir/htdocs/install/
-		
-		if php$phpversion upgrade.php $current_version $next_version > /var/log/$app/upgrade.html;  then
-			ynh_print_info --message="Step 1 upgrading ended successfully"
-		else
-			ynh_die --message="Step 1 upgrading ended with error"
-		fi
+			if php$phpversion upgrade.php $current_version $next_version > /var/log/$app/upgrade.html;  then
+				ynh_print_info --message="Step 1 upgrading ended successfully"
+			else
+				ynh_die --message="Step 1 upgrading ended with error"
+			fi
 
-		ynh_exec_fully_quiet sleep 5
+			ynh_exec_fully_quiet sleep 5
 
-		if php$phpversion upgrade2.php $current_version $next_version > /var/log/$app/upgrade2.html; then
-			ynh_print_info --message="Step 2 upgrading ended successfully"
-		else
-			ynh_die --message="Step 2 upgrading ended with error"
-		fi
+			if php$phpversion upgrade2.php $current_version $next_version > /var/log/$app/upgrade2.html; then
+				ynh_print_info --message="Step 2 upgrading ended successfully"
+			else
+				ynh_die --message="Step 2 upgrading ended with error"
+			fi
 
-		ynh_exec_fully_quiet sleep 5
+			ynh_exec_fully_quiet sleep 5
 
-		if php$phpversion step5.php $current_version $next_version > /var/log/$app/upgrade3.html; then
-			ynh_print_info --message="Step 3 upgrading ended successfully"
-		else
-			ynh_die  --message="Step 3 upgrading ended with error"
-		fi
-		
-
+			if php$phpversion step5.php $current_version $next_version > /var/log/$app/upgrade3.html; then
+				ynh_print_info --message="Step 3 upgrading ended successfully"
+			else
+				ynh_die  --message="Step 3 upgrading ended with error"
+			fi
 		popd
 		
-#REMOVEME? 		ynh_permission_update --permission="main" --remove="visitors"
 		
 		# Get the new current version number
         current_version=$next_version
@@ -305,7 +226,7 @@ ynh_use_logrotate --non-append
 #=================================================
 # SECURE FILES AND DIRECTORIES
 #=================================================
-#REMOVEME? ynh_script_progression --message="Configuring permissions..." --weight=1
+ynh_script_progression --message="Configuring permissions..." --weight=1
 
 # Set permissions on app files
 if [ ! -f "$data_dir/install.lock" ]; then
@@ -321,13 +242,6 @@ chown -R $app:www-data "$install_dir"
 mkdir -p "$data_dir"
 chown -R $app: "$data_dir"
 chmod go-w $data_dir
-
-#=================================================
-# RELOAD NGINX
-#=================================================
-#REMOVEME? ynh_script_progression --message="Reloading NGINX web server..." --weight=1
-
-#REMOVEME? ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT
