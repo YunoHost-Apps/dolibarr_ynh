@@ -12,23 +12,23 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Loading installation settings..." --weight=2
+#REMOVEME? ynh_script_progression --message="Loading installation settings..." --weight=2
 
-app=$YNH_APP_INSTANCE_NAME
+#REMOVEME? app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get --app=$app --key=domain)
-path_url=$(ynh_app_setting_get --app=$app --key=path)
-admin=$(ynh_app_setting_get --app=$app --key=admin)
-final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-language=$(ynh_app_setting_get --app=$app --key=language)
-db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-current_version=$(ynh_app_setting_get --app=$app --key=version)
+#REMOVEME? domain=$(ynh_app_setting_get --app=$app --key=domain)
+#REMOVEME? path=$(ynh_app_setting_get --app=$app --key=path)
+#REMOVEME? admin=$(ynh_app_setting_get --app=$app --key=admin)
+#REMOVEME? #REMOVEME? install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
+#REMOVEME? language=$(ynh_app_setting_get --app=$app --key=language)
+#REMOVEME? db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+#REMOVEME? current_version=$(ynh_app_setting_get --app=$app --key=version)
 update_version=$(ynh_app_upstream_version "../manifest.json")
-datadir=$final_path/documents/
+#REMOVEME? data_dir=$install_dir/documents/
 
-fpm_footprint=$(ynh_app_setting_get --app=$app --key=fpm_footprint)
-fpm_usage=$(ynh_app_setting_get --app=$app --key=fpm_usage)
-phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
+#REMOVEME? fpm_footprint=$(ynh_app_setting_get --app=$app --key=fpm_footprint)
+#REMOVEME? fpm_usage=$(ynh_app_setting_get --app=$app --key=fpm_usage)
+#REMOVEME? phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
 
 #=================================================
 # CHECK VERSION
@@ -39,16 +39,16 @@ upgrade_type=$(ynh_check_app_version_changed)
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=11
+#REMOVEME? ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=11
 
 # Backup the current version of the app
-ynh_backup_before_upgrade
-ynh_clean_setup () {
+#REMOVEME? ynh_backup_before_upgrade
+#REMOVEME? ynh_clean_setup () {
 	# restore it if the upgrade fails
-	ynh_restore_upgradebackup
+#REMOVEME? 	ynh_restore_upgradebackup
 }
 # Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
+#REMOVEME? ynh_abort_if_errors
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -60,13 +60,13 @@ ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
 # If db_name doesn't exist, create it
 if [ -z "$db_name" ]; then
 	db_name=$(ynh_sanitize_dbid --db_name=$app)
-	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+#REMOVEME? 	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
 fi
 
-# If final_path doesn't exist, create it
-if [ -z "$final_path" ]; then
-	final_path=/var/www/$app
-	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+# If install_dir doesn't exist, create it
+if [ -z "$install_dir" ]; then
+#REMOVEME? 	install_dir=/var/www/$app
+#REMOVEME? 	ynh_app_setting_set --app=$app --key=install_dir --value=$install_dir
 fi
 
 # If fpm_footprint doesn't exist, create it
@@ -82,15 +82,15 @@ if [ -z "$fpm_usage" ]; then
 fi
 
 # Cleaning legacy permissions
-if ynh_legacy_permissions_exists; then
-	ynh_legacy_permissions_delete_all
+#REMOVEME? if ynh_legacy_permissions_exists; then
+#REMOVEME? 	ynh_legacy_permissions_delete_all
 
 	ynh_app_setting_delete --app=$app --key=is_public
 fi
 
 # Create a permission if needed
-if ! ynh_permission_exists --permission "public_space"; then
-	ynh_permission_create --permission "public_space" --url "/public/" --allowed "visitors"
+#REMOVEME? if ! ynh_permission_exists --permission "public_space"; then
+#REMOVEME? 	ynh_permission_create --permission "public_space" --url "/public/" --allowed "visitors"
 fi
 
 # Delete existing ini configuration file (backward compatibility)
@@ -101,17 +101,17 @@ fi
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_script_progression --message="Making sure dedicated system user exists..." --weight=1
+#REMOVEME? ynh_script_progression --message="Making sure dedicated system user exists..." --weight=1
 
 # Create a dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir="$final_path"
+#REMOVEME? ynh_system_user_create --username=$app --home_dir="$install_dir"
 
 #=================================================
 # UPGRADE DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Upgrading dependencies..." --weight=1
+#REMOVEME? ynh_script_progression --message="Upgrading dependencies..." --weight=1
 
-ynh_install_app_dependencies $pkg_dependencies
+#REMOVEME? ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # NGINX CONFIGURATION
@@ -125,7 +125,7 @@ ynh_remove_nginx_config
 ynh_app_setting_delete --app=$app --key="checksum__etc_nginx_conf.d_$domain.d_$app.conf"
 
 # Wait untils NGINX has fully reloaded
-ynh_systemd_action --service_name=nginx --action=reload --line_match="Reloaded" --log_path="systemd"
+#REMOVEME? ynh_systemd_action --service_name=nginx --action=reload --line_match="Reloaded" --log_path="systemd"
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
@@ -150,7 +150,7 @@ ynh_script_progression --message="Upgrading PHP-FPM configuration..." --weight=2
 
 # Recreate a dedicated PHP-FPM config
 ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint
-phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
+#REMOVEME? phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -205,12 +205,12 @@ EOF
 
 	
 		# Download, check integrity, uncompress and patch the source from app.src
-		ynh_setup_source --dest_dir="$final_path"
+		ynh_setup_source --dest_dir="$install_dir"
 
-		chown -R $app: "$final_path"
+		chown -R $app: "$install_dir"
 
 		# Remove the lock if it exists
-		lock=$final_path/documents/install.lock
+		lock=$install_dir/documents/install.lock
 		if [ -f $lock ]
 		then
 			ynh_secure_remove $lock
@@ -222,7 +222,7 @@ EOF
 		
 		# Set the app as temporarily public for cURL call
 		if ! ynh_permission_has_user --permission "main" --user="visitors"; then
-			ynh_permission_update --permission="main" --add="visitors"
+#REMOVEME? 			ynh_permission_update --permission="main" --add="visitors"
 		fi
 			
 		
@@ -239,7 +239,7 @@ EOF
 
 		ynh_exec_fully_quiet sleep 5
 
-		pushd $final_path/htdocs/install/
+		pushd $install_dir/htdocs/install/
 		
 		if php$phpversion upgrade.php $current_version $next_version > /var/log/$app/upgrade.html;  then
 			ynh_print_info --message="Step 1 upgrading ended successfully"
@@ -266,7 +266,7 @@ EOF
 
 		popd
 		
-		ynh_permission_update --permission="main" --remove="visitors"
+#REMOVEME? 		ynh_permission_update --permission="main" --remove="visitors"
 		
 		# Get the new current version number
         current_version=$next_version
@@ -274,7 +274,7 @@ EOF
 		
 		done
 		
-		if php$phpversion $final_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y; then
+		if php$phpversion $install_dir/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y; then
 				ynh_print_info --message="LDAP user update ok"
 		else
 				ynh_print_info --message="LDAP user update ended with error"
@@ -287,10 +287,10 @@ fi
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
 
-ynh_backup_if_checksum_is_different --file="$final_path/htdocs/conf/conf.php"
+ynh_backup_if_checksum_is_different --file="$install_dir/htdocs/conf/conf.php"
 # Recalculate and store the checksum of the file for the next upgrade.
-ynh_store_file_checksum --file="$final_path/htdocs/conf/conf.php"
-chmod 644 "$final_path/htdocs/conf/conf.php"
+ynh_store_file_checksum --file="$install_dir/htdocs/conf/conf.php"
+chmod 644 "$install_dir/htdocs/conf/conf.php"
 
 #=================================================
 # SETUP LOGROTATE
@@ -305,29 +305,29 @@ ynh_use_logrotate --non-append
 #=================================================
 # SECURE FILES AND DIRECTORIES
 #=================================================
-ynh_script_progression --message="Configuring permissions..." --weight=1
+#REMOVEME? ynh_script_progression --message="Configuring permissions..." --weight=1
 
 # Set permissions on app files
-if [ ! -f "$datadir/install.lock" ]; then
-	echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$datadir/install.lock"
-	chown $app:$app "$datadir/install.lock"
-	chmod 440 "$datadir/install.lock"
+if [ ! -f "$data_dir/install.lock" ]; then
+	echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$data_dir/install.lock"
+	chown $app:$app "$data_dir/install.lock"
+	chmod 440 "$data_dir/install.lock"
 fi
 
-chmod 750 "$final_path"
-chmod -R o-rwx "$final_path"
-chown -R $app:www-data "$final_path"
+chmod 750 "$install_dir"
+chmod -R o-rwx "$install_dir"
+chown -R $app:www-data "$install_dir"
 
-mkdir -p "$datadir"
-chown -R $app: "$datadir"
-chmod go-w $datadir
+mkdir -p "$data_dir"
+chown -R $app: "$data_dir"
+chmod go-w $data_dir
 
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server..." --weight=1
+#REMOVEME? ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 
-ynh_systemd_action --service_name=nginx --action=reload
+#REMOVEME? ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT

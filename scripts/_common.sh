@@ -3,9 +3,9 @@
 #=================================================
 # COMMON VARIABLES
 #=================================================
-YNH_PHP_VERSION="8.1"
+#REMOVEME? YNH_PHP_VERSION="8.1"
 
-php_dependencies="php$YNH_PHP_VERSION-mysql \
+#REMOVEME? php_dependencies="php$YNH_PHP_VERSION-mysql \
 						php$YNH_PHP_VERSION-imagick \
 						php$YNH_PHP_VERSION-gd \
 						php$YNH_PHP_VERSION-mbstring \
@@ -20,7 +20,7 @@ php_dependencies="php$YNH_PHP_VERSION-mysql \
 						php$YNH_PHP_VERSION-imap"
 
 # dependencies used by the app (must be on a single line)
-pkg_dependencies="$php_dependencies"
+#REMOVEME? pkg_dependencies="$php_dependencies"
 
 #=================================================
 # PERSONAL HELPERS
