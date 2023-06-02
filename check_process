@@ -11,7 +11,7 @@
 		setup_private=0
 		setup_public=0
 		upgrade=1
-		upgrade=1	from_commit=f8b06e9a578e2d9c62948c46ffe3eca28fc854cf
+		upgrade=1	from_commit=9b90f7434caf18f827665b7775d0c3b7688af75f
 		backup_restore=1
 		multi_instance=1
 		port_already_use=0
@@ -21,5 +21,5 @@ Email=
 Notification=none
 ;;; Upgrade options
 	; commit=CommitHash
-		name=10.0.1
+		name=10.0.6
 		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&
