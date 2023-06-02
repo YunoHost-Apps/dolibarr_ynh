@@ -203,9 +203,6 @@ SOURCE_FORMAT=tar.bz2
 SOURCE_IN_SUBDIR=true
 EOF
 
-	
-		# Download, check integrity, uncompress and patch the source from app.src
-		ynh_setup_source --dest_dir="$final_path"
 
 		chown -R $app: "$final_path"
 
@@ -238,7 +235,10 @@ EOF
 		fi
 
 		ynh_exec_fully_quiet sleep 5
-
+		
+		# Download, check integrity, uncompress and patch the source from app.src
+		ynh_setup_source --dest_dir="$final_path"
+		
 		pushd $final_path/htdocs/install/
 		
 		if php$phpversion upgrade.php $current_version $next_version > /var/log/$app/upgrade.html;  then
