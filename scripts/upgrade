@@ -164,12 +164,17 @@ EOF
 
 		ynh_exec_fully_quiet sleep 5
 
-		pushd $install_dir/htdocs/install/
-			if php$phpversion upgrade.php $current_version $next_version > /var/log/$app/upgrade.html;  then
-				ynh_print_info --message="Step 1 upgrading ended successfully"
-			else
-				ynh_die --message="Step 1 upgrading ended with error"
-			fi
+		
+		# Download, check integrity, uncompress and patch the source from app.src
+		ynh_setup_source --dest_dir="$install_dir"
+		
+		pushd $final_path/htdocs/install/
+		
+		if php$phpversion upgrade.php $current_version $next_version > /var/log/$app/upgrade.html;  then
+			ynh_print_info --message="Step 1 upgrading ended successfully"
+		else
+			ynh_die --message="Step 1 upgrading ended with error"
+		fi
 
 			ynh_exec_fully_quiet sleep 5
 
