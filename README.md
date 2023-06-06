@@ -18,7 +18,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 Dolibarr ERP & CRM is a modern software for managing your professional or associative activity (contacts, invoices, orders, stocks, agenda, etc.).
 
-**Shipped version:** 17.0.1~ynh1
+**Shipped version:** 17.0.0~ynh1
 
 **Demo:** https://www.dolibarr.org/onlinedemo
 
