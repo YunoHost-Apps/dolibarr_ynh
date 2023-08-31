@@ -52,8 +52,6 @@ ram.runtime = "50M"
 
     [resources.permissions]
     main.url = "/"
-    public_space.url = "/public/"
-    public_space.allowed = "visitors"
 
     [resources.apt]
     packages = "mariadb-server php8.2-imagick php8.2-gd php8.2-mbstring php8.2-soap php8.2-curl php8.2-intl php8.2-opcache php8.2-calendar php8.2-zip php8.2-xml php8.2-fileinfo php8.2-imap"
