@@ -5,7 +5,7 @@ name = "Dolibarr"
 description.en = "Manage the various aspects of your business or association"
 description.fr = "Gérez les différents aspects de votre activité pro ou associative"
 
-version = "17.0.0~ynh1"
+version = "17.0.1~ynh1"
 
 maintainers = ["mastereur"]
 
@@ -35,6 +35,10 @@ ram.runtime = "50M"
     type = "path"
     default = "/dolibarr"
 
+    [install.init_main_permission]
+    type = "group"
+    default = "visitors"
+
     [install.admin]
     type = "user"
 
@@ -52,7 +56,7 @@ ram.runtime = "50M"
     public_space.allowed = "visitors"
 
     [resources.apt]
-    packages = "mariadb-server php8.1-imagick php8.1-gd php8.1-mbstring php8.1-soap php8.1-curl php8.1-intl php8.1-opcache php8.1-calendar php8.1-zip php8.1-xml php8.1-fileinfo php8.1-imap"
+    packages = "mariadb-server php8.2-imagick php8.2-gd php8.2-mbstring php8.2-soap php8.2-curl php8.2-intl php8.2-opcache php8.2-calendar php8.2-zip php8.2-xml php8.2-fileinfo php8.2-imap"
 
     [resources.database]
     type = "mysql"
