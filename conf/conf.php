@@ -1,4 +1,4 @@
-$dolibarr_main_document_root="/home/www/dolibarr/htdocs";
+$dolibarr_main_document_root="__INSTALL_DIR__/htdocs";
 $dolibarr_main_url_root="http://__DOMAIN____PATH__";
 $dolibarr_main_db_type="mysql";
 $dolibarr_main_db_host="localhost";
