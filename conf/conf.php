@@ -13,19 +13,12 @@ $dolibarr_main_db_pass="__DB_PWD__";
 //$dolibarr_main_authentication='dolibarr';
 
 $dolibarr_main_authentication='ldap,dolibarr,http';
-
 $dolibarr_main_auth_ldap_host='ldap:localhost';
-
 $dolibarr_main_auth_ldap_port='389';
-
 $dolibarr_main_auth_ldap_version='3';
-
 $dolibarr_main_auth_ldap_servertype='openldap';
-
 $dolibarr_main_auth_ldap_login_attribute='uid';  // Ex: uid or samaccountname for active directory
-
 $dolibarr_main_auth_ldap_dn='ou=users,dc=yunohost,dc=org';
-
 $dolibarr_main_auth_ldap_filter = '&(objectClass=posixAccount)';
 
 //$dolibarr_main_auth_ldap_admin_login='uid=admin,dc=yunohost,dc=org';
