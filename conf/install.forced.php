@@ -25,7 +25,7 @@ $force_install_noedit = 2;
 $force_install_message = 'Welcome to your Dolibarr install';
 
 /** @var string Data root absolute path (documents folder) */
-$force_install_main_data_root = null;
+$force_install_main_data_root = '__DATA_DIR__';
 
 /** @var bool Force HTTPS */
 $force_install_mainforcehttps = true;
@@ -34,7 +34,7 @@ $force_install_mainforcehttps = true;
 $force_install_database = '__DB_NAME__';
 
 /** @var string Database driver (mysql|mysqli|pgsql|mssql|sqlite|sqlite3) */
-$force_install_type = 'mysql';
+$force_install_type = 'mysqli';
 
 /** @var string Database server host */
 $force_install_dbserver = 'localhost';

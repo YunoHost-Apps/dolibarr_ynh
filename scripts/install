@@ -56,7 +56,6 @@ ynh_script_progression --message="Download source files..." --weight=70
 ynh_setup_source --dest_dir="$install_dir"
 
 # Create necessary files
-data_dir=$install_dir/documents
 touch $install_dir/htdocs/conf/conf.php
 
 #=================================================
@@ -105,7 +104,7 @@ ynh_local_curl "/install/step1.php" \
 
 ynh_exec_fully_quiet sleep 5
 		
-ynh_script_progression --message="installation - step 2 (may take a while)..." --weight=72
+ynh_script_progression --message="installation - step 2 (may take a while)..." --weight=20
 ynh_local_curl "/install/step2.php" \
 		"testpost=ok" \
 		"action=set" > /var/log/$app/install2.html
@@ -175,13 +174,9 @@ ynh_script_progression --message="Configuring permissions..." --weight=1
 # fi
 
 chmod 750 "$install_dir"
+chmod 644 "$install_dir/htdocs/conf/conf.php"
 chmod -R o-rwx "$install_dir"
 chown -R $app:www-data "$install_dir"
-
-chmod 644 "$install_dir/htdocs/conf/conf.php"
-mkdir -p "$data_dir"
-chown -R $app: "$data_dir"
-chmod go-w $data_dir
 
 #=================================================
 # SETUP LOGROTATE
