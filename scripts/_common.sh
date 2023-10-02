@@ -3,7 +3,7 @@
 #=================================================
 # COMMON VARIABLES
 #=================================================
-YNH_PHP_VERSION="7.4"
+YNH_PHP_VERSION="8.1"
 
 php_dependencies="php$YNH_PHP_VERSION-mysql \
 						php$YNH_PHP_VERSION-imagick \
