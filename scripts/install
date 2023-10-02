@@ -55,6 +55,8 @@ EOF
 ynh_script_progression --message="Download source files..." --weight=10
 ynh_setup_source --dest_dir="$install_dir"
 
+touch $install_dir/htdocs/conf/conf.php
+
 #=================================================
 # PHP-FPM CONFIGURATION
 #=================================================
