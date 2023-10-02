@@ -1,6 +1,7 @@
 $dolibarr_main_document_root="__INSTALL_DIR__/htdocs";
+$dolibarr_main_data_dir="__DATA_DIR__";
 $dolibarr_main_url_root="http://__DOMAIN____PATH__";
-$dolibarr_main_db_type="mysql";
+$dolibarr_main_db_type="mysqli";
 $dolibarr_main_db_host="localhost";
 $dolibarr_main_db_port="3306";
 $dolibarr_main_db_name="__DB_NAME__";
