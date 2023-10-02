@@ -213,10 +213,6 @@ chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
 chown -R $app:www-data "$install_dir"
 
-mkdir -p "$data_dir"
-chown -R $app: "$data_dir"
-chmod go-w $data_dir
-
 #=================================================
 # END OF SCRIPT
 #=================================================
