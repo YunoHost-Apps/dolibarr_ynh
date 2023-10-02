@@ -42,7 +42,7 @@ ynh_script_progression --message="Setting up source files..." --weight=1
 # Load the last available version
 source upgrade.d/upgrade.last.sh
 
-# Create an app.src for the last version of nextcloud
+# Create an app.src for the last version of Dolibarr
 cat > ../conf/app.src << EOF
 SOURCE_URL=https://github.com/Dolibarr/dolibarr/archive/$next_version.tar.gz
 SOURCE_SUM=$dolibarr_source_sha256
@@ -57,7 +57,7 @@ ynh_setup_source --dest_dir="$install_dir"
 
 # Create necessary files
 data_dir=$install_dir/documents
-#touch $install_dir/htdocs/conf/conf.php
+touch $install_dir/htdocs/conf/conf.php
 
 #=================================================
 # PHP-FPM CONFIGURATION
@@ -77,9 +77,7 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Adding a configuration file..." --weight=1
 
-ynh_add_config --template="../conf/conf.php" --destination="$install_dir/htdocs/conf/conf.php"
-
-#ynh_add_config --template="../conf/install.forced.php" --destination="$install_dir/htdocs/install/install.forced.php"
+ynh_add_config --template="../conf/install.forced.php" --destination="$install_dir/htdocs/install/install.forced.php"
 
 #=================================================
 # SETUP APPLICATION WITH CURL
@@ -153,7 +151,7 @@ ynh_exec_fully_quiet sleep 5
 #ynh_script_progression --message="configuring config file" --weight=1
 
 # Setup HTTP auth in conf
-#ynh_replace_string --match_string="dolibarr_main_authentication='dolibarr'" --replace_string="dolibarr_main_authentication='http'" --target_file="$install_dir/htdocs/conf/conf.php"
+ynh_replace_string --match_string="dolibarr_main_authentication='dolibarr'" --replace_string="dolibarr_main_authentication='http'" --target_file="$install_dir/htdocs/conf/conf.php"
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
