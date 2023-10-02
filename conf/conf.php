@@ -11,7 +11,7 @@ $dolibarr_main_db_pass="__DB_PWD__";
 // Authentication settings
 //$dolibarr_main_authentication='dolibarr';
 
-$dolibarr_main_authentication='ldap,dolibarr';
+$dolibarr_main_authentication='ldap,dolibarr,http';
 
 $dolibarr_main_auth_ldap_host='ldap:localhost';
 

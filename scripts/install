@@ -57,7 +57,7 @@ ynh_setup_source --dest_dir="$install_dir"
 
 # Create necessary files
 data_dir=$install_dir/documents
-touch $install_dir/htdocs/conf/conf.php
+#touch $install_dir/htdocs/conf/conf.php
 
 #=================================================
 # PHP-FPM CONFIGURATION
@@ -77,9 +77,9 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Adding a configuration file..." --weight=1
 
-#ynh_add_config --template="../conf/conf.php" --destination="$install_dir/htdocs/conf/conf.php"
+ynh_add_config --template="../conf/conf.php" --destination="$install_dir/htdocs/conf/conf.php"
 
-ynh_add_config --template="../conf/install.forced.php" --destination="$install_dir/htdocs/install/install.forced.php"
+#ynh_add_config --template="../conf/install.forced.php" --destination="$install_dir/htdocs/install/install.forced.php"
 
 #=================================================
 # SETUP APPLICATION WITH CURL
@@ -133,7 +133,7 @@ ynh_local_curl "/install/step5.php" \
 
 ynh_exec_fully_quiet sleep 5
 
-ynh_script_progression --message="configuring LDAP" --weight=1
+#ynh_script_progression --message="configuring LDAP" --weight=1
 
 # # Populate the LDAP parameters
 # ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ../conf/sql/ldap.sql
@@ -150,10 +150,10 @@ ynh_script_progression --message="configuring LDAP" --weight=1
 #=================================================
 # MODIFY A CONFIG FILE
 #=================================================
-ynh_script_progression --message="configuring config file" --weight=1
+#ynh_script_progression --message="configuring config file" --weight=1
 
 # Setup HTTP auth in conf
-ynh_replace_string --match_string="dolibarr_main_authentication='dolibarr'" --replace_string="dolibarr_main_authentication='http'" --target_file="$install_dir/htdocs/conf/conf.php"
+#ynh_replace_string --match_string="dolibarr_main_authentication='dolibarr'" --replace_string="dolibarr_main_authentication='http'" --target_file="$install_dir/htdocs/conf/conf.php"
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
