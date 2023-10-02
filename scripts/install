@@ -77,9 +77,9 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Adding a configuration file..." --weight=1
 
-ynh_add_config --template="../conf/conf.php" --destination="$install_dir/htdocs/conf/conf.php"
+#ynh_add_config --template="../conf/conf.php" --destination="$install_dir/htdocs/conf/conf.php"
 
-#ynh_add_config --template="../conf/install.forced.php" --destination="$install_dir/htdocs/install/install.forced.php"
+ynh_add_config --template="../conf/install.forced.php" --destination="$install_dir/htdocs/install/install.forced.php"
 
 #=================================================
 # SETUP APPLICATION WITH CURL
@@ -153,14 +153,14 @@ mkdir -p /var/log/$app/
 ynh_script_progression --message="configuring config file" --weight=1
 
 # Setup HTTP auth in conf
-ynh_replace_string --match_string="dolibarr_main_authentication='dolibarr'" --replace_string="dolibarr_main_authentication='http'" --target_file="$install_dir/htdocs/conf/conf.php"
+#ynh_replace_string --match_string="dolibarr_main_authentication='dolibarr'" --replace_string="dolibarr_main_authentication='http'" --target_file="$install_dir/htdocs/conf/conf.php"
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
 
 # Calculate and store the config file checksum into the app settings
-ynh_store_file_checksum --file="$install_dir/htdocs/conf/conf.php"
+#ynh_store_file_checksum --file="$install_dir/htdocs/conf/conf.php"
 
 #=================================================
 # GENERIC FINALIZATION
