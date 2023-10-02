@@ -23,8 +23,6 @@ ynh_abort_if_errors
 domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
 admin=$YNH_APP_ARG_ADMIN
-#member=0
-#is_public=0
 phpversion=$YNH_PHP_VERSION
 
 app=$YNH_APP_INSTANCE_NAME
@@ -48,8 +46,6 @@ ynh_script_progression --message="Storing installation settings..." --weight=2
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=admin --value=$admin
-#ynh_app_setting_set --app=$app --key=is_public --value=$is_public
-#ynh_app_setting_set --app=$app --key=member --value=$member
 ynh_app_setting_set --app=$app --key=version --value=$(ynh_app_upstream_version "../manifest.json")
 
 #=================================================
@@ -86,11 +82,10 @@ ynh_mysql_execute_as_root --sql="ALTER DATABASE $db_name charset=utf8"
 #=================================================
 ynh_script_progression --message="Setting up source files..." --weight=1
 
-
 # Load the last available version
 source upgrade.d/upgrade.last.sh
 
-# Create an app.src for the last version of nextcloud
+# Create an app.src for the last version of Dolibarr
 cat > ../conf/app.src << EOF
 SOURCE_URL=https://github.com/Dolibarr/dolibarr/archive/$next_version.tar.gz
 SOURCE_SUM=$dolibarr_source_sha256
@@ -222,9 +217,9 @@ ynh_permission_update --permission="main" --remove="visitors"
 #=================================================
 # MODIFY A CONFIG FILE
 #=================================================
+ynh_script_progression --message="configuring config file" --weight=1
 
 # Setup HTTP auth in conf
-ynh_script_progression --message="configuring config file" --weight=1
 ynh_replace_string --match_string="dolibarr_main_authentication='dolibarr'" --replace_string="dolibarr_main_authentication='http'" --target_file="$final_path/htdocs/conf/conf.php"
 
 #=================================================
