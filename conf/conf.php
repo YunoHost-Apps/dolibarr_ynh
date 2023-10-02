@@ -232,8 +232,8 @@ $dolibarr_main_authentication='http';
 // $dolibarr_main_auth_ldap_version='3';                       // Version of LDAP
 // $dolibarr_main_auth_ldap_servertype='openldap';			       // openldap, activedirectory or egroupware
 // $dolibarr_main_auth_ldap_login_attribute='loginfield';	     // Ex: uid or samaccountname for active directory
-// $dolibarr_main_auth_ldap_dn='ou=users,dc=my-domain,dc=com'; // Ex: ou=users,dc=my-domain,dc=com
-// $dolibarr_main_auth_ldap_filter = '';                       // If defined, the two previous parameters (dolibarr_main_auth_ldap_login_attribute and dolibarr_main_auth_ldap_dn) are not used to find a user into LDAP. Instead we use this search string. Ex: (uid=%1%) or &(uid=%1%)(isMemberOf=cn=Sales,ou=Groups,dc=opencsi,dc=com).
+// $dolibarr_main_auth_ldap_dn='ou=users,dc=yunohost,dc=org'; // Ex: ou=users,dc=my-domain,dc=com
+// $dolibarr_main_auth_ldap_filter = '&(objectClass=posixAccount)';                       // If defined, the two previous parameters (dolibarr_main_auth_ldap_login_attribute and dolibarr_main_auth_ldap_dn) are not used to find a user into LDAP. Instead we use this search string. Ex: (uid=%1%) or &(uid=%1%)(isMemberOf=cn=Sales,ou=Groups,dc=opencsi,dc=com).
 // $dolibarr_main_auth_ldap_admin_login='';					           // Required only if anonymous bind disabled. Ex: cn=admin,dc=example,dc=com
 // $dolibarr_main_auth_ldap_admin_pass='';					           // Required only if anonymous bind disabled. Ex: secret
 // $dolibarr_main_auth_ldap_debug='false';
@@ -278,7 +278,7 @@ $dolibarr_main_force_https='0';
 // Examples:
 // $dolibarr_main_prod='1';
 //
-$dolibarr_main_prod='1';
+$dolibarr_main_prod='0';
 
 // dolibarr_main_restrict_os_commands
 // ==================================
