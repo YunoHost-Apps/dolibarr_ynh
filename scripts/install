@@ -57,7 +57,7 @@ ynh_setup_source --dest_dir="$install_dir"
 
 # Create necessary files
 data_dir=$install_dir/documents
-touch $install_dir/htdocs/conf/conf.php
+#touch $install_dir/htdocs/conf/conf.php
 
 #=================================================
 # PHP-FPM CONFIGURATION
@@ -170,11 +170,11 @@ ynh_store_file_checksum --file="$install_dir/htdocs/conf/conf.php"
 ynh_script_progression --message="Configuring permissions..." --weight=1
 
 # Set permissions on app files
-if [ ! -f "$data_dir/install.lock" ]; then
-	echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$data_dir/install.lock"
-	chown $app:$app "$data_dir/install.lock"
-	chmod 440 "$data_dir/install.lock"
-fi
+# if [ ! -f "$data_dir/install.lock" ]; then
+# 	echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$data_dir/install.lock"
+# 	chown $app:$app "$data_dir/install.lock"
+# 	chmod 440 "$data_dir/install.lock"
+# fi
 
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
