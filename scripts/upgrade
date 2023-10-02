@@ -40,45 +40,13 @@ if [ -z "${fpm_usage:-}" ]; then
     ynh_app_setting_set --app=$app --key=fpm_usage --value=$fpm_usage
 fi
 
-# Delete existing ini configuration file (backward compatibility)
-if [ -f /etc/php/$YNH_PHP_VERSION/fpm/conf.d/20-$app.ini ]; then
-    ynh_secure_remove --file=/etc/php/$YNH_PHP_VERSION/fpm/conf.d/20-$app.ini
-fi
-
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
 ynh_script_progression --message="Upgrading NGINX web server configuration..." --weight=1
 
-ynh_backup_if_checksum_is_different --file="/etc/nginx/conf.d/$domain.d/$app.conf"
-
-# Delete current NGINX configuration to be able to check if .well-known is already served.
-ynh_remove_nginx_config
-ynh_app_setting_delete --app=$app --key="checksum__etc_nginx_conf.d_$domain.d_$app.conf"
-
-# Wait untils NGINX has fully reloaded
-ynh_systemd_action --service_name=nginx --action=reload --line_match="Reloaded" --log_path="systemd"
-
 # Create a dedicated nginx config
 ynh_add_nginx_config
-
-#=================================================
-# PHP-FPM CONFIGURATION
-#=================================================
-ynh_script_progression --message="Upgrading PHP-FPM configuration..." --weight=2
-
-# If php has changed, remove the old fpm config file
-# if [ "$phpversion" != $YNH_PHP_VERSION ]
-# then
-    # ynh_backup_if_checksum_is_different --file="/etc/php/$phpversion/fpm/pool.d/$app.conf"
-    # ynh_secure_remove --file="/etc/php/$phpversion/fpm/pool.d/$app.conf"
-    # if [ -f /etc/php/$phpversion/fpm/conf.d/20-$app.ini ]; then
-        # ynh_secure_remove --file="/etc/php/$phpversion/fpm/conf.d/20-$app.ini"
-    # fi
-    # ynh_systemd_action --service_name="php${phpversion}-fpm" --action=reload
-    
-    # phpversion="$YNH_PHP_VERSION"
-# fi
 
 # Recreate a dedicated PHP-FPM config
 ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint

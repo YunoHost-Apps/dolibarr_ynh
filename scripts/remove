@@ -17,33 +17,11 @@ ynh_script_progression --message="Removing NGINX web server configuration..." --
 # Remove the dedicated nginx config
 ynh_remove_nginx_config
 
-#=================================================
-# REMOVE PHP-FPM CONFIGURATION
-#=================================================
-ynh_script_progression --message="Removing PHP-FPM configuration..." --weight=1
-
 # Remove the dedicated php-fpm config
 ynh_remove_fpm_config
 
-# Delete old static pool.d conf
-old_php_version=7.0
-if [ -f /etc/php/$old_php_version/fpm/pool.d/$app.conf ]; then
-	ynh_secure_remove --file=/etc/php/$old_php_version/fpm/pool.d/$app.conf
-fi
-
-#=================================================
-# REMOVE LOGROTATE CONFIGURATION
-#=================================================
-ynh_script_progression --message="Removing logrotate configuration..." --weight=1
-
 # Remove the app-specific logrotate config
 ynh_remove_logrotate
-
-#=================================================
-# SPECIFIC REMOVE
-#=================================================
-# REMOVE APP FOLDERS
-#=================================================
 
 # Remove a directory securely
 ynh_secure_remove --file="/etc/$app"
