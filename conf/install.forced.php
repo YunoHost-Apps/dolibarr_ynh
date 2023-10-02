@@ -34,7 +34,7 @@ $force_install_mainforcehttps = true;
 $force_install_database = '__DB_NAME__';
 
 /** @var string Database driver (mysql|mysqli|pgsql|mssql|sqlite|sqlite3) */
-$force_install_type = 'mysqli';
+$force_install_type = 'mysql';
 
 /** @var string Database server host */
 $force_install_dbserver = 'localhost';
@@ -46,7 +46,7 @@ $force_install_port = 3306;
 $force_install_prefix = 'llx_';
 
 /** @var bool Force database creation */
-$force_install_createdatabase = false;
+$force_install_createdatabase = true;
 
 /** @var string Database username */
 $force_install_databaselogin = '__DB_USER__';
