@@ -14,6 +14,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 update_version=$(ynh_app_upstream_version "../manifest.json")
+current_version=$(ynh_app_setting_get --app=$app --key=version)
 
 #=================================================
 # CHECK VERSION
