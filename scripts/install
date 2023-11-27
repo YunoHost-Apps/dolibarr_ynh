@@ -76,7 +76,7 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Adding a configuration file..." --weight=1
 
-ynh_add_config --template="../conf/install.forced.php" --destination="$install_dir/htdocs/install/install.forced.php"
+ynh_add_config --template="install.forced.php" --destination="$install_dir/htdocs/install/install.forced.php"
 
 #=================================================
 # SETUP APPLICATION WITH CURL
