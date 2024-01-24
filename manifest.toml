@@ -1,0 +1,63 @@
+packaging_format = 2
+
+id = "dolibarr"
+name = "Dolibarr"
+description.en = "Manage the various aspects of your business or association"
+description.fr = "Gérez les différents aspects de votre activité pro ou associative"
+
+version = "18.0.3~ynh1"
+
+maintainers = ["mastereur"]
+
+[upstream]
+license = "GPL-3.0-or-later"
+website = "https://www.dolibarr.org/"
+demo = "https://www.dolibarr.org/onlinedemo"
+admindoc = "https://www.dolibarr.org/documentation-home"
+userdoc = "https://www.dolibarr.org/#features"
+code = "https://github.com/Dolibarr/dolibarr"
+
+[integration]
+yunohost = ">= 11.2"
+architectures = "all"
+multi_instance = true
+
+ldap = true
+
+sso = false
+
+disk = "50M"
+ram.build = "50M"
+ram.runtime = "50M"
+
+[install]
+    [install.domain]
+    type = "domain"
+
+    [install.path]
+    type = "path"
+    default = "/dolibarr"
+
+    [install.init_main_permission]
+    type = "group"
+    default = "visitors"
+
+    [install.admin]
+    type = "user"
+
+[resources]
+
+    [resources.system_user]
+
+    [resources.install_dir]
+
+    [resources.data_dir]
+
+    [resources.permissions]
+    main.url = "/"
+
+    [resources.apt]
+    packages = "mariadb-server, php8.1-imagick, php8.1-gd, php8.1-mbstring, php8.1-soap, php8.1-curl, php8.1-intl, php8.1-opcache, php8.1-calendar, php8.1-zip, php8.1-xml, php8.1-fileinfo, php8.1-imap"
+
+    [resources.database]
+    type = "mysql"

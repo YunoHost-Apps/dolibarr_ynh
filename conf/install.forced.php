@@ -25,7 +25,7 @@ $force_install_noedit = 2;
 $force_install_message = 'Welcome to your Dolibarr install';
 
 /** @var string Data root absolute path (documents folder) */
-$force_install_main_data_root = null;
+$force_install_main_data_root = '__DATA_DIR__';
 
 /** @var bool Force HTTPS */
 $force_install_mainforcehttps = true;
@@ -46,7 +46,7 @@ $force_install_port = 3306;
 $force_install_prefix = 'llx_';
 
 /** @var bool Force database creation */
-$force_install_createdatabase = false;
+$force_install_createdatabase = true;
 
 /** @var string Database username */
 $force_install_databaselogin = '__DB_USER__';

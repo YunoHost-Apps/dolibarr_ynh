@@ -10,70 +10,27 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# MANAGE SCRIPT FAILURE
-#=================================================
-
-# Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
-
-#=================================================
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
 
-domain=$YNH_APP_ARG_DOMAIN
-path_url=$YNH_APP_ARG_PATH
-admin=$YNH_APP_ARG_ADMIN
-phpversion=$YNH_PHP_VERSION
-
-app=$YNH_APP_INSTANCE_NAME
-
-#=================================================
-# CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
-#=================================================
-ynh_script_progression --message="Validating installation parameters..." --weight=1
-
-final_path=/var/www/$app
-test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
-
-# Register (book) web path
-ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
+member=0
+fpm_footprint="medium"
+fpm_usage="medium"
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
 ynh_script_progression --message="Storing installation settings..." --weight=2
 
-ynh_app_setting_set --app=$app --key=domain --value=$domain
-ynh_app_setting_set --app=$app --key=path --value=$path_url
-ynh_app_setting_set --app=$app --key=admin --value=$admin
+ynh_app_setting_set --app=$app --key=member --value=$member
 ynh_app_setting_set --app=$app --key=version --value=$(ynh_app_upstream_version "../manifest.json")
-
-#=================================================
-# STANDARD MODIFICATIONS
-#=================================================
-# INSTALL DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Installing dependencies..." --weight=1
-
-ynh_install_app_dependencies $pkg_dependencies
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Configuring system user..." --weight=2
-
-# Create a system user
-ynh_system_user_create --username=$app --home_dir="$final_path"
+ynh_app_setting_set --app=$app --key=fpm_footprint --value=$fpm_footprint
+ynh_app_setting_set --app=$app --key=fpm_usage --value=$fpm_usage
 
 #=================================================
 # CREATE A MYSQL DATABASE
 #=================================================
 ynh_script_progression --message="Creating a MySQL database..." --weight=1
-
-db_name=$(ynh_sanitize_dbid --db_name=$app)
-db_user=$db_name
-ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-ynh_mysql_setup_db --db_user=$db_user --db_name=$db_name
 
 ynh_mysql_execute_as_root --sql="ALTER DATABASE $db_name charset=utf8"
 
@@ -94,36 +51,20 @@ SOURCE_FORMAT=tar.bz2
 SOURCE_IN_SUBDIR=true
 EOF
 
-ynh_app_setting_set --app=$app --key=final_path --value=$final_path
-
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_script_progression --message="Download source files..." --weight=70
-ynh_setup_source --dest_dir="$final_path"
+ynh_setup_source --dest_dir="$install_dir"
 
 # Create necessary files
-datadir=$final_path/documents
-touch $final_path/htdocs/conf/conf.php
+touch $install_dir/htdocs/conf/conf.php
 
 #=================================================
 # PHP-FPM CONFIGURATION
 #=================================================
 ynh_script_progression --message="Configuring PHP-FPM" --weight=2
 
-fpm_footprint="medium"
-fpm_usage="medium"
-
-ynh_app_setting_set --app=$app --key=fpm_footprint --value=$fpm_footprint
-ynh_app_setting_set --app=$app --key=fpm_usage --value=$fpm_usage
-
 # Create a dedicated php-fpm config
-ynh_add_fpm_config --phpversion=$phpversion --usage=$fpm_usage --footprint=$fpm_footprint
-# Used by ynh_add_nginx_config
-phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
-
-#=================================================
-# NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Configuring NGINX web server..." --weight=1
+ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
@@ -135,22 +76,14 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Adding a configuration file..." --weight=1
 
-ynh_add_config --template="../conf/install.forced.php" --destination="$final_path/htdocs/install/install.forced.php"
+ynh_add_config --template="install.forced.php" --destination="$install_dir/htdocs/install/install.forced.php"
 
 #=================================================
 # SETUP APPLICATION WITH CURL
 #=================================================
 
 # Set right permissions for curl install
-chown -R $app: "$final_path"
-
-# Set the app as temporarily public for cURL call
-if ! ynh_permission_has_user --permission "main" --user="visitors"; then
-	ynh_permission_update --permission="main" --add="visitors"
-fi
-
-# Reload NGINX
-ynh_systemd_action --service_name=nginx --action=reload
+chown -R $app: "$install_dir"
 
 # Installation with curl
 
@@ -170,8 +103,8 @@ ynh_local_curl "/install/step1.php" \
 		"action=set" > /var/log/$app/install1.html
 
 ynh_exec_fully_quiet sleep 5
-		
-ynh_script_progression --message="installation - step 2 (may take a while)..." --weight=72
+
+ynh_script_progression --message="installation - step 2 (may take a while)..." --weight=20
 ynh_local_curl "/install/step2.php" \
 		"testpost=ok" \
 		"action=set" > /var/log/$app/install2.html
@@ -197,22 +130,19 @@ ynh_local_curl "/install/step5.php" \
 
 ynh_exec_fully_quiet sleep 5
 
-ynh_script_progression --message="configuring LDAP" --weight=1
+# ynh_script_progression --message="configuring LDAP" --weight=1
 
-# Populate the LDAP parameters
-ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ../conf/sql/ldap.sql
+# # Populate the LDAP parameters
+# ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ../conf/sql/ldap.sql
 
-# Populate the database with YNH users.
-ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ../conf/sql/ldap_user.sql
+# # Populate the database with YNH users.
+# ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ../conf/sql/ldap_user.sql
 
-if php$phpversion $final_path/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y; then
-        ynh_print_info --message="LDAP user update ok"
-else
-        ynh_print_info --message="LDAP user update ended with error"
-fi
-
-# Remove the public access
-ynh_permission_update --permission="main" --remove="visitors"
+# if php$phpversion $install_dir/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y; then
+#         ynh_print_info --message="LDAP user update ok"
+# else
+#         ynh_print_info --message="LDAP user update ended with error"
+# fi
 
 #=================================================
 # MODIFY A CONFIG FILE
@@ -220,14 +150,14 @@ ynh_permission_update --permission="main" --remove="visitors"
 ynh_script_progression --message="configuring config file" --weight=1
 
 # Setup HTTP auth in conf
-ynh_replace_string --match_string="dolibarr_main_authentication='dolibarr'" --replace_string="dolibarr_main_authentication='http'" --target_file="$final_path/htdocs/conf/conf.php"
+ynh_replace_string --match_string="dolibarr_main_authentication='dolibarr'" --replace_string="dolibarr_main_authentication='http'" --target_file="$install_dir/htdocs/conf/conf.php"
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
 
 # Calculate and store the config file checksum into the app settings
-ynh_store_file_checksum --file="$final_path/htdocs/conf/conf.php"
+ynh_store_file_checksum --file="$install_dir/htdocs/conf/conf.php"
 
 #=================================================
 # GENERIC FINALIZATION
@@ -237,20 +167,16 @@ ynh_store_file_checksum --file="$final_path/htdocs/conf/conf.php"
 ynh_script_progression --message="Configuring permissions..." --weight=1
 
 # Set permissions on app files
-if [ ! -f "$datadir/install.lock" ]; then
-	echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$datadir/install.lock"
-	chown $app:$app "$datadir/install.lock"
-	chmod 440 "$datadir/install.lock"
-fi
+# if [ ! -f "$data_dir/install.lock" ]; then
+# 	echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$data_dir/install.lock"
+# 	chown $app:$app "$data_dir/install.lock"
+# 	chmod 440 "$data_dir/install.lock"
+# fi
 
-chmod 750 "$final_path"
-chmod -R o-rwx "$final_path"
-chown -R $app:www-data "$final_path"
-
-chmod 644 "$final_path/htdocs/conf/conf.php"
-mkdir -p "$datadir"
-chown -R $app: "$datadir"
-chmod go-w $datadir
+chmod 750 "$install_dir"
+chmod 644 "$install_dir/htdocs/conf/conf.php"
+chmod -R o-rwx "$install_dir"
+chown -R $app:www-data "$install_dir"
 
 #=================================================
 # SETUP LOGROTATE
@@ -258,24 +184,7 @@ chmod go-w $datadir
 ynh_script_progression --message="Configuring log rotation..." --weight=1
 
 # Use logrotate to manage application logfile(s)
-ynh_use_logrotate --logfile="$final_path/documents/dolibarr.log"
-
-#=================================================
-# SETUP SSOWAT
-#=================================================
-ynh_script_progression --message="Configuring permissions..." --weight=1
-
-# Create the public space permission if needed
-if ! ynh_permission_exists --permission "public_space"; then
-	ynh_permission_create --permission "public_space" --url "/public/" --allowed "visitors"
-fi
-
-#=================================================
-# RELOAD NGINX
-#=================================================
-ynh_script_progression --message="Reloading NGINX web server..." --weight=1
-
-ynh_systemd_action --service_name=nginx --action=reload
+ynh_use_logrotate --logfile="$install_dir/documents/dolibarr.log"
 
 #=================================================
 # END OF SCRIPT
