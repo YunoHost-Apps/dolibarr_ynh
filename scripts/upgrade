@@ -87,6 +87,7 @@ for version in "${main_versions[@]}"; do
         continue
     fi
     ynh_print_info --message="Upgrading app from $current_version to $new_version"
+    source_id="$version"
     upgrade_dolibarr
     current_version="$new_version"
 done
