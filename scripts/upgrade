@@ -8,19 +8,6 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# LOAD SETTINGS
-#=================================================
-
-update_version=$(ynh_app_upstream_version "../manifest.json")
-current_version=$(ynh_app_setting_get --app=$app --key=version)
-
-#=================================================
-# CHECK VERSION
-#=================================================
-
-upgrade_type=$(ynh_check_app_version_changed)
-
-#=================================================
 # STANDARD UPGRADE STEPS
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
@@ -30,13 +17,21 @@ ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
 # If fpm_footprint doesn't exist, create it
 if [ -z "${fpm_footprint:-}" ]; then
     fpm_footprint=low
-    ynh_app_setting_set --app=$app --key=fpm_footprint --value=$fpm_footprint
+    ynh_app_setting_set --app="$app" --key=fpm_footprint --value=$fpm_footprint
 fi
 
 # If fpm_usage doesn't exist, create it
 if [ -z "${fpm_usage:-}" ]; then
     fpm_usage=low
-    ynh_app_setting_set --app=$app --key=fpm_usage --value=$fpm_usage
+    ynh_app_setting_set --app="$app" --key=fpm_usage --value=$fpm_usage
+fi
+
+charset=$(mysql -ss -N -e "SELECT default_character_set_name FROM information_schema.SCHEMATA WHERE schema_name = '$db_name'")
+if [ "$charset" != "utf8" ]; then
+    ynh_print_info --message="Changing Database charset to utf8"
+    ynh_mysql_execute_as_root --sql="ALTER DATABASE $db_name charset=utf8"
+    ynh_local_curl  "/install/repair.php" "force_utf8_on_tables=confirmed" > "/var/log/$app/repair.html"
+    ynh_exec_fully_quiet sleep 5
 fi
 
 #=================================================
@@ -48,7 +43,7 @@ ynh_script_progression --message="Upgrading NGINX web server configuration..." -
 ynh_add_nginx_config
 
 # Recreate a dedicated PHP-FPM config
-ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint
+ynh_add_fpm_config --usage="$fpm_usage" --footprint="$fpm_footprint"
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -56,113 +51,55 @@ ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint
 # MAKE SEQUENTIAL UPGRADES FROM EACH MAJOR
 # VERSION TO THE NEXT ONE
 #=================================================
-if [ "$upgrade_type" == "UPGRADE_APP" ]
-then
-	ynh_script_progression --message="Upgrading source files..." --weight=60
+ynh_script_progression --message="Upgrading source files..." --weight=60
 
-	# Load the last available version
-    source upgrade.d/upgrade.last.sh
-    last_version=$next_version
+upgrade_dolibarr() {
+    ynh_setup_source --source_id="$source_id" --dest_dir="$install_dir"
+    chmod -R o-rwx "$install_dir"
+    chown -R "$app:www-data" "$install_dir"
 
-	last_major_version=${last_version%%.*}
+    # Remove the lock if it exists
+    lock=$install_dir/documents/install.lock
+    if [ -f "$lock" ]; then
+        ynh_secure_remove --file="$lock"
+    fi
 
-	# While the current version is not the last version, do an upgrade
-    while [ "$last_version" != "$current_version" ]
-    do
+    pushd "$install_dir/htdocs/install/"
+        "php$phpversion" upgrade.php "$current_version" "$new_version"
+        ynh_exec_fully_quiet sleep 5
 
-		# The major version is the first part of the version number
-        current_major_version=${current_version%%.*}
+        "php$phpversion" upgrade2.php "$current_version" "$new_version"
+        ynh_exec_fully_quiet sleep 5
 
-        if [ ! -f upgrade.d/upgrade.$current_major_version.sh ]; then
-			source_id="main"
-        else
-			source_id="upgrade_from_$current_major_version"
-        fi
+        "php$phpversion" step5.php "$current_version" "$new_version"
+        ynh_exec_fully_quiet sleep 5
+    popd
+}
 
-		# If the current version has the same major version than the next one,
-        # then it's the last upgrade to do
-        # We also cover the case where the last version is the first of the current major version series
-        # (e.g. 20.0.0 is the latest version)
-        if [[ ("$last_major_version" -eq "$current_major_version") || ( ("$last_major_version" -eq "$((current_major_version+1))") && ("$next_version" == "$last_version") ) ]]; then
-            current_major_version=last
-        fi
+# Sort --version-sort cdécembrean handle underscore in versions numbers
+mapfile -t main_versions < <(
+    ynh_read_manifest --key="resources.sources | keys[]" | grep "main_" | sort --version-sort
+)
+current_version="$YNH_APP_CURRENT_VERSION"
+for version in "${main_versions[@]}"; do
+    new_version=$(echo "$version" | sed 's|main_||' | sed 's|_|.|g')
+    if dpkg --compare-versions "$current_version" ge "$new_version"; then
+        continue
+    fi
+    ynh_print_info --message="Upgrading app from $current_version to $new_version"
+    upgrade_dolibarr
+    current_version="$new_version"
+done
 
-		# Load the value for this version
-        source upgrade.d/upgrade.$current_major_version.sh
+# Final upgrade to the final version
+new_version=$(ynh_app_upstream_version)
+ynh_print_info --message="Upgrading app from $current_version to $new_version"
+upgrade_dolibarr
 
-		ynh_print_info --message="Upgrading app from $current_version to $next_version"
-		# Download, check integrity, uncompress and patch the source from app.src
-		ynh_setup_source --source_id="$source_id" --dest_dir="$install_dir"
-
-		chown -R $app: "$install_dir"
-
-		# Remove the lock if it exists
-		lock=$install_dir/documents/install.lock
-		if [ -f $lock ]
-		then
-			ynh_secure_remove $lock
-		fi
-
-		mkdir -p /var/log/$app/
-
-		# Upgrade with CURL
-
-		charset=$(mysql -ss -N -e "SELECT default_character_set_name FROM information_schema.SCHEMATA WHERE schema_name = '$db_name'")
-		if [ "$charset" != "utf8" ]
-		then
-			ynh_print_info --message="Changing Database charset to utf8"
-
-			ynh_mysql_execute_as_root --database=$db_name --sql="ALTER DATABASE $db_name charset=utf8"
-
-			ynh_local_curl  "/install/repair.php" \
-					"force_utf8_on_tables=confirmed" > /var/log/$app/repair.html
-		fi
-
-		ynh_exec_fully_quiet sleep 5
-
-
-		# Download, check integrity, uncompress and patch the source from app.src
-		ynh_setup_source --dest_dir="$install_dir"
-
-		pushd $install_dir/htdocs/install/
-
-		if php$phpversion upgrade.php $current_version $next_version > /var/log/$app/upgrade.html;  then
-			ynh_print_info --message="Step 1 upgrading ended successfully"
-		else
-			ynh_die --message="Step 1 upgrading ended with error"
-		fi
-
-			ynh_exec_fully_quiet sleep 5
-
-			if php$phpversion upgrade2.php $current_version $next_version > /var/log/$app/upgrade2.html; then
-				ynh_print_info --message="Step 2 upgrading ended successfully"
-			else
-				ynh_die --message="Step 2 upgrading ended with error"
-			fi
-
-			ynh_exec_fully_quiet sleep 5
-
-			if php$phpversion step5.php $current_version $next_version > /var/log/$app/upgrade3.html; then
-				ynh_print_info --message="Step 3 upgrading ended successfully"
-			else
-				ynh_die  --message="Step 3 upgrading ended with error"
-			fi
-		popd
-
-
-		# Get the new current version number
-        current_version=$next_version
-        current_major_version=${current_version%%.*}
-
-		done
-
-		if php$phpversion $install_dir/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y; then
-				ynh_print_info --message="LDAP user update ok"
-		else
-				ynh_print_info --message="LDAP user update ended with error"
-		fi
-
-		ynh_app_setting_set --app=$app --key=version --value=$update_version
+if "php$phpversion" "$install_dir/scripts/user/sync_users_ldap2dolibarr.php" commitiferror --server=localhost -y; then
+    ynh_print_info --message="LDAP user update ok"
+else
+    ynh_print_info --message="LDAP user update ended with error"
 fi
 
 #=================================================
@@ -191,9 +128,9 @@ ynh_script_progression --message="Configuring permissions..." --weight=1
 
 # Set permissions on app files
 if [ ! -f "$data_dir/install.lock" ]; then
-	echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$data_dir/install.lock"
-	chown $app:$app "$data_dir/install.lock"
-	chmod 440 "$data_dir/install.lock"
+    echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$data_dir/install.lock"
+    chown $app:$app "$data_dir/install.lock"
+    chmod 440 "$data_dir/install.lock"
 fi
 
 chmod 750 "$install_dir"

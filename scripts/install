@@ -21,7 +21,6 @@ fpm_usage="medium"
 ynh_script_progression --message="Storing installation settings..." --weight=2
 
 ynh_app_setting_set --app="$app" --key="member" --value="$member"
-ynh_app_setting_set --app="$app" --key="version" --value="$(ynh_app_upstream_version)"
 ynh_app_setting_set --app="$app" --key="fpm_footprint" --value="$fpm_footprint"
 ynh_app_setting_set --app="$app" --key="fpm_usage" --value="$fpm_usage"
 
@@ -41,14 +40,15 @@ ynh_script_progression --message="Setting up source files..." --weight=1
 ynh_setup_source --dest_dir="$install_dir"
 
 chmod 750 "$install_dir"
+chmod -R o-rwx "$install_dir"
 chown -R "$app:www-data" "$install_dir"
 
 #=================================================
 # PREPARE AND INSTALL APP
 #=================================================
-ynh_script_progression --message="Adding a configuration file..." --weight=1
+ynh_script_progression --message="Adding $app's configuration file..." --weight=1
 
-ynh_add_config --template="conf.php" --destination="$install_dir/htdocs/conf/conf.php"
+ynh_add_config --template="../conf/conf.php" --destination="$install_dir/htdocs/conf/conf.php"
 
 chmod 644 "$install_dir/htdocs/conf/conf.php"
 chown "$app:$app" "$install_dir/htdocs/conf/conf.php"

@@ -8,9 +8,9 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# REMOVE NGINX CONFIGURATION
+# REMOVE SYSTEM CONFIGURATIONS
 #=================================================
-ynh_script_progression --message="Removing NGINX web server configuration..." --weight=1
+ynh_script_progression --message="Removing system configurations related to $app..." --weight=1
 
 # Remove the dedicated nginx config
 ynh_remove_nginx_config
