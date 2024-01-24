@@ -37,20 +37,7 @@ ynh_mysql_execute_as_root --sql="ALTER DATABASE $db_name charset=utf8"
 #=================================================
 ynh_script_progression --message="Setting up source files..." --weight=1
 
-# Load the last available version
-source upgrade.d/upgrade.last.sh
-
-# Create an app.src for the last version of Dolibarr
-cat > ../conf/app.src << EOF
-SOURCE_URL=https://github.com/Dolibarr/dolibarr/archive/$next_version.tar.gz
-SOURCE_SUM=$dolibarr_source_sha256
-SOURCE_SUM_PRG=sha256sum
-SOURCE_FORMAT=tar.bz2
-SOURCE_IN_SUBDIR=true
-EOF
-
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_script_progression --message="Download source files..." --weight=10
 ynh_setup_source --dest_dir="$install_dir"
 
 chmod 750 "$install_dir"

@@ -74,9 +74,9 @@ then
         current_major_version=${current_version%%.*}
 
         if [ ! -f upgrade.d/upgrade.$current_major_version.sh ]; then
-            source upgrade.d/upgrade.last.sh
+			source_id="main"
         else
-            source upgrade.d/upgrade.$current_major_version.sh
+			source_id="upgrade_from_$current_major_version"
         fi
 
 		# If the current version has the same major version than the next one,
@@ -91,19 +91,8 @@ then
         source upgrade.d/upgrade.$current_major_version.sh
 
 		ynh_print_info --message="Upgrading app from $current_version to $next_version"
-
-		# Create an app.src for this version of Dolibarr
-        cat > ../conf/app.src << EOF
-SOURCE_URL=https://github.com/Dolibarr/dolibarr/archive/$next_version.tar.gz
-SOURCE_SUM=$dolibarr_source_sha256
-SOURCE_SUM_PRG=sha256sum
-SOURCE_FORMAT=tar.bz2
-SOURCE_IN_SUBDIR=true
-EOF
-
-
 		# Download, check integrity, uncompress and patch the source from app.src
-		ynh_setup_source --dest_dir="$install_dir"
+		ynh_setup_source --source_id="$source_id" --dest_dir="$install_dir"
 
 		chown -R $app: "$install_dir"
 

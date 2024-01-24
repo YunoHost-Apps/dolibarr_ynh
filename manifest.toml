@@ -1,3 +1,5 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/master/schemas/manifest.v2.schema.json
+
 packaging_format = 2
 
 id = "dolibarr"
@@ -5,7 +7,7 @@ name = "Dolibarr"
 description.en = "Manage the various aspects of your business or association"
 description.fr = "Gérez les différents aspects de votre activité pro ou associative"
 
-version = "18.0.3~ynh1"
+version = "18.0.4~ynh1"
 
 maintainers = ["mastereur"]
 
@@ -46,6 +48,55 @@ ram.runtime = "50M"
     type = "user"
 
 [resources]
+    [resources.sources.main]
+    url = "https://github.com/Dolibarr/dolibarr/archive/18.0.4.tar.gz"
+    sha256 = "b1467797f892f72aa313f69f16d5277b481f2a7264ebe1d0ccf43311ca473684"
+    autoupdate.strategy = "latest_github_release"
+
+    [resources.sources.upgrade_from_17]
+    url = "https://github.com/dolibarr/dolibarr/archive/18.0.1.tar.gz"
+    sha256 = "37bd3c8533b821c241dbb34b0e88349c1d5b43f7ffa6027f0b7970748d1f727a"
+    prefetch = false
+
+    [resources.sources.upgrade_from_16]
+    url = "https://github.com/dolibarr/dolibarr/archive/17.0.1.tar.gz"
+    sha256 = "2eddd545c07eae291ad46e48ab55d3adb988d99c29a8dfaa2e2fde0a890b0ddc"
+    prefetch = false
+
+    [resources.sources.upgrade_from_15]
+    url = "https://github.com/dolibarr/dolibarr/archive/16.0.5.tar.gz"
+    sha256 = "c8298342558e62b955a6f4c01fedb6a187b2e0c0b2c1681a97158ca979f9304f"
+    prefetch = false
+
+    [resources.sources.upgrade_from_14]
+    url = "https://github.com/dolibarr/dolibarr/archive/15.0.3.tar.gz"
+    sha256 = "b145a38f56c44b166721d64909fb12408c6d10d08fcf74d2c00418a60201cc9d"
+    prefetch = false
+
+    [resources.sources.upgrade_from_13]
+    url = "https://github.com/Dolibarr/dolibarr/archive/14.0.5.tar.gz"
+    sha256 = "31f4c934e484a9582d8867e4170f1f1acd8c41628b059370a6a449eb6e94ae75"
+    prefetch = false
+
+    [resources.sources.upgrade_from_12]
+    url = "https://github.com/Dolibarr/dolibarr/archive/13.0.5.tar.gz"
+    sha256 = "08ec08dc5093d614361f273237f5aaf8d70e63d764c2fa8d7f3f68a1485156d0"
+    prefetch = false
+
+    [resources.sources.upgrade_from_11]
+    url = "https://github.com/Dolibarr/dolibarr/archive/12.0.5.tar.gz"
+    sha256 = "b60b124ebcd294375f6200cc0683449e475b5dec687f8317b820fc8ec1413d21"
+    prefetch = false
+
+    [resources.sources.upgrade_from_10]
+    url = "https://github.com/Dolibarr/dolibarr/archive/11.0.5.tar.gz"
+    sha256 = "6f51435a4ffe576e836bf6449d900de9a56016f09591322cb2ba47a07c97679d"
+    prefetch = false
+
+    [resources.sources.upgrade_from_9]
+    url = "https://github.com/Dolibarr/dolibarr/archive/10.0.7.tar.gz"
+    sha256 = "6efc230f400a7b7152a0e4b9ba02a780f38b869b4aebd2bc28883268270ef871"
+    prefetch = false
 
     [resources.system_user]
 
