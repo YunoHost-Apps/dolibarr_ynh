@@ -103,7 +103,7 @@ ynh_local_curl "/install/step1.php" \
 		"action=set" > /var/log/$app/install1.html
 
 ynh_exec_fully_quiet sleep 5
-		
+
 ynh_script_progression --message="installation - step 2 (may take a while)..." --weight=20
 ynh_local_curl "/install/step2.php" \
 		"testpost=ok" \
