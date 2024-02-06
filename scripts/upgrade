@@ -137,7 +137,7 @@ EOF
 		# Download, check integrity, uncompress and patch the source from app.src
 		ynh_setup_source --dest_dir="$install_dir"
 		
-		pushd $final_path/htdocs/install/
+		pushd $install_dir/htdocs/install/
 		
 		if php$phpversion upgrade.php $current_version $next_version > /var/log/$app/upgrade.html;  then
 			ynh_print_info --message="Step 1 upgrading ended successfully"
