@@ -29,7 +29,9 @@ ynh_script_progression --message="Setting up source files..." --weight=1
 ynh_setup_source --source_id="main" --dest_dir="$install_dir"
 
 # Create necessary files
-touch $install_dir/htdocs/conf/conf.php
+touch "$install_dir/htdocs/conf/conf.php"
+
+chown -R "$app:www-data" "$install_dir"
 
 #=================================================
 # PREPARE AND INSTALL APP
@@ -57,7 +59,7 @@ ynh_use_logrotate --logfile="$install_dir/documents/dolibarr.log"
 #=================================================
 
 # Set right permissions for curl install
-chown -R "$app:" "$install_dir"
+# chown -R "$app:" "$install_dir"
 
 # Installation with curl
 
