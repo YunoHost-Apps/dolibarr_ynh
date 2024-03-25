@@ -7,5 +7,6 @@ test_format = 1.0
     # -------------------------------
     # Commits to test upgrade from
     # -------------------------------
-    
+
     test_upgrade_from.8f6e1a302a943607aa640bbcb44405c8cb0a513d.name = "Upgrade from 18.0.3"
+    test_upgrade_from.c91139d3859032c3982b4bba3943aeae3ca57948.name = "15.0.3"
