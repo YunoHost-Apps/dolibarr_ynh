@@ -44,7 +44,7 @@ ynh_add_config --template="install.forced.php" --destination="$install_dir/htdoc
 ynh_script_progression --message="Adding system configurations related to $app..." --weight=1
 
 # Create a dedicated php-fpm config
-ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint
+ynh_add_fpm_config
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
