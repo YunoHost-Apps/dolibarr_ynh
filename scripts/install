@@ -1,8 +1,6 @@
 #!/bin/bash
 
 #=================================================
-# GENERIC START
-#=================================================
 # IMPORT GENERIC HELPERS
 #=================================================
 
@@ -22,15 +20,15 @@ fpm_usage="medium"
 #=================================================
 ynh_script_progression --message="Storing installation settings..." --weight=2
 
-ynh_app_setting_set --app=$app --key=member --value=$member
-ynh_app_setting_set --app=$app --key=version --value=$(ynh_app_upstream_version "../manifest.json")
-ynh_app_setting_set --app=$app --key=fpm_footprint --value=$fpm_footprint
-ynh_app_setting_set --app=$app --key=fpm_usage --value=$fpm_usage
+ynh_app_setting_set --app="$app" --key="member" --value="$member"
+ynh_app_setting_set --app="$app" --key="version" --value="$(ynh_app_upstream_version)"
+ynh_app_setting_set --app="$app" --key="fpm_footprint" --value="$fpm_footprint"
+ynh_app_setting_set --app="$app" --key="fpm_usage" --value="$fpm_usage"
 
 #=================================================
 # CREATE A MYSQL DATABASE
 #=================================================
-ynh_script_progression --message="Creating a MySQL database..." --weight=1
+ynh_script_progression --message="Configuring $app's MySQL database..." --weight=1
 
 ynh_mysql_execute_as_root --sql="ALTER DATABASE $db_name charset=utf8"
 
@@ -56,32 +54,25 @@ ynh_script_progression --message="Download source files..." --weight=10
 ynh_setup_source --dest_dir="$install_dir"
 
 #=================================================
-# PHP-FPM CONFIGURATION
+# PREPARE AND INSTALL APP
 #=================================================
-ynh_script_progression --message="Configuring PHP-FPM" --weight=2
+ynh_script_progression --message="Adding a configuration file..." --weight=1
+
+ynh_add_config --template="conf.php" --destination="$install_dir/htdocs/conf/conf.php"
+
+chmod 644 "$install_dir/htdocs/conf/conf.php"
+chown "$app:$app" "$install_dir/htdocs/conf/conf.php"
+
+#=================================================
+# SYSTEM CONFIGURATION
+#=================================================
+ynh_script_progression --message="Adding system configurations related to $app..." --weight=1
 
 # Create a dedicated php-fpm config
 ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
-
-#=================================================
-# SPECIFIC SETUP
-#=================================================
-# PREPARE AND INSTALL APP
-#=================================================
-ynh_script_progression --message="Adding a configuration file..." --weight=1
-
-ynh_add_config --template="../conf/conf.php" --destination="$install_dir/htdocs/conf/conf.php"
-
-chmod 644 "$install_dir/htdocs/conf/conf.php"
-chown $app:$app "$install_dir/htdocs/conf/conf.php"
-
-#=================================================
-# SETUP LOGROTATE
-#=================================================
-ynh_script_progression --message="Configuring log rotation..." --weight=1
 
 # Use logrotate to manage application logfile(s)
 ynh_use_logrotate --logfile="$install_dir/documents/dolibarr.log"
