@@ -53,6 +53,8 @@ EOF
 ynh_script_progression --message="Download source files..." --weight=10
 ynh_setup_source --dest_dir="$install_dir"
 
+chown -R "$app:www-data" "$install_dir"
+
 #=================================================
 # PREPARE AND INSTALL APP
 #=================================================
