@@ -28,11 +28,6 @@ ynh_script_progression --message="Setting up source files..." --weight=1
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --source_id="main" --dest_dir="$install_dir"
 
-# Create necessary files
-touch "$install_dir/htdocs/conf/conf.php"
-
-# chown -R "$app:www-data" "$install_dir"
-
 #=================================================
 # PREPARE AND INSTALL APP
 #=================================================
@@ -57,6 +52,12 @@ ynh_use_logrotate --logfile="$install_dir/documents/dolibarr.log"
 #=================================================
 # SETUP APPLICATION WITH CURL
 #=================================================
+
+# Create necessary files
+touch "$install_dir/htdocs/conf/conf.php"
+
+# chown -R "$app:www-data" "$install_dir"
+
 
 # Set right permissions for curl install
 chown -R "$app:" "$install_dir"
@@ -85,6 +86,8 @@ ynh_local_curl "/install/step4.php" "testpost=ok" "action=set"
 
 ynh_exec_fully_quiet sleep 5
 
+cp "$install_dir/htdocs/conf/conf.php" "$install_dir/htdocs/conf/conf.php.intermediate"
+
 # Generate a random password for the admin user (will be ignored because of LDAP)
 password=$(ynh_string_random 8)
 
@@ -101,7 +104,7 @@ ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ..
 # Populate the database with YNH users.
 ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ../conf/sql/ldap_user.sql
 
-if php$phpversion $install_dir/scripts/user/sync_users_ldap2dolibarr.php commitiferror --server=localhost -y; then
+if "php$phpversion" "$install_dir/scripts/user/sync_users_ldap2dolibarr.php" commitiferror --server=localhost -y; then
     ynh_print_info --message="LDAP user update ok"
 else
     ynh_print_info --message="LDAP user update ended with error"
@@ -113,11 +116,9 @@ fi
 ynh_script_progression --message="configuring config file" --weight=1
 
 # Setup HTTP auth in conf
-ynh_replace_string --match_string="dolibarr_main_authentication='dolibarr'" --replace_string="dolibarr_main_authentication='http'" --target_file="$install_dir/htdocs/conf/conf.php"
-
-#=================================================
-# STORE THE CONFIG FILE CHECKSUM
-#=================================================
+ynh_replace_string --target_file="$install_dir/htdocs/conf/conf.php" \
+    --match_string="dolibarr_main_authentication='dolibarr'" \
+    --replace_string="dolibarr_main_authentication='http'"
 
 # Calculate and store the config file checksum into the app settings
 ynh_store_file_checksum --file="$install_dir/htdocs/conf/conf.php"
@@ -128,20 +129,20 @@ ynh_store_file_checksum --file="$install_dir/htdocs/conf/conf.php"
 #REMOVEME? ynh_script_progression --message="Configuring permissions..." --weight=1
 
 # Set permissions on app files
-if [ ! -f "$data_dir/install.lock" ]; then
-    echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$data_dir/install.lock"
-    chown $app:$app "$data_dir/install.lock"
-    chmod 440 "$data_dir/install.lock"
+if [ ! -f "$install_dir/documents/install.lock" ]; then
+    echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$install_dir/documents/install.lock"
+    chown $app:$app "$install_dir/documents/install.lock"
+    chmod 440 "$install_dir/documents/install.lock"
 fi
 
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
-chown -R $app:www-data "$install_dir"
+chown -R "$app:www-data" "$install_dir"
 
 chmod 644 "$install_dir/htdocs/conf/conf.php"
-mkdir -p "$data_dir"
-chown -R $app: "$data_dir"
-chmod go-w $data_dir
+mkdir -p "$install_dir/documents"
+chown -R "$app:" "$install_dir/documents"
+chmod go-w "$install_dir/documents"
 
 #=================================================
 # END OF SCRIPT
