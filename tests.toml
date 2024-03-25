@@ -1,0 +1,11 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/master/schemas/tests.v1.schema.json
+
+test_format = 1.0
+
+[default]
+
+    # ------------
+    # Tests to run
+    # ------------
+
+    test_upgrade_from.7e3914481ac4d6c40f3be3f35f155fac6f4387c6.name = "old version"
