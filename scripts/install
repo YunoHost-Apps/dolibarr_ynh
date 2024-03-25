@@ -16,7 +16,7 @@ ynh_app_setting_set --app=$app --key=version --value=$(ynh_app_upstream_version)
 #=================================================
 # CREATE A MYSQL DATABASE
 #=================================================
-ynh_script_progression --message="Creating $app's MySQL database..." --weight=1
+ynh_script_progression --message="Configuring $app's MySQL database..." --weight=1
 
 ynh_mysql_execute_as_root --sql="ALTER DATABASE $db_name charset=utf8"
 
@@ -29,6 +29,8 @@ ynh_script_progression --message="Setting up source files..." --weight=1
 ynh_setup_source --source_id="main" --dest_dir="$install_dir"
 
 chmod 750 "$install_dir"
+chmod -R o-rwx "$install_dir"
+chmod go-w "$install_dir/documents"
 
 #=================================================
 # PREPARE AND INSTALL APP
@@ -95,12 +97,8 @@ if [ ! -f "$install_dir/documents/install.lock" ]; then
     chmod 440 "$install_dir/documents/install.lock"
 fi
 
-chmod -R o-rwx "$install_dir"
 chown -R "$app:www-data" "$install_dir"
-
-mkdir -p "$install_dir/documents"
 chown -R "$app:" "$install_dir/documents"
-chmod go-w "$install_dir/documents"
 
 #=================================================
 # SETUP LDAP
