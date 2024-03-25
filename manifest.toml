@@ -69,6 +69,7 @@ ram.runtime = "50M" # FIXME: replace with an **estimate** minimum ram requiremen
         "php8.1-soap",
         "php8.1-curl",
         "php8.1-intl",
+        "php8.1-ldap",
         "php8.1-opcache",
         "php8.1-calendar",
         "php8.1-zip",
