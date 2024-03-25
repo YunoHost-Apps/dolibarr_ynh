@@ -5,7 +5,8 @@
 #=================================================
 
 upgrade_dolibarr() {
-    ynh_setup_source --source_id="$source_id" --dest_dir="$install_dir"
+    ynh_setup_source --source_id="$source_id" --dest_dir="$install_dir" --full_replace=1 \
+        --keep="htdocs/conf/conf.php htdocs/install/install.forced.php"
     chmod -R o-rwx "$install_dir"
     chown -R "$app:www-data" "$install_dir"
 
