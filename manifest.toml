@@ -42,6 +42,11 @@ ram.runtime = "50M" # FIXME: replace with an **estimate** minimum ram requiremen
     type = "user"
 
 [resources]
+    [resources.sources.main]
+    url = "https://github.com/Dolibarr/dolibarr/archive/18.0.3.tar.gz"
+    sha256 = "8639d466b26f0fba7d2b610a96ffcf36a657b1e00bdc2e5a1ac5287521dcb4ed"
+    autoupdate.strategy = "latest_github_release"
+
     [resources.system_user]
 
     [resources.install_dir]
