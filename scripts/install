@@ -61,34 +61,25 @@ chown -R "$app:" "$install_dir"
 
 # Installation with curl
 
-mkdir -p "/var/log/$app/"
-
 ynh_script_progression --message="Finalizing installation..." --weight=1
 
 ynh_script_progression --message="Generate fileconf" --weight=1
-ynh_local_curl "/install/fileconf.php" \
-    "testpost=ok"
+ynh_local_curl "/install/fileconf.php" "testpost=ok"
 
 ynh_exec_fully_quiet sleep 5
 
 ynh_script_progression --message="installation - step 1" --weight=3
-ynh_local_curl "/install/step1.php" \
-    "testpost=ok" \
-    "action=set" > /var/log/$app/install1.html
+ynh_local_curl "/install/step1.php" "testpost=ok" "action=set"
 
 ynh_exec_fully_quiet sleep 5
 
 ynh_script_progression --message="installation - step 2 (may take a while)..." --weight=72
-ynh_local_curl "/install/step2.php" \
-    "testpost=ok" \
-    "action=set" > /var/log/$app/install2.html
+ynh_local_curl "/install/step2.php" "testpost=ok" "action=set"
 
 ynh_exec_fully_quiet sleep 5
 
 ynh_script_progression --message="installation - step 4" --weight=3
-ynh_local_curl "/install/step4.php" \
-    "testpost=ok" \
-    "action=set" > /var/log/$app/install3.html
+ynh_local_curl "/install/step4.php" "testpost=ok" "action=set"
 
 ynh_exec_fully_quiet sleep 5
 
@@ -96,11 +87,7 @@ ynh_exec_fully_quiet sleep 5
 password=$(ynh_string_random 8)
 
 ynh_script_progression --message="installation - step 5" --weight=4
-ynh_local_curl "/install/step5.php" \
-    "testpost=ok" \
-    "action=set" \
-    "pass=$password" \
-    "pass_verif=$password" > /var/log/$app/install4.html
+ynh_local_curl "/install/step5.php" "testpost=ok" "action=set" "pass=$password" "pass_verif=$password"
 
 ynh_exec_fully_quiet sleep 5
 
