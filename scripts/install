@@ -68,6 +68,15 @@ ynh_add_nginx_config
 # Use logrotate to manage application logfile(s)
 ynh_use_logrotate --logfile="$install_dir/documents/dolibarr.log"
 
+#=================================================
+# FINAL CONFIGURATION
+#=================================================
+ynh_script_progression --message="Final configuration of $app to create databases..." --weight=1
+
+ynh_local_curl "/install/step2.php" \
+    "testpost=ok" \
+    "action=set"
+
 ynh_script_progression --message="Configuring LDAP" --weight=1
 
 # Populate the LDAP parameters
