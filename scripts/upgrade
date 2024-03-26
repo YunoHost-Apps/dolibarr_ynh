@@ -80,21 +80,15 @@ ynh_backup_if_checksum_is_different --file="$install_dir/htdocs/conf/conf.php"
 ynh_store_file_checksum --file="$install_dir/htdocs/conf/conf.php"
 chmod 644 "$install_dir/htdocs/conf/conf.php"
 
-#=================================================
-# SECURE FILES AND DIRECTORIES
-#=================================================
-#REMOVEME? ynh_script_progression --message="Configuring permissions..." --weight=1
-
-# Set permissions on app files
-if [ ! -f "$data_dir/install.lock" ]; then
-	echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$data_dir/install.lock"
-	chown $app:$app "$data_dir/install.lock"
-	chmod 440 "$data_dir/install.lock"
+if [ ! -f "$install_dir/documents/install.lock" ]; then
+    echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$install_dir/documents/install.lock"
+    chown "$app:$app" "$install_dir/documents/install.lock"
+    chmod 440 "$install_dir/documents/install.lock"
 fi
 
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
-chown -R $app:www-data "$install_dir"
+chown -R "$app:www-data" "$install_dir"
 
 # mkdir -p "$data_dir"
 # chown -R $app: "$data_dir"
