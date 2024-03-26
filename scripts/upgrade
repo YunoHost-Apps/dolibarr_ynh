@@ -37,7 +37,7 @@ charset=$(mysql -ss -N -e "SELECT default_character_set_name FROM information_sc
 if [ "$charset" != "utf8" ]; then
     ynh_print_info --message="Changing Database charset to utf8"
     ynh_mysql_execute_as_root --sql="ALTER DATABASE $db_name charset=utf8"
-    ynh_local_curl  "/install/repair.php" "force_utf8_on_tables=confirmed" > "/var/log/$app/repair.html"
+    ynh_local_curl  "/install/repair.php" "force_utf8_on_tables=confirmed"
     ynh_exec_fully_quiet sleep 5
 fi
 
