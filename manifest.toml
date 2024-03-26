@@ -119,6 +119,7 @@ ram.runtime = "50M" # FIXME: replace with an **estimate** minimum ram requiremen
         "php8.1-xml",
         "php8.1-fileinfo",
         "php8.1-imap",
+        "mariadb-server",
     ]
 
     [resources.database]
