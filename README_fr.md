@@ -18,7 +18,7 @@ Il NE doit PAS être modifié à la main.
 
 Dolibarr ERP & CRM est un logiciel moderne de gestion de votre activité professionnelle ou associative (contacts, factures, commandes, stocks, agenda, etc.).
 
-**Version incluse :** 18.0.3~ynh2
+**Version incluse :** 19.0.2~ynh1
 
 **Démo :** <https://www.dolibarr.org/onlinedemo>
 
