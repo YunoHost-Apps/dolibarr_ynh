@@ -18,7 +18,7 @@ EZ editatu eskuz.
 
 Dolibarr ERP & CRM is a modern software for managing your professional or associative activity (contacts, invoices, orders, stocks, agenda, etc.).
 
-**Paketatutako bertsioa:** 18.0.3~ynh2
+**Paketatutako bertsioa:** 19.0.2~ynh1
 
 **Demoa:** <https://www.dolibarr.org/onlinedemo>
 
