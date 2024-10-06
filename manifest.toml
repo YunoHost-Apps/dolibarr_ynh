@@ -7,7 +7,7 @@ name = "Dolibarr"
 description.en = "Manage the various aspects of your business or association"
 description.fr = "Gérez les différents aspects de votre activité pro ou associative"
 
-version = "19.0.2~ynh1"
+version = "20.0.0~ynh1"
 
 maintainers = ["mastereur"]
 
@@ -48,8 +48,8 @@ ram.runtime = "150M"
 
 [resources]
     [resources.sources.main]
-    url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/19.0.2.tar.gz"
-    sha256 = "7da083cff05bf6522e3140b6a19c9eb87cdbab2e06df4cbf3dbebd6dd47d886d"
+    url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/20.0.0.tar.gz"
+    sha256 = "d5a75b9efb84d51190a07594b79898462f4130b6872db61167b4d95c97c31a81"
     autoupdate.strategy = "latest_github_release"
 
     [resources.sources.main_18_0_1]
@@ -107,20 +107,20 @@ ram.runtime = "150M"
 
     [resources.apt]
     packages = [
-        "php8.1-mysql",
-        "php8.1-imagick",
-        "php8.1-gd",
-        "php8.1-mbstring",
-        "php8.1-soap",
-        "php8.1-curl",
-        "php8.1-intl",
-        "php8.1-ldap",
-        "php8.1-opcache",
-        "php8.1-calendar",
-        "php8.1-zip",
-        "php8.1-xml",
-        "php8.1-fileinfo",
-        "php8.1-imap",
+        "php8.3-mysql",
+        "php8.3-imagick",
+        "php8.3-gd",
+        "php8.3-mbstring",
+        "php8.3-soap",
+        "php8.3-curl",
+        "php8.3-intl",
+        "php8.3-ldap",
+        "php8.3-opcache",
+        "php8.3-calendar",
+        "php8.3-zip",
+        "php8.3-xml",
+        "php8.3-fileinfo",
+        "php8.3-imap",
         "mariadb-server",
     ]
 

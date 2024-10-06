@@ -14,16 +14,6 @@ ynh_config_remove_phpfpm
 
 ynh_config_remove_logrotate
 
-#=================================================
-# REMOVE OLD FILES
-#=================================================
-
-# Delete old static pool.d conf
-old_php_version=7.0
-if [ -f "/etc/php/$old_php_version/fpm/pool.d/$app.conf" ]; then
-    ynh_safe_rm "/etc/php/$old_php_version/fpm/pool.d/$app.conf"
-fi
-
 ynh_safe_rm "/etc/$app"
 
 #=================================================
