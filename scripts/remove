@@ -1,9 +1,5 @@
 #!/bin/bash
 
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
 source /usr/share/yunohost/helpers
 
@@ -12,29 +8,23 @@ source /usr/share/yunohost/helpers
 #=================================================
 ynh_script_progression "Removing system configurations related to $app..."
 
-# Remove the dedicated nginx config
 ynh_config_remove_nginx
 
-# Remove the dedicated php-fpm config
 ynh_config_remove_phpfpm
 
-# Remove the app-specific logrotate config
 ynh_config_remove_logrotate
 
 #=================================================
 # REMOVE OLD FILES
 #=================================================
+
 # Delete old static pool.d conf
 old_php_version=7.0
 if [ -f "/etc/php/$old_php_version/fpm/pool.d/$app.conf" ]; then
     ynh_safe_rm "/etc/php/$old_php_version/fpm/pool.d/$app.conf"
 fi
 
-# Remove a directory securely
 ynh_safe_rm "/etc/$app"
-
-# Remove the log files
-#REMOVEME? (Apps should not remove their log dir during remove ... this should only happen if --purge is used, and be handled by the core...) ynh_safe_rm "/var/log/$app"
 
 #=================================================
 # END OF SCRIPT
