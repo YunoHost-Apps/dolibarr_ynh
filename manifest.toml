@@ -48,7 +48,6 @@ ram.runtime = "150M"
 
 [resources]
     [resources.sources.main]
-        [resources.sources.main]
     url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/20.0.1.tar.gz"
     sha256 = "7c1f92cd1b370ce1f1f908be4d3b1919e0f40b157cfc76ac569df6d38ec31bcd"
     autoupdate.strategy = "latest_github_release"

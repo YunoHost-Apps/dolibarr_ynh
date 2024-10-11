@@ -5,7 +5,7 @@ No se debe editar a mano.
 
 # Dolibarr para Yunohost
 
-[![Nivel de integración](https://dash.yunohost.org/integration/dolibarr.svg)](https://dash.yunohost.org/appci/app/dolibarr) ![Estado funcional](https://ci-apps.yunohost.org/ci/badges/dolibarr.status.svg) ![Estado En Mantención](https://ci-apps.yunohost.org/ci/badges/dolibarr.maintain.svg)
+[![Nivel de integración](https://dash.yunohost.org/integration/dolibarr.svg)](https://ci-apps.yunohost.org/ci/apps/dolibarr/) ![Estado funcional](https://ci-apps.yunohost.org/ci/badges/dolibarr.status.svg) ![Estado En Mantención](https://ci-apps.yunohost.org/ci/badges/dolibarr.maintain.svg)
 
 [![Instalar Dolibarr con Yunhost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=dolibarr)
 
@@ -18,7 +18,7 @@ No se debe editar a mano.
 
 Dolibarr ERP & CRM is a modern software for managing your professional or associative activity (contacts, invoices, orders, stocks, agenda, etc.).
 
-**Versión actual:** 19.0.2~ynh1
+**Versión actual:** 20.0.0~ynh1
 
 **Demo:** <https://www.dolibarr.org/onlinedemo>
 
@@ -37,7 +37,7 @@ Dolibarr ERP & CRM is a modern software for managing your professional or associ
 
 ## Información para desarrolladores
 
-Por favor enviar sus correcciones a la [`branch testing`](https://github.com/YunoHost-Apps/dolibarr_ynh/tree/testing
+Por favor enviar sus correcciones a la [rama `testing`](https://github.com/YunoHost-Apps/dolibarr_ynh/tree/testing).
 
 Para probar la rama `testing`, sigue asÍ:
 
