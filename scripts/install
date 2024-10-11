@@ -17,7 +17,6 @@ ynh_mysql_db_shell <<< "ALTER DATABASE $db_name charset=utf8"
 #=================================================
 ynh_script_progression "Setting up source files..."
 
-# Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --source_id="main" --dest_dir="$install_dir"
 
 mkdir -p "$install_dir/documents"
