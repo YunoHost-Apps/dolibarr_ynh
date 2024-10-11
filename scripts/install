@@ -19,7 +19,6 @@ ynh_mysql_execute_as_root --sql="ALTER DATABASE $db_name charset=utf8"
 #=================================================
 ynh_script_progression --message="Setting up source files..." --weight=1
 
-# Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --source_id="main" --dest_dir="$install_dir"
 
 mkdir -p "$install_dir/documents"
