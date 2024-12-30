@@ -5,7 +5,9 @@
 
 # YunoHost 上的 Dolibarr
 
-[![集成程度](https://dash.yunohost.org/integration/dolibarr.svg)](https://ci-apps.yunohost.org/ci/apps/dolibarr/) ![工作状态](https://ci-apps.yunohost.org/ci/badges/dolibarr.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/dolibarr.maintain.svg)
+[![集成程度](https://apps.yunohost.org/badge/integration/dolibarr)](https://ci-apps.yunohost.org/ci/apps/dolibarr/)
+![工作状态](https://apps.yunohost.org/badge/state/dolibarr)
+![维护状态](https://apps.yunohost.org/badge/maintained/dolibarr)
 
 [![使用 YunoHost 安装 Dolibarr](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=dolibarr)
 
@@ -18,7 +20,7 @@
 
 Dolibarr ERP & CRM is a modern software for managing your professional or associative activity (contacts, invoices, orders, stocks, agenda, etc.).
 
-**分发版本：** 20.0.2~ynh1
+**分发版本：** 20.0.3~ynh1
 
 **演示：** <https://www.dolibarr.org/onlinedemo>
 

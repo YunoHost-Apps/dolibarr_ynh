@@ -5,7 +5,9 @@ Hij mag NIET handmatig aangepast worden.
 
 # Dolibarr voor Yunohost
 
-[![Integratieniveau](https://dash.yunohost.org/integration/dolibarr.svg)](https://ci-apps.yunohost.org/ci/apps/dolibarr/) ![Mate van functioneren](https://ci-apps.yunohost.org/ci/badges/dolibarr.status.svg) ![Onderhoudsstatus](https://ci-apps.yunohost.org/ci/badges/dolibarr.maintain.svg)
+[![Integratieniveau](https://apps.yunohost.org/badge/integration/dolibarr)](https://ci-apps.yunohost.org/ci/apps/dolibarr/)
+![Mate van functioneren](https://apps.yunohost.org/badge/state/dolibarr)
+![Onderhoudsstatus](https://apps.yunohost.org/badge/maintained/dolibarr)
 
 [![Dolibarr met Yunohost installeren](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=dolibarr)
 
@@ -18,7 +20,7 @@ Hij mag NIET handmatig aangepast worden.
 
 Dolibarr ERP & CRM is a modern software for managing your professional or associative activity (contacts, invoices, orders, stocks, agenda, etc.).
 
-**Geleverde versie:** 20.0.2~ynh1
+**Geleverde versie:** 20.0.3~ynh1
 
 **Demo:** <https://www.dolibarr.org/onlinedemo>
 
