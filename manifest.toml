@@ -24,8 +24,10 @@ cpe = "cpe:2.3:a:dolibarr:dolibarr"
 yunohost = ">= 11.2.27"
 architectures = "all"
 multi_instance = true
+
 ldap = true
 sso = true
+
 disk = "200M"
 ram.build = "150M"
 ram.runtime = "150M"
@@ -50,6 +52,11 @@ ram.runtime = "150M"
     url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/20.0.3.tar.gz"
     sha256 = "ddd6f9eb2d83f453b4c7b657eb31a5904a48d8c07ee1be130d25f0749de63881"
     autoupdate.strategy = "latest_github_release"
+
+    [resources.sources.main_19_0_2]
+    url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/19.0.2.tar.gz"
+    sha256 = "7da083cff05bf6522e3140b6a19c9eb87cdbab2e06df4cbf3dbebd6dd47d886d"
+    prefetch = false
 
     [resources.sources.main_18_0_1]
     url = "https://github.com/dolibarr/dolibarr/archive/18.0.1.tar.gz"
