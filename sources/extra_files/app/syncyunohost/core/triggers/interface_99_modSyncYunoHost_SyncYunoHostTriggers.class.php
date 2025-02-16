@@ -93,7 +93,7 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 	            $newPass = $this->generateSecurePassword(20);
 	            $this->runCommand('create', $member->login, $newPass, $fullName, $member->email, $baseDomain);
 	        }
-	        $this->runCommand('activate', $member->login, $baseDomain, $mainGroup);
+	        $this->runCommand('activate', $member->login, $mainGroup);
 	    }
 	}
 
