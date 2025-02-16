@@ -117,11 +117,14 @@ fi
 if [[ $syncyunohost_enabled == 1 ]]
 then
     ynh_script_progression --message="Enabling SyncYunohost module..." --weight=1
-    export syncyunohost_old_members="$syncyunohost_old_members"
-    export syncyunohost_main_group="$syncyunohost_main_group"
-    export syncyunohost_base_domain="$syncyunohost_base_domain"
-    
-    envsubst < ../conf/sql/syncyunohost.sql | ynh_mysql_connect_as --user="$db_name" --password="$db_pwd" --database="$db_name"
+    ynh_mysql_connect_as --user="$db_name" --password="$db_pwd" --database="$db_name" < ../conf/sql/syncyunohost.sql
+    ynh_mysql_connect_as --user="$db_name" --password="$db_pwd" --database="$db_name" <<EOF
+    INSERT INTO llx_const (name, value, type) VALUES
+    ('YUNOHOST_BASE_DOMAIN', '$syncyunohost_base_domain', 'chaine'),
+    ('YUNOHOST_MAIN_GROUP', '$syncyunohost_main_group', 'chaine'),
+    ('YUNOHOST_OLD_MEMBERS', '$syncyunohost_old_members', 'chaine')
+    ON DUPLICATE KEY UPDATE value = VALUES(value);
+    EOF
 else
     ynh_script_progression --message="SyncYunohost module is disabled." --weight=1
 fi
