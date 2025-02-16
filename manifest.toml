@@ -52,7 +52,7 @@ ram.runtime = "150M"
     default = false
     
     [install.syncyunohost_base_domain]
-    type = "string"
+    type = "domain"
     ask.en = "Enter the main domain for Yunohost user creation:"
     ask.fr = "Entrez le domaine principal pour la création des utilisateurs Yunohost:"
     
