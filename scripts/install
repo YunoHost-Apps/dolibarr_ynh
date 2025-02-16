@@ -117,24 +117,10 @@ fi
 if [[ $syncyunohost_enabled == 1 ]]
 then
     ynh_script_progression --message="Enabling SyncYunohost module..." --weight=1
+    sed -i "s/{{syncyunohost_old_members}}/$syncyunohost_old_members/g" ../conf/sql/syncyunohost.sql
+    sed -i "s/{{syncyunohost_main_group}}/$syncyunohost_main_group/g" ../conf/sql/syncyunohost.sql
+    sed -i "s/{{syncyunohost_base_domain}}/$syncyunohost_base_domain/g" ../conf/sql/syncyunohost.sql
     ynh_mysql_connect_as --user="$db_name" --password="$db_pwd" --database="$db_name" < ../conf/sql/syncyunohost.sql
-    # ایجاد یک فایل موقت برای SQL
-    SQL_FILE=$(mktemp)
-    
-    # نوشتن دستورات SQL در فایل موقت
-    cat <<EOF > "$SQL_FILE"
-    INSERT INTO llx_const (name, value, type) VALUES
-    ('YUNOHOST_BASE_DOMAIN', '$syncyunohost_base_domain', 'chaine'),
-    ('YUNOHOST_MAIN_GROUP', '$syncyunohost_main_group', 'chaine'),
-    ('YUNOHOST_OLD_MEMBERS', '$syncyunohost_old_members', 'chaine')
-    ON DUPLICATE KEY UPDATE value = VALUES(value);
-    EOF
-    
-    # اجرای SQL با ynh_mysql_connect_as
-    ynh_mysql_connect_as --user="$db_name" --password="$db_pwd" --database="$db_name" < "$SQL_FILE"
-    
-    # حذف فایل موقت
-    rm -f "$SQL_FILE"
 else
     ynh_script_progression --message="SyncYunohost module is disabled." --weight=1
 fi
