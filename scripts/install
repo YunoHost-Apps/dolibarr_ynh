@@ -112,13 +112,17 @@ if "php$phpversion" "$install_dir/scripts/user/sync_users_ldap2dolibarr.php" com
 else
     ynh_print_info --message="LDAP user update ended with error"
 fi
-#=================================================
-# POPULATE DATABASE WITH SYNCYUNOHOST SETTINGS
-#=================================================
-ynh_script_progression --message="Adding syncyunohost configuration to database..." --weight=1
 
-ynh_mysql_connect_as --user="$db_name" --password="$db_pwd" --database="$db_name" < ../conf/sql/syncyunohost.sql
+# Retrieve the user's choice from the installation variable
+syncyunohost_enabled=$(ynh_read_var "syncyunohost_enabled")
 
+# Check if the user has enabled the SyncYunohost module
+if [ "$syncyunohost_enabled" = "true" ]; then
+    ynh_script_progression --message="Enabling SyncYunohost module..." --weight=1
+    ynh_mysql_connect_as --user="$db_name" --password="$db_pwd" --database="$db_name" < ../conf/sql/syncyunohost.sql
+else
+    ynh_script_progression --message="SyncYunohost module is disabled." --weight=1
+fi
 
 #=================================================
 # COPY FOLDER TO DESTINATION
