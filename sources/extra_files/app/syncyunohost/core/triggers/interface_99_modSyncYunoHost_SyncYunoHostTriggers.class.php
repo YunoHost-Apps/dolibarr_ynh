@@ -6,10 +6,9 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 	{
 		$this->db = $db;
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
-		$this->family = "demo";
+		$this->family = "hr";
 		$this->description = "SyncYunoHost triggers.";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
+		$this->version = self::VERSIONS['dev'];
 		$this->picto = 'syncyunohost@syncyunohost';
 	}
 	public function getName()
@@ -27,7 +26,7 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 	    }
 
 	    // Retrieve YunoHost configuration values
-	    $yunohostBaseGroup = $conf->global->YUNOHOST_BASE_GROUP;
+	    $yunohostBaseDomain = $conf->global->YUNOHOST_BASE_DOMAIN;
 	    $yunohostMainGroup = $conf->global->YUNOHOST_MAIN_GROUP;
 	    $yunohostOldUsers = $conf->global->YUNOHOST_OLD_MEMBERS;
 
@@ -35,16 +34,16 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 	    switch ($action) {
 	        case 'MEMBER_CREATE':
 	            $fullName = $this->getFullName($object);
-	            $this->runCommand('create', $object->login, $object->pass, $fullName, $object->email, $yunohostBaseGroup);
+	            $this->runCommand('create', $object->login, $object->pass, $fullName, $object->email, $yunohostBaseDomain);
 	            break;
 
 	        case 'MEMBER_SUBSCRIPTION_CREATE':
-	            $this->handleSubscriptionCreate($object, $yunohostBaseGroup, $yunohostMainGroup, $yunohostOldUsers);
+	            $this->handleSubscriptionCreate($object, $yunohostBaseDomain, $yunohostMainGroup, $yunohostOldUsers);
 	            break;
 
 	        case 'MEMBER_SUBSCRIPTION_DELETE':
 	        case 'MEMBER_SUBSCRIPTION_EXPIRED': // custum trigger by Syncyunohost
-	            $this->handleSubscriptionDelete($object, $yunohostBaseGroup, $yunohostMainGroup, $yunohostOldUsers);
+	            $this->handleSubscriptionDelete($object, $yunohostBaseDomain, $yunohostMainGroup, $yunohostOldUsers);
 	            break;
 
 	        case 'MEMBER_VALIDATE':
@@ -53,7 +52,7 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 	            if ($yunohostOldUsers) {
 	                $fullName = $this->getFullName($object);
 	                $newPass = $this->generateSecurePassword(20);
-	                $this->runCommand('create', $object->login, $newPass, $fullName, $object->email, $yunohostBaseGroup);
+	                $this->runCommand('create', $object->login, $newPass, $fullName, $object->email, $yunohostBaseDomain);
 	            }
 	            if ($action === 'MEMBER_NEW_PASSWORD') {
 	                $this->runCommand('password', $object->login, $object->pass);
@@ -61,7 +60,7 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 	            break;
 
 	        case 'MEMBER_MODIFY':
-	            $this->handleMemberModify($object, $yunohostOldUsers, $yunohostBaseGroup);
+	            $this->handleMemberModify($object, $yunohostOldUsers, $yunohostBaseDomain);
 	            break;
 
 	        case 'MEMBER_DELETE':
@@ -85,38 +84,38 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 	        : sprintf("%s %s", $object->firstname, $object->lastname);
 	}
 
-	private function handleSubscriptionCreate($object, $baseGroup, $mainGroup, $oldUsers)
+	private function handleSubscriptionCreate($object, $baseDomain, $mainGroup, $oldUsers)
 	{
 	    $member = new Adherent($this->db);
 	    if ($member->fetch($object->fk_adherent) > 0) {
 	        if ($oldUsers) {
 	            $fullName = $this->getFullName($member);
 	            $newPass = $this->generateSecurePassword(20);
-	            $this->runCommand('create', $member->login, $newPass, $fullName, $member->email, $baseGroup);
+	            $this->runCommand('create', $member->login, $newPass, $fullName, $member->email, $baseDomain);
 	        }
-	        $this->runCommand('activate', $member->login, $baseGroup, $mainGroup);
+	        $this->runCommand('activate', $member->login, $baseDomain, $mainGroup);
 	    }
 	}
 
-	private function handleSubscriptionDelete($object, $baseGroup, $mainGroup, $oldUsers)
+	private function handleSubscriptionDelete($object, $baseDomain, $mainGroup, $oldUsers)
 	{
 	    $member = new Adherent($this->db);
 	    if ($member->fetch($object->fk_adherent) > 0) {
 	        if ($oldUsers) {
 	            $fullName = $this->getFullName($member);
 	            $newPass = $this->generateSecurePassword(20);
-	            $this->runCommand('create', $member->login, $newPass, $fullName, $member->email, $baseGroup);
+	            $this->runCommand('create', $member->login, $newPass, $fullName, $member->email, $baseDomain);
 	        }
-	        $this->runCommand('deactivate', $member->login, $baseGroup, $mainGroup);
+	        $this->runCommand('deactivate', $member->login, $baseDomain, $mainGroup);
 	    }
 	}
 
-	private function handleMemberModify($object, $oldUsers, $baseGroup)
+	private function handleMemberModify($object, $oldUsers, $baseDomain)
 	{
 	    if ($oldUsers) {
 	        $oldFullName = $this->getFullName($object->oldcopy);
 	        $newPass = $this->generateSecurePassword(20);
-	        $this->runCommand('create', $object->login, $newPass, $oldFullName, $object->oldcopy->email, $baseGroup);
+	        $this->runCommand('create', $object->login, $newPass, $oldFullName, $object->oldcopy->email, $baseDomain);
 	    }
 
 	    $fullName = $this->getFullName($object);
