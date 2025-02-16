@@ -27,7 +27,20 @@ chmod 644 "$install_dir/htdocs/conf/conf.php"
 ynh_script_progression --message="Restoring the MySQL database..." --weight=1
 
 ynh_mysql_connect_as --user="$db_user" --password="$db_pwd" --database="$db_name" < ./db.sql
+#=================================================
+# COPY CUSTOM FILES TO DESTINATION
+#=================================================
+ynh_script_progression --message="Copying custom files to /htdocs/custom/syncyunohost/..." --weight=1
 
+# Ensure the target directory exists
+mkdir -p "$install_dir/htdocs/custom/syncyunohost"
+
+# Copy files
+cp -r ../sources/extra_files/app/syncyunohost/* "$install_dir/htdocs/custom/syncyunohost/"
+
+# Set appropriate permissions
+chown -R "$app:www-data" "$install_dir/htdocs/custom/syncyunohost"
+chmod -R 750 "$install_dir/htdocs/custom/syncyunohost"
 #=================================================
 # RESTORE SYSTEM CONFIGURATIONS
 #=================================================
@@ -35,7 +48,9 @@ ynh_script_progression --message="Restoring system configurations related to $ap
 
 # Restore the file first, so it can have a backup if different
 ynh_restore_file --origin_path="/etc/php/$phpversion/fpm/pool.d/$app.conf"
-
+# Copy sh.sh script to /usr/local/bin/
+ynh_script_progression --message="Copying syncyunohost.sh to /usr/local/bin/..." --weight=1
+ynh_add_config --template="syncyunohost.sh" --destination="/usr/local/bin/syncyunohost.sh"
 # Recreate a dedicated php-fpm config
 ynh_add_fpm_config --phpversion="$phpversion"
 
