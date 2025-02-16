@@ -26,10 +26,10 @@ ynh_secure_remove --file="/etc/$app"
 #=================================================
 # REMOVE CUSTOM FILES
 #=================================================
-ynh_script_progression --message="Removing custom files from /htdocs/custom/..." --weight=1
+ynh_script_progression --message="Removing custom files from /htdocs/custom/syncyunohost/..." --weight=1
 
 # Remove the custom directory securely
-ynh_secure_remove --file="$install_dir/htdocs/custom"
+ynh_secure_remove --file="$install_dir/htdocs/custom/syncyunohost"
 #=================================================
 # REMOVE CUSTOM SCRIPTS
 #=================================================
