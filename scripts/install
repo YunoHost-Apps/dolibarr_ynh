@@ -116,6 +116,7 @@ fi
 # Check if the user has enabled the SyncYunohost module
 if [[ $syncyunohost_enabled == 1 ]]
 then
+    syncyunohost_old_members="0"
     ynh_script_progression --message="Enabling SyncYunohost module..." --weight=1
     sed -i "s/{{syncyunohost_old_members}}/$syncyunohost_old_members/g" ../conf/sql/syncyunohost.sql
     sed -i "s/{{syncyunohost_main_group}}/$syncyunohost_main_group/g" ../conf/sql/syncyunohost.sql
