@@ -21,8 +21,8 @@ ynh_backup --src_path="$install_dir"
 #=================================================
 # BACKUP CUSTOM FILES
 #=================================================
-ynh_print_info --message="Backing up custom files from /htdocs/custom/..."
-ynh_backup --src_path="$install_dir/htdocs/custom/"
+ynh_print_info --message="Backing up custom files from /htdocs/custom/syncyunohost/..."
+ynh_backup --src_path="$install_dir/htdocs/custom/syncyunohost/"
 #=================================================
 # BACKUP THE SYSTEM CONFIGURATION
 #=================================================
