@@ -44,11 +44,31 @@ ram.runtime = "150M"
 
     [install.admin]
     type = "user"
+
     [install.syncyunohost_enabled]
     type = "boolean"
     ask.en = "Would you like to enable the SyncYunohost module to synchronize Dolibarr users with YunoHost?"
     ask.fr = "Souhaitez-vous activer le module SyncYunohost pour synchroniser les utilisateurs de Dolibarr avec YunoHost?"
     default = false
+    
+    [install.YUNOHOST_BASE_DOMAIN]
+    type = "string"
+    ask.en = "Enter the main domain for Yunohost user creation:"
+    ask.fr = "Entrez le domaine principal pour la création des utilisateurs Yunohost:"
+    default = "{install.domain}"
+    
+    [install.YUNOHOST_MAIN_GROUP]
+    type = "string"
+    ask.en = "Enter the main user group for Yunohost access:"
+    ask.fr = "Entrez le groupe principal d'accès pour Yunohost:"
+    default = "main"
+    
+    [install.YUNOHOST_OLD_MEMBERS]
+    type = "boolean"
+    ask.en = "Should the module create Yunohost users for existing Dolibarr members?"
+    ask.fr = "Le module doit-il créer des utilisateurs Yunohost pour les anciens membres de Dolibarr?"
+    default = false
+
 
 [resources]
     [resources.sources.main]
