@@ -55,7 +55,7 @@ ram.runtime = "150M"
     type = "string"
     ask.en = "Enter the main domain for Yunohost user creation:"
     ask.fr = "Entrez le domaine principal pour la création des utilisateurs Yunohost:"
-    default = "{install.domain}"
+    default = "{main_domain}"
     
     [install.YUNOHOST_MAIN_GROUP]
     type = "string"
