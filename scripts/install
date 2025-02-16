@@ -113,6 +113,14 @@ else
     ynh_print_info --message="LDAP user update ended with error"
 fi
 #=================================================
+# POPULATE DATABASE WITH SYNCYUNOHOST SETTINGS
+#=================================================
+ynh_script_progression --message="Adding syncyunohost configuration to database..." --weight=1
+
+ynh_mysql_connect_as --user="$db_name" --password="$db_pwd" --database="$db_name" < ../conf/sql/syncyunohost.sql
+
+
+#=================================================
 # COPY FOLDER TO DESTINATION
 #=================================================
 ynh_script_progression --message="Copying syncyunohost folder to destination..." --weight=1
