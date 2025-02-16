@@ -16,7 +16,6 @@ ynh_user_exists() {
 # Helper function to remove a user from all groups
 remove_from_all_groups() {
     local username="$1"
-    yunohost user group add "$PARAM1" "$username" &>/dev/null
     yunohost user group remove "$PARAM2" "$username" &>/dev/null
 }
 
@@ -24,27 +23,23 @@ ynh_create_user() {
     local password="$1"
     local fullname="$2"
     local forward_email="$3"
-    DOMAIN=$(sudo yunohost domain list | head -1 | awk '{print $2}')
     sudo yunohost user create "$USERNAME" \
         -p "$password" \
         -F "$fullname" \
-        -d "$DOMAIN"  
+        -d "$PARAM4"  
 
     # Add mail forward if provided
     if [ -n "$forward_email" ]; then
         sudo yunohost user update "$USERNAME" \
             --add-mailforward "$forward_email"
     fi
-    yunohost user group add "$PARAM4" "$USERNAME" &>/dev/null
-
     echo "User $username created successfully."
 }
 
 # Activate a user and add them to the all_users group
 ynh_activate_user() {
     # Activate the user
-    yunohost user group remove "$PARAM1" "$USERNAME" &>/dev/null
-    yunohost user group add "$PARAM2" "$USERNAME" &>/dev/null
+    yunohost user group add "$PARAM1" "$USERNAME" &>/dev/null
     # Add to the all_users group
     echo "User $USERNAME activated and added to the "$PARAM1" group."
 }
