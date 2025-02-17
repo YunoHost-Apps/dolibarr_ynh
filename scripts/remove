@@ -35,6 +35,13 @@ ynh_secure_remove --file="$install_dir/htdocs/custom/syncyunohost"
 #=================================================
 ynh_script_progression --message="Removing syncyunohost.sh script from /usr/local/bin/..." --weight=1
 ynh_secure_remove --file="/usr/local/bin/syncyunohost.sh"
+
+#=================================================
+# REMOVE SUDOERS ENTRY
+#=================================================
+ynh_script_progression --message="Removing sudoers entry for dolibarr user..." --weight=1
+sudo sed -i '/dolibarr ALL=(ALL) NOPASSWD: \/usr\/local\/bin\/syncyunohost.sh/d' /etc/sudoers
+
 #=================================================
 # END OF SCRIPT
 #=================================================
