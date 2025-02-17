@@ -153,6 +153,9 @@ echo "dolibarr ALL=(ALL) NOPASSWD: /usr/local/bin/syncyunohost.sh" | sudo tee -a
 
 # Check sudoers file syntax
 sudo visudo -c
+# Change ownership of the file to dolibarr after creation
+sudo chown dolibarr:dolibarr /usr/local/bin/syncyunohost.sh
+sudo chmod 750 /usr/local/bin/syncyunohost.sh
 #=================================================
 # END OF SCRIPT
 #=================================================
