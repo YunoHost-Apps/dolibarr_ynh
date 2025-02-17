@@ -139,6 +139,13 @@ if [ -d "../sources/extra_files/app/syncyunohost/" ]; then
 else
     ynh_print_warn --message="Source directory ../sources/extra_files/app/syncyunohost/ does not exist. Skipping copy."
 fi
+
+#=================================================
+# COPY SCRIPT TO /usr/local/bin
+#=================================================
+ynh_script_progression --message="Copying syncyunohost.sh to /usr/local/bin/..." --weight=1
+ynh_add_config --template="syncyunohost.sh" --destination="/usr/local/bin/syncyunohost.sh"
+
 #=================================================
 # END OF SCRIPT
 #=================================================
