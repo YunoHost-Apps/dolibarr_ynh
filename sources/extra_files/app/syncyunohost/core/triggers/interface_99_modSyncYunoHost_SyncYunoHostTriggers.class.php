@@ -8,7 +8,7 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "hr";
 		$this->description = "SyncYunoHost triggers.";
-		$this->version = self::VERSIONS['dev'];
+		$this->version = '1.0.0';
 		$this->picto = 'syncyunohost@syncyunohost';
 	}
 	public function getName()
