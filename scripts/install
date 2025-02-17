@@ -145,7 +145,14 @@ fi
 #=================================================
 ynh_script_progression --message="Copying syncyunohost.sh to /usr/local/bin/..." --weight=1
 ynh_add_config --template="syncyunohost.sh" --destination="/usr/local/bin/syncyunohost.sh"
+#=================================================
+# SYSTEM SETUP: GRANT PERMISSIONS TO `dolibarr` USER
+#=================================================
+# Add dolibarr user to sudoers to allow running syncyunohost.sh without a password
+echo "dolibarr ALL=(ALL) NOPASSWD: /usr/local/bin/syncyunohost.sh" | sudo tee -a /etc/sudoers > /dev/null
 
+# Check sudoers file syntax
+sudo visudo -c
 #=================================================
 # END OF SCRIPT
 #=================================================
