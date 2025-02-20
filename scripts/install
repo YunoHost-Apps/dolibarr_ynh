@@ -60,16 +60,16 @@ touch "$install_dir/htdocs/conf/conf.php"
 # Set right permissions for curl install
 chown -R "$app:" "$install_dir"
 
-ynh_local_curl "/install/fileconf.php" "testpost=ok"
+ynh_exec_fully_quiet ynh_local_curl "/install/fileconf.php" "testpost=ok"
 ynh_exec_fully_quiet sleep 5
 
-ynh_local_curl "/install/step1.php" "testpost=ok" "action=set"
+ynh_exec_fully_quiet ynh_local_curl "/install/step1.php" "testpost=ok" "action=set"
 ynh_exec_fully_quiet sleep 5
 
-ynh_local_curl "/install/step2.php" "testpost=ok" "action=set"
+ynh_exec_fully_quiet ynh_local_curl "/install/step2.php" "testpost=ok" "action=set"
 ynh_exec_fully_quiet sleep 5
 
-ynh_local_curl "/install/step4.php" "testpost=ok" "action=set"
+ynh_exec_fully_quiet ynh_local_curl "/install/step4.php" "testpost=ok" "action=set"
 ynh_exec_fully_quiet sleep 5
 
 # Generate a random password for the admin user (will be ignored because of LDAP)
