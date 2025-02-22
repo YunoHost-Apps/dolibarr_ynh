@@ -10,16 +10,13 @@ services = ["__APP__"]
     yes = "true"
     no = "false"
     default = false
-    bind = ":__INSTALL_DIR__/config.yml"
 
     [main.syncyunohost.base_domain]
     ask.en = "Choose the domain for Yunohost user's email creation:"
     type = "domain"
-    bind = ":__INSTALL_DIR__/config.yml"
 
     [main.syncyunohost.main_group]
     ask.en = "Which Yunohost group do you want to sync Dolibarr's activated members with?"
     type = "group"
     default = "visitors"
-    bind = ":__INSTALL_DIR__/config.yml"
 [main]
