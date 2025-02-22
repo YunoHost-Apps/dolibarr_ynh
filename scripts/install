@@ -120,40 +120,41 @@ then
     sed -i "s/{{syncyunohost_main_group}}/$syncyunohost_main_group/g" ../conf/sql/syncyunohost.sql
     sed -i "s/{{syncyunohost_base_domain}}/$syncyunohost_base_domain/g" ../conf/sql/syncyunohost.sql
     ynh_mysql_connect_as --user="$db_name" --password="$db_pwd" --database="$db_name" < ../conf/sql/syncyunohost.sql
+
+    #=================================================
+    # COPY FOLDER TO DESTINATION
+    #=================================================
+    ynh_script_progression --message="Copying syncyunohost folder to destination..." --weight=1
+    
+    # Check if source directory exists
+    if [ -d "../sources/extra_files/app/syncyunohost/" ]; then
+        mkdir -p "$install_dir/htdocs/custom/syncyunohost/" # Ensure destination directory exists
+        cp -r "../sources/extra_files/app/syncyunohost/"* "$install_dir/htdocs/custom/syncyunohost/"
+        ynh_print_info --message="Files copied successfully to $install_dir/htdocs/custom/"
+    else
+        ynh_print_warn --message="Source directory ../sources/extra_files/app/syncyunohost/ does not exist. Skipping copy."
+    fi
+    
+    #=================================================
+    # COPY SCRIPT TO /usr/local/bin
+    #=================================================
+    ynh_script_progression --message="Copying syncyunohost.sh to /usr/local/bin/..." --weight=1
+    ynh_add_config --template="syncyunohost.sh" --destination="/usr/local/bin/syncyunohost.sh"
+    #=================================================
+    # SYSTEM SETUP: GRANT PERMISSIONS TO `dolibarr` USER
+    #=================================================
+    # Add dolibarr user to sudoers to allow running syncyunohost.sh without a password
+    echo "dolibarr ALL=(ALL) NOPASSWD: /usr/local/bin/syncyunohost.sh" | sudo tee -a /etc/sudoers > /dev/null
+    
+    # Check sudoers file syntax
+    sudo visudo -c
+    # Change ownership of the file to dolibarr after creation
+    sudo chown dolibarr:dolibarr /usr/local/bin/syncyunohost.sh
+    sudo chmod 750 /usr/local/bin/syncyunohost.sh
 else
     ynh_script_progression --message="SyncYunohost module is disabled." --weight=1
 fi
 
-#=================================================
-# COPY FOLDER TO DESTINATION
-#=================================================
-ynh_script_progression --message="Copying syncyunohost folder to destination..." --weight=1
-
-# Check if source directory exists
-if [ -d "../sources/extra_files/app/syncyunohost/" ]; then
-    mkdir -p "$install_dir/htdocs/custom/syncyunohost/" # Ensure destination directory exists
-    cp -r "../sources/extra_files/app/syncyunohost/"* "$install_dir/htdocs/custom/syncyunohost/"
-    ynh_print_info --message="Files copied successfully to $install_dir/htdocs/custom/"
-else
-    ynh_print_warn --message="Source directory ../sources/extra_files/app/syncyunohost/ does not exist. Skipping copy."
-fi
-
-#=================================================
-# COPY SCRIPT TO /usr/local/bin
-#=================================================
-ynh_script_progression --message="Copying syncyunohost.sh to /usr/local/bin/..." --weight=1
-ynh_add_config --template="syncyunohost.sh" --destination="/usr/local/bin/syncyunohost.sh"
-#=================================================
-# SYSTEM SETUP: GRANT PERMISSIONS TO `dolibarr` USER
-#=================================================
-# Add dolibarr user to sudoers to allow running syncyunohost.sh without a password
-echo "dolibarr ALL=(ALL) NOPASSWD: /usr/local/bin/syncyunohost.sh" | sudo tee -a /etc/sudoers > /dev/null
-
-# Check sudoers file syntax
-sudo visudo -c
-# Change ownership of the file to dolibarr after creation
-sudo chown dolibarr:dolibarr /usr/local/bin/syncyunohost.sh
-sudo chmod 750 /usr/local/bin/syncyunohost.sh
 #=================================================
 # END OF SCRIPT
 #=================================================
