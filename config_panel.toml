@@ -4,7 +4,7 @@ version = "1.0"
 name = "SyncYunohost Configuration"
 services = ["__APP__"]
 
-    [main.main.syncyunohost_enabled]
+    [main.syncyunohost.enabled]
     ask.en = "Would you like to enable the SyncYunohost module to synchronize Dolibarr members with YunoHost?"
     type = "boolean"
     yes = "true"
@@ -12,12 +12,12 @@ services = ["__APP__"]
     default = false
     bind = ":__INSTALL_DIR__/config.yml"
 
-    [main.main.syncyunohost_base_domain]
+    [main.syncyunohost.base_domain]
     ask.en = "Choose the domain for Yunohost user's email creation:"
     type = "domain"
     bind = ":__INSTALL_DIR__/config.yml"
 
-    [main.main.syncyunohost_main_group]
+    [main.syncyunohost.main_group]
     ask.en = "Which Yunohost group do you want to sync Dolibarr's activated members with?"
     type = "group"
     default = "visitors"
