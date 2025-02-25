@@ -55,12 +55,14 @@ ram.runtime = "150M"
     type = "domain"
     ask.en = "Choose the domain for Yunohost user's email creation:"
     ask.fr = "Choisissez le domaine pour la création des emails des utilisateurs Yunohost:"
+    visible = "syncyunohost_enabled"
     
     [install.syncyunohost_main_group]
     type = "group"
     ask.en = "Which yunohost group do you want to sync dolibar's activated members with?"
     ask.fr = "Avec quel groupe de yunohost souhaitez vous synchroniser les membres actifs de Dolibarr?"
     default = "visitors"
+    visible = "syncyunohost_enabled"
 
 
 [resources]
