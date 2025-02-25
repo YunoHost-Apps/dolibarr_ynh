@@ -14,9 +14,11 @@ services = ["__APP__"]
     [main.main.syncyunohost_base_domain]
     ask.en = "Choose the domain for Yunohost user's email creation:"
     type = "domain"
+    visible = "syncyunohost_enabled"
 
     [main.main.syncyunohost_main_group]
     ask.en = "Which Yunohost group do you want to sync Dolibarr's activated members with?"
     type = "group"
+    visible = "syncyunohost_enabled"
     
 [main]
