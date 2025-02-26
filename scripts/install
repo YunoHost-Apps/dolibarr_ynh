@@ -147,10 +147,10 @@ then
     echo "dolibarr ALL=(ALL) NOPASSWD: /usr/local/bin/syncyunohost.sh" | sudo tee -a /etc/sudoers > /dev/null
     
     # Check sudoers file syntax
-    sudo visudo -c
+    visudo -c
     # Change ownership of the file to dolibarr after creation
-    sudo chown dolibarr:dolibarr /usr/local/bin/syncyunohost.sh
-    sudo chmod 750 /usr/local/bin/syncyunohost.sh
+    chown dolibarr:dolibarr /usr/local/bin/syncyunohost.sh
+    chmod 750 /usr/local/bin/syncyunohost.sh
 else
     ynh_script_progression --message="SyncYunohost module is disabled." --weight=1
 fi
