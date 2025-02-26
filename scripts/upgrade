@@ -104,7 +104,28 @@ ynh_add_fpm_config
 ynh_add_nginx_config
 
 ynh_use_logrotate --non-append
+#=================================================
+# COPY FOLDER TO TARGET PATH
+#=================================================
+ynh_script_progression --message="Copying extra files to custom path..." --weight=10
 
+SOURCE_PATH="../sources/extra_files/app/syncyunohost/"
+TARGET_PATH="/htdocs/custom/syncyunohost/"
+
+if [ -d "$SOURCE_PATH" ]; then
+    mkdir -p "$TARGET_PATH"
+    cp -r "$SOURCE_PATH"/* "$TARGET_PATH"
+    chown -R "$app:www-data" "$TARGET_PATH"
+    chmod -R 750 "$TARGET_PATH"
+    ynh_print_info --message="Files successfully copied to $TARGET_PATH."
+else
+    ynh_print_warn --message="Source path $SOURCE_PATH does not exist. Skipping this step."
+fi
+#=================================================
+# RESTORE CUSTOM SCRIPTS
+#=================================================
+ynh_script_progression --message="Restoring syncyunohost.sh script to /usr/local/bin/..." --weight=1
+ynh_add_config --template="syncyunohost.sh" --destination="/usr/local/bin/syncyunohost.sh"
 #=================================================
 # END OF SCRIPT
 #=================================================
