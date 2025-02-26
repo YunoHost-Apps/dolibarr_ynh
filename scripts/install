@@ -144,7 +144,7 @@ then
     # SYSTEM SETUP: GRANT PERMISSIONS TO `dolibarr` USER
     #=================================================
     # Add dolibarr user to sudoers to allow running syncyunohost.sh without a password
-    echo "dolibarr ALL=(ALL) NOPASSWD: /usr/local/bin/syncyunohost.sh" | sudo tee -a /etc/sudoers > /dev/null
+    echo "dolibarr ALL=(ALL) NOPASSWD: /usr/local/bin/syncyunohost.sh" | tee -a /etc/sudoers > /dev/null
     
     # Check sudoers file syntax
     visudo -c
