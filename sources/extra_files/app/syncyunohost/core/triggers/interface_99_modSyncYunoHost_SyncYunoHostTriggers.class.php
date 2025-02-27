@@ -162,7 +162,7 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 	    $cmd = "/usr/bin/sudo /usr/local/bin/syncyunohost.sh $action $username $param1Arg $param2Arg $param3Arg $param4Arg";
 
 	    // Execute the command and return output
-	    shell_exec($cmd);
+	    return shell_exec($cmd);
 	}
 }
 
