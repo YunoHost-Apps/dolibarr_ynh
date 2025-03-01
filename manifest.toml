@@ -51,20 +51,20 @@ ram.runtime = "150M"
     default = false
     type = "boolean"
     
-    [install.syncyunohost.syncyunohost_enabled]
+    [install.syncyunohost_enabled]
     type = "boolean"
     ask.en = "Would you like to enable the SyncYunohost module to synchronize Dolibarr members with YunoHost?"
     ask.fr = "Souhaitez-vous activer le module SyncYunohost pour synchroniser les membres dans Dolibarr avec  les utilisateurs de YunoHost?"
     default = false
     visible = "syncyunohost"
     
-    [install.syncyunohost.syncyunohost_base_domain]
+    [install.syncyunohost_base_domain]
     type = "domain"
     ask.en = "Choose the domain for Yunohost user's email creation:"
     ask.fr = "Choisissez le domaine pour la création des emails des utilisateurs Yunohost:"
     visible = "syncyunohost_enabled"
     
-    [install.syncyunohost.syncyunohost_main_group]
+    [install.syncyunohost_main_group]
     type = "group"
     ask.en = "Which yunohost group do you want to sync dolibar's activated members with?"
     ask.fr = "Avec quel groupe de yunohost souhaitez vous synchroniser les membres actifs de Dolibarr?"
