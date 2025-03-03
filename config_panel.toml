@@ -17,10 +17,10 @@ no = "no"
 ask.en = "Choose the domain for Yunohost user's email creation:"
 ask.fr = "Choisissez le domaine pour la création des emails des utilisateurs Yunohost:"
 type = "domain"
-visible = "syncyunohost.syncyunohost_enabled"  # اصلاح رفرنس شرط
+visible = "syncyunohost_enabled"  # اصلاح رفرنس شرط
 
 [main.syncyunohost.syncyunohost_main_group]
 ask.en = "Which Yunohost group do you want to sync Dolibarr's activated members with?"
 ask.fr = "Avec quel groupe de yunohost souhaitez vous synchroniser les membres actifs de Dolibarr?"
 type = "group"
-visible = "syncyunohost.syncyunohost_enabled"  # اصلاح رفرنس شرط
+visible = "syncyunohost_enabled"  # اصلاح رفرنس شرط
