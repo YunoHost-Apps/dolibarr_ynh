@@ -70,4 +70,4 @@ $force_install_dolibarrlogin = '__ADMIN__';
 $force_install_lockinstall = true;
 
 /** @var string Enable module(s) (Comma separated class names list) */
-$force_install_module = 'modLdap,modAdherent';
+$force_install_module = 'modLdap';
