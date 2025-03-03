@@ -2,7 +2,7 @@ version = "1.0"
 
 [main]
     services = ["__APP__"]
-    visible = "syncyunohost"
+    visible = "getter__dolibarr_syncyunohost"
     name.en = "SyncYunohost Configuration"
     name.fr = "SyncYunohost Configuration"    
         [main.syncyunohost]
