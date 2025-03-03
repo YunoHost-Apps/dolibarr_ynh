@@ -1,10 +1,7 @@
 version = "1.0"
 
-[main]
+[main.syncyunohost]
     services = ["__APP__"]
-    name.en = "SyncYunohost Configuration"
-    name.fr = "SyncYunohost Configuration"    
-        [main.syncyunohost]
         name.en = "SyncYunohost Configuration"
         name.fr = "SyncYunohost Configuration"
         visible = "syncyunohost == 1"
