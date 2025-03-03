@@ -1,14 +1,14 @@
 version = "1.0"
 
 [main]
-    visible = "syncyunohost"
     services = ["__APP__"]
+    
     name.en = "SyncYunohost Configuration"
     name.fr = "SyncYunohost Configuration"    
         [main.syncyunohost]
         name.en = "SyncYunohost Configuration"
         name.fr = "SyncYunohost Configuration"
-    
+        visible = "syncyunohost"
             [main.syncyunohost.syncyunohost_enabled]
             ask.en = "Would you like to enable the SyncYunohost module to synchronize Dolibarr members with YunoHost?"
             ask.fr = "Souhaitez-vous activer le module SyncYunohost pour synchroniser les membres dans Dolibarr avec  les utilisateurs de YunoHost?"
