@@ -39,3 +39,6 @@ upgrade_dolibarr() {
 #=================================================
 # FUTURE OFFICIAL HELPERS
 #=================================================
+syncyunohost_modules_control(){
+    php "$install_dir/scripts/members/modules.php --action=activate --modules=mod1,mod2 --base_domain=example.com --main_group=admin --old_members=yes
+}
