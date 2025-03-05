@@ -16,7 +16,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 // Load required Dolibarr files
 require_once $path."../../htdocs/master.inc.php";
-require_once $path."../../htdocs/main.inc.php";
+// require_once $path."../../htdocs/main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Check if the required parameters are passed
