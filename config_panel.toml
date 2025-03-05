@@ -29,5 +29,5 @@ name.fr = "SyncYunohost"
         ask.fr = "Avec quel groupe de yunohost souhaitez vous synchroniser les membres actifs de Dolibarr?"
         type = "group"
         visible = "syncyunohost_enabled"
-[main]
+
 
