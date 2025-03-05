@@ -1,5 +1,6 @@
 version = "1.0"
 [main]
+        services = ["__APP__"]
         name.en = "SyncYunohost"
         name.fr = "SyncYunohost"
         [main.syncyunohost]
