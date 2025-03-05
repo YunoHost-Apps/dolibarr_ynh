@@ -64,12 +64,15 @@ if ($action == 'activate' || $action == 'deactivate') {
         foreach ($modulesArray as $modtoaction) {
             $modtoactionnew = str_replace('.class.php', '', $modtoaction);
             $file = $modtoactionnew . '.class.php';
-            
-           // dolibarr_install_syslog("syncyunohost: {$action} module file=" . $file);
+            if($modtoaction =='modSyncYunoHost'){
+                $module_dir = "/custom/syncyunohost/core/modules/";
+            } else {
+                $module_dir = "/core/modules/";
+            }
             
             // Check if module file exists before including
-            if (file_exists(DOL_DOCUMENT_ROOT . "/core/modules/" . $file)) {
-                dol_include_once("/core/modules/" . $file);
+            if (file_exists(DOL_DOCUMENT_ROOT . $module_dir . $file)) {
+                dol_include_once($module_dir . $file);
                 
                 $res = ($action == 'activate') ? activateModule($modtoactionnew, 1) : deactivateModule($modtoactionnew, 1);
                 
@@ -77,7 +80,7 @@ if ($action == 'activate' || $action == 'deactivate') {
                     echo "ERROR: failed to {$action} module file=" . $file . "\n";
                 }
             } else {
-                echo "WARNING: File not found: " . DOL_DOCUMENT_ROOT . "/core/modules/" . $file . "\n";
+                echo "WARNING: File not found: " . DOL_DOCUMENT_ROOT . $module_dir. $file . "\n";
             }
         }
     }
