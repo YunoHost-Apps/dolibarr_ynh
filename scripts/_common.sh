@@ -86,5 +86,5 @@ syncyunohost_install(){
     syncyunohost_modules_activate
 }
 syncyunohost_modules_activate(){
-    php "$install_dir/scripts/members/syncyunohost-modules.php" --action=activate --modules=modAdherent,modSyncyunohost --base_domain=example.com --main_group=admin --old_members=yes;
+    php "$install_dir/scripts/members/syncyunohost-modules.php" --action=activate --modules=modAdherent,modCorn,modSyncyunohost --base_domain=example.com --main_group=admin --old_members=yes;
 }
