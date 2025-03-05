@@ -63,7 +63,7 @@ syncyunohost_install(){
     # COPY SCRIPT TO /scripts/members
     #=================================================
     ynh_script_progression --message="Copying syncyunohost-modules.php to dolibarr scripts/members directory ..." --weight=1
-    ynh_add_config --template="syncyunohost-modules.php" --destination="$install_dir/scripts/members/syncyunohost-modules.php" --no-remove
+    ynh_add_config --template="syncyunohost-modules.php" --destination="$install_dir/scripts/members/syncyunohost-modules.php"
     #=================================================
     #=================================================
     # COPY SCRIPT TO /usr/local/bin
