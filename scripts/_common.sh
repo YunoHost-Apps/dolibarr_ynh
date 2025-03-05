@@ -40,10 +40,10 @@ upgrade_dolibarr() {
 # FUTURE OFFICIAL HELPERS
 #=================================================
 syncyunohost_install(){
-    ynh_script_progression --message="Enabling SyncYunohost module..." --weight=1
-    sed -i "s/{{syncyunohost_main_group}}/$syncyunohost_main_group/g" ../conf/sql/syncyunohost.sql
-    sed -i "s/{{syncyunohost_base_domain}}/$syncyunohost_base_domain/g" ../conf/sql/syncyunohost.sql
-    ynh_mysql_connect_as --user="$db_name" --password="$db_pwd" --database="$db_name" < ../conf/sql/syncyunohost.sql
+   # ynh_script_progression --message="Enabling SyncYunohost module..." --weight=1
+   # sed -i "s/{{syncyunohost_main_group}}/$syncyunohost_main_group/g" ../conf/sql/syncyunohost.sql
+   # sed -i "s/{{syncyunohost_base_domain}}/$syncyunohost_base_domain/g" ../conf/sql/syncyunohost.sql
+   # ynh_mysql_connect_as --user="$db_name" --password="$db_pwd" --database="$db_name" < ../conf/sql/syncyunohost.sql
 
     #=================================================
     # COPY FOLDER TO DESTINATION
