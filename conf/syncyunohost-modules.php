@@ -65,7 +65,7 @@ if ($action == 'activate' || $action == 'deactivate') {
             $modtoactionnew = str_replace('.class.php', '', $modtoaction);
             $file = $modtoactionnew . '.class.php';
             
-            dolibarr_install_syslog("syncyunohost: {$action} module file=" . $file);
+           // dolibarr_install_syslog("syncyunohost: {$action} module file=" . $file);
             
             // Check if module file exists before including
             if (file_exists(DOL_DOCUMENT_ROOT . "/core/modules/" . $file)) {
