@@ -82,6 +82,8 @@ syncyunohost_install(){
     # Change ownership of the file to dolibarr after creation
     chown dolibarr:dolibarr /usr/local/bin/syncyunohost.sh
     chmod 750 /usr/local/bin/syncyunohost.sh
+
+    syncyunohost_modules_activate
 }
 syncyunohost_modules_activate(){
     php "$install_dir/scripts/members/syncyunohost-modules.php" --action=activate --modules=modAdherent,modSyncyunohost --base_domain=example.com --main_group=admin --old_members=yes;
