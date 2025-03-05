@@ -84,5 +84,5 @@ syncyunohost_install(){
     chmod 750 /usr/local/bin/syncyunohost.sh
 }
 syncyunohost_modules_activate(){
-    php "$install_dir/scripts/members/syncyunohost-modules.php --action=activate --modules=modAdherent,modSyncyunohost --base_domain=example.com --main_group=admin --old_members=yes
+    php "$install_dir/scripts/members/syncyunohost-modules.php" --action=activate --modules=modAdherent,modSyncyunohost --base_domain=example.com --main_group=admin --old_members=yes;
 }
