@@ -65,19 +65,20 @@ if ($action == 'activate' || $action == 'deactivate') {
             $modtoactionnew = str_replace('.class.php', '', $modtoaction);
             $file = $modtoactionnew . '.class.php';
             if($modtoaction =='modSyncYunoHost'){
-                $module_dir = "/custom/syncyunohost/core/modules/";
+                $module_dir = "/custom//core/modules/";
             } else {
                 $module_dir = "/core/modules/";
             }
-            
             // Check if module file exists before including
             if (file_exists(DOL_DOCUMENT_ROOT . $module_dir . $file)) {
-                dol_include_once($module_dir . $file);
-                
+                dol_include_once($module_dir . $file);               
                 $res = ($action == 'activate') ? activateModule($modtoactionnew, 1) : deactivateModule($modtoactionnew, 1);
-                
                 if ($res === false || (is_array($res) && !empty($res['errors']))) {
                     echo "ERROR: failed to {$action} module file=" . $file . "\n";
+                } else {
+                    if($action == 'activate' && $modtoaction =='modAdherent'){
+                        syncyunohost_adherent_required_fields($db);
+                    }
                 }
             } else {
                 echo "WARNING: File not found: " . DOL_DOCUMENT_ROOT . $module_dir. $file . "\n";
@@ -98,5 +99,18 @@ if ($action == 'activate' || $action == 'deactivate') {
 } else {
     echo "Error: Invalid action. Use 'activate' or 'deactivate'.\n";
     exit(1);
+}
+function syncyunohost_adherent_required_fields($db){
+	$db->begin();
+	$res1 = $res2 = 0;
+	$res1 = dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', 0, 'chaine', 0, '', $conf->entity);
+	$res2 = dolibarr_set_const($db, 'ADHERENT_MAIL_REQUIRED', 1, 'chaine', 0, '', $conf->entity);
+	if ($res1 < 0 || $res2 < 0 ) {
+		setEventMessages('ErrorFailedToSaveData', null, 'errors');
+		$db->rollback();
+	} else {
+		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
+		$db->commit();
+	}	
 }
 ?>
