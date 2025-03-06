@@ -77,7 +77,7 @@ if ($action == 'activate' || $action == 'deactivate') {
                     echo "ERROR: failed to {$action} module file=" . $file . "\n";
                 } else {
                     if($action == 'activate' && $modtoaction =='modAdherent'){
-                        syncyunohost_adherent_required_fields($db);
+                        syncyunohost_adherent_required_fields($db, $conf);
                     }
                 }
             } else {
