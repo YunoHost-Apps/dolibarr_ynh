@@ -65,7 +65,7 @@ if ($action == 'activate' || $action == 'deactivate') {
             $modtoactionnew = str_replace('.class.php', '', $modtoaction);
             $file = $modtoactionnew . '.class.php';
             if($modtoaction =='modSyncYunoHost'){
-                $module_dir = "/custom/core/modules/";
+                $module_dir = "/custom/syncyunohost/core/modules/";
             } else {
                 $module_dir = "/core/modules/";
             }
