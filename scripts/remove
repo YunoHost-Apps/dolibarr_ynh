@@ -23,24 +23,9 @@ ynh_remove_logrotate
 
 # Remove a directory securely
 ynh_secure_remove --file="/etc/$app"
-#=================================================
-# REMOVE CUSTOM FILES
-#=================================================
-ynh_script_progression --message="Removing custom files from /htdocs/custom/syncyunohost/..." --weight=1
 
-# Remove the custom directory securely
-ynh_secure_remove --file="$install_dir/htdocs/custom/syncyunohost"
-#=================================================
-# REMOVE CUSTOM SCRIPTS
-#=================================================
-ynh_script_progression --message="Removing syncyunohost.sh script from /usr/local/bin/..." --weight=1
-ynh_secure_remove --file="/usr/local/bin/syncyunohost.sh"
-
-#=================================================
-# REMOVE SUDOERS ENTRY
-#=================================================
-ynh_script_progression --message="Removing sudoers entry for dolibarr user..." --weight=1
-sudo sed -i '/dolibarr ALL=(ALL) NOPASSWD: \/usr\/local\/bin\/syncyunohost.sh/d' /etc/sudoers
+# remove syncyunohost module
+syncyunohost_remove
 
 #=================================================
 # END OF SCRIPT
