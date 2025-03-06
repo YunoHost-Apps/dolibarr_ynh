@@ -1,74 +1,31 @@
 version = "1.0"
 
 [main]
-name = "Main Settings"
+name.en = "SyncYunohost"
+name.fr = "SyncYunohost"
 services = ["__APP__"]
-
-    [main.welcome]
-    name = "Experience for new Users"
-
-        [main.welcome.enable_registration]
-        ask = "Enable Registration for new users"
+        [main.syncyunohost]
+        ask.en = "SyncYunohost Configuration"
+        ask.fr = "SyncYunohost Configuration"
         type = "boolean"
         yes = "true"
         no = "false"
-        help = "Defaults to 'false'. If 'true', it is highly recommended to use either captcha, email, or token-based verification to avoid SPAM."
-
-        [main.welcome.password_enabled]
-        ask = "Enable Password Login"
+        [main.syncyunohost.syncyunohost_enabled]
+        ask.en = "Would you like to enable the SyncYunohost module to synchronize Dolibarr members with YunoHost?"
+        ask.fr = "Souhaitez-vous activer le module SyncYunohost pour synchroniser les membres dans Dolibarr avec  les utilisateurs de YunoHost?"
         type = "boolean"
         yes = "true"
         no = "false"
-        help = "If disabled, Login with Non-YunoHost Users impossible. But it simplies Login process if your Matrix server only has YunoHost SSO Users."
-        visible = "! enable_registration"
-
-        [main.welcome.registrations_require_3pid]
-        ask = "Registration requires all following 3PID personal identifier"
-        type = "select"
-        choices = ["email", "msisdn", "email&msisdn"]
-        help = "! Warning msisdn (Phone number) registration require a third party service which send confirmation token by SMS.\nDo not select msisdn if you don't know what to do. And don't select user msisdn if you don't understand privacy flow\nDefaults to: 'email'."
-        visible = "enable_registration"
-
-        [main.welcome.allowed_local_3pids_email]
-        ask = "Register only with given email formats"
-        type = "tags"
-        help = '( e.g. ^[^@]+@matrix\\.org$ )'
-
-        [main.welcome.allowed_local_3pids_msisdn]
-        ask = "Register only with given phone number formats"
-        type = "tags"
-        help = '( e.g. \\+33 )'
-
-        [main.welcome.disable_msisdn_registration]
-        ask = "Disable asking Phone Number in Registration flow"
-        type = "boolean"
-        yes = "true"
-        no = "false"
-        help = "Overrides 3PID settings if MSISDNs are set as required."
-        visible = "enable_registration"
-
-        [main.welcome.account_threepid_delegates_msisdn]
-        ask = "Specify a third party server to send confirmation code by SMS"
-        type = "string"
-        help = "That should be an URL with port or API."
-        visible = 'enable_registration && (registrations_require_3pid == "email&msisdn" || registrations_require_3pid == "msisdn")'
-
-        [main.welcome.auto_join_rooms]
-        ask = "Auto Join new Users in following Rooms"
-        type = "tags"
-        help = "( e.g. #example:example.com ) Users who register on this homeserver will automatically be joined to these rooms. If the room already exists, the join rule must be set to 'public'. See also next setting."
-
-        [main.welcome.autocreate_auto_join_rooms]
-        ask = "Auto-Create room for Auto Join if not existing"
-        type = "boolean"
-        yes = "true"
-        no = "false"
-        help = "Setting to false means that if the rooms are not manually created, users cannot be auto-joined. Auto-created rooms will be public and federated by default, this can be customised in CLI with the settings auto_join_*."
-
-        [main.welcome.notif_for_new_users]
-        ask = "Enable email notifications for new users"
-        type = "boolean"
-        yes = "true"
-        no = "false"
-        help = "Defaults to 'true'."
-        visible = "enable_notifs"
+        visible = "syncyunohost"
+                
+        [main.syncyunohost.syncyunohost_base_domain]
+        ask.en = "Choose the domain for Yunohost user's email creation:"
+        ask.fr = "Choisissez le domaine pour la création des emails des utilisateurs Yunohost:"
+        type = "domain"
+        visible = "syncyunohost_enabled"
+                
+        [main.syncyunohost.syncyunohost_main_group]
+        ask.en = "Which Yunohost group do you want to sync Dolibarr's activated members with?"
+        ask.fr = "Avec quel groupe de yunohost souhaitez vous synchroniser les membres actifs de Dolibarr?"
+        type = "group"
+        visible = "syncyunohost_enabled"
