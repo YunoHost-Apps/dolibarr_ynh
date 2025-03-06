@@ -40,11 +40,6 @@ upgrade_dolibarr() {
 # FUTURE OFFICIAL HELPERS
 #=================================================
 syncyunohost_install(){
-   # ynh_script_progression --message="Enabling SyncYunohost module..." --weight=1
-   # sed -i "s/{{syncyunohost_main_group}}/$syncyunohost_main_group/g" ../conf/sql/syncyunohost.sql
-   # sed -i "s/{{syncyunohost_base_domain}}/$syncyunohost_base_domain/g" ../conf/sql/syncyunohost.sql
-   # ynh_mysql_connect_as --user="$db_name" --password="$db_pwd" --database="$db_name" < ../conf/sql/syncyunohost.sql
-
     #=================================================
     # COPY FOLDER TO DESTINATION
     #=================================================
@@ -85,6 +80,32 @@ syncyunohost_install(){
 
     syncyunohost_modules_activate
 }
+syncyunohost_remove(){
+    ynh_script_progression --message="Deactive modSyncYunoHost ..." --weight=1
+    syncyunohost_modules_deactivate
+    #=================================================
+    # REMOVE CUSTOM FILES
+    #=================================================
+    ynh_script_progression --message="Removing custom files from /htdocs/custom/syncyunohost/..." --weight=1
+    # Remove the custom directory securely
+    ynh_secure_remove --file="$install_dir/htdocs/custom/syncyunohost"
+    #=================================================
+    # REMOVE CUSTOM SCRIPTS
+    #=================================================
+    ynh_script_progression --message="Removing syncyunohost-modules.php script from $install_dir/scripts/members/ ..." --weight=1
+    ynh_secure_remove --file="$install_dir/scripts/members/syncyunohost-modules.php"
+    
+    ynh_script_progression --message="Removing syncyunohost.sh script from /usr/local/bin/..." --weight=1
+    ynh_secure_remove --file="/usr/local/bin/syncyunohost.sh"
+    #=================================================
+    # REMOVE SUDOERS ENTRY
+    #=================================================
+    ynh_script_progression --message="Removing sudoers entry for dolibarr user..." --weight=1
+    sudo sed -i '/dolibarr ALL=(ALL) NOPASSWD: \/usr\/local\/bin\/syncyunohost.sh/d' /etc/sudoers
+}
 syncyunohost_modules_activate(){
     php "$install_dir/scripts/members/syncyunohost-modules.php" --action=activate --modules=modAdherent,modCron,modSyncYunoHost --base_domain=$syncyunohost_base_domain --main_group=$syncyunohost_base_domain --old_members=yes;
+}
+syncyunohost_modules_deactivate(){
+    php "$install_dir/scripts/members/syncyunohost-modules.php" --action=deactivate --modules=modSyncYunoHost;
 }
