@@ -68,7 +68,7 @@ class modSyncYunoHost extends DolibarrModules
                 'comment' => 'Comment',
                 'frequency' => 1,
                 'unitfrequency' => 3600*24,
-                'status' => 0,
+                'status' => 1,
                 'test' => 'isModEnabled("syncyunohost")',
                 'priority' => 50,
             ),
