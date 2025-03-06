@@ -86,21 +86,12 @@ if ($action == 'activate' || $action == 'deactivate') {
         }
     }
     
-    // Print optional parameters if provided
-    if (!empty($base_domain)) {
-        echo "Base Domain: $base_domain\n";
-    }
-    if (!empty($main_group)) {
-        echo "Main Group: $main_group\n";
-    }
-    if (!empty($old_members)) {
-        echo "Old Members: $old_members\n";
-    }
+    syncyunohost_update_settings($db, $conf, $base_domain, $main_group, $old_members);
 } else {
     echo "Error: Invalid action. Use 'activate' or 'deactivate'.\n";
     exit(1);
 }
-function syncyunohost_adherent_required_fields($db){
+function syncyunohost_adherent_required_fields($db, $conf){
 	$db->begin();
 	$res1 = $res2 = 0;
 	$res1 = dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', 0, 'chaine', 0, '', $conf->entity);
@@ -112,5 +103,35 @@ function syncyunohost_adherent_required_fields($db){
 		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
 		$db->commit();
 	}	
+}
+function syncyunohost_update_settings($db, $conf, $base_domain = null, $main_group = null, $old_members = null) {
+    if (!empty($base_domain) || !empty($main_group) || !empty($old_members)) {
+        $db->begin();
+        $errors = false;
+
+        if (!empty($base_domain)) {
+            if (dolibarr_set_const($db, 'YUNOHOST_BASE_DOMAIN', $base_domain, 'chaine', 0, '', $conf->entity) < 0) {
+                $errors = true;
+            }
+        }
+        if (!empty($main_group)) {
+            if (dolibarr_set_const($db, 'YUNOHOST_MAIN_GROUP', $main_group, 'chaine', 0, '', $conf->entity) < 0) {
+                $errors = true;
+            }
+        }
+        if (!empty($old_members)) {
+            if (dolibarr_set_const($db, 'YUNOHOST_OLD_MEMBERS', $old_members, 'chaine', 0, '', $conf->entity) < 0) {
+                $errors = true;
+            }
+        }
+
+        if ($errors) {
+            setEventMessages('ErrorFailedToSaveData', null, 'errors');
+            $db->rollback();
+        } else {
+            setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
+            $db->commit();
+        }
+    }
 }
 ?>
