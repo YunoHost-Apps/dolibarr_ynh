@@ -20,7 +20,7 @@ Nie powinno być ono edytowane ręcznie.
 
 Dolibarr ERP & CRM is a modern software for managing your professional or associative activity (contacts, invoices, orders, stocks, agenda, etc.).
 
-**Dostarczona wersja:** 20.0.3~ynh1
+**Dostarczona wersja:** 21.0.0~ynh1
 
 **Demo:** <https://www.dolibarr.org/onlinedemo>
 
