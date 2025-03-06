@@ -104,7 +104,7 @@ syncyunohost_remove(){
     sudo sed -i '/dolibarr ALL=(ALL) NOPASSWD: \/usr\/local\/bin\/syncyunohost.sh/d' /etc/sudoers
 }
 syncyunohost_modules_activate(){
-    php "$install_dir/scripts/members/syncyunohost-modules.php" --action=activate --modules=modAdherent,modCron,modSyncYunoHost --base_domain=$syncyunohost_base_domain --main_group=$syncyunohost_base_domain --old_members=yes;
+    php "$install_dir/scripts/members/syncyunohost-modules.php" --action=activate --modules=modAdherent,modCron,modSyncYunoHost --base_domain=$syncyunohost_base_domain --main_group=$syncyunohost_main_group --old_members=yes;
 }
 syncyunohost_modules_deactivate(){
     php "$install_dir/scripts/members/syncyunohost-modules.php" --action=deactivate --modules=modSyncYunoHost;
