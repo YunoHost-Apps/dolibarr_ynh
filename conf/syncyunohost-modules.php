@@ -72,7 +72,7 @@ if ($action == 'activate' || $action == 'deactivate') {
             // Check if module file exists before including
             if (file_exists(DOL_DOCUMENT_ROOT . $module_dir . $file)) {
                 dol_include_once($module_dir . $file);               
-                $res = ($action == 'activate') ? activateModule($modtoactionnew, 1) : deactivateModule($modtoactionnew, 1);
+                $res = ($action == 'activate') ? activateModule($modtoactionnew, 1) : unActivateModule($modtoactionnew, 1);
                 if ($res === false || (is_array($res) && !empty($res['errors']))) {
                     echo "ERROR: failed to {$action} module file=" . $file . "\n";
                 } else {
