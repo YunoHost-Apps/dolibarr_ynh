@@ -1,11 +1,20 @@
 #!/bin/bash
-source /usr/share/yunohost/helpers
-ynh_abort_if_errors
-#=================================================
-# GENERIC FINALIZATION
-#=================================================
 
-ynh_app_config_validate() {
-    syncyunohost_modules_deactivate    
+source _common.sh
+source /usr/share/yunohost/helpers
+
+ynh_abort_if_errors
+
+ynh_app_config_apply() {
+    _ynh_app_config_apply
+
+    if [ "${changed[syncyunohost]}" == "true" ] && [ $syncyunohost -eq 1 ]
+    then
+        syncyunohost_modules_activate
+    elif [ "${changed[syncyunohost]}" == "true" ] && [ $syncyunohost -eq 0 ]
+    then
+        syncyunohost_modules_activate
+    fi
 }
+
 ynh_app_config_run $1
