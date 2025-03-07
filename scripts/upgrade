@@ -104,6 +104,10 @@ ynh_add_fpm_config
 ynh_add_nginx_config
 
 ynh_use_logrotate --non-append
+# If syncyunohost don't exist, create them
+if [ -z "${syncyunohost:-}" ] ]; then
+    ynh_app_setting_set --app=$app --key=syncyunohost --value="false"
+fi
 #=================================================
 # COPY FOLDER TO TARGET PATH
 #=================================================
