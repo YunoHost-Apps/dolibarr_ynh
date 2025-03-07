@@ -77,11 +77,11 @@ syncyunohost_install(){
     # Change ownership of the file to dolibarr after creation
     chown dolibarr:dolibarr /usr/local/bin/syncyunohost.sh
     chmod 750 /usr/local/bin/syncyunohost.sh
-
+    # Active modAdherent,modCron,modSyncYunoHost
     syncyunohost_modules_activate
 }
 syncyunohost_remove(){
-    ynh_script_progression --message="Deactive modSyncYunoHost ..." --weight=1
+    # Deactive modSyncYunoHost
     syncyunohost_modules_deactivate
     #=================================================
     # REMOVE CUSTOM FILES
@@ -104,8 +104,10 @@ syncyunohost_remove(){
     sudo sed -i '/dolibarr ALL=(ALL) NOPASSWD: \/usr\/local\/bin\/syncyunohost.sh/d' /etc/sudoers
 }
 syncyunohost_modules_activate(){
+    ynh_script_progression --message="Active modAdherent,modCron,modSyncYunoHost ..." --weight=1
     php "$install_dir/scripts/members/syncyunohost-modules.php" --action=activate --modules=modAdherent,modCron,modSyncYunoHost --base_domain=$syncyunohost_base_domain --main_group=$syncyunohost_main_group --old_members=yes;
 }
 syncyunohost_modules_deactivate(){
+    ynh_script_progression --message="Deactive modSyncYunoHost ..." --weight=1
     php "$install_dir/scripts/members/syncyunohost-modules.php" --action=deactivate --modules=modSyncYunoHost;
 }
