@@ -39,7 +39,7 @@ upgrade_dolibarr() {
 #=================================================
 # FUTURE OFFICIAL HELPERS
 #=================================================
-syncyunohost_install(){
+syncyunohost_module_install(){
     #=================================================
     # COPY FOLDER TO DESTINATION
     #=================================================
@@ -80,7 +80,7 @@ syncyunohost_install(){
     # Active modAdherent,modCron,modSyncYunoHost
     syncyunohost_modules_activate
 }
-syncyunohost_remove(){
+syncyunohost_module_remove(){
     # Deactive modSyncYunoHost
     syncyunohost_modules_deactivate
     #=================================================
