@@ -4,16 +4,33 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 ynh_abort_if_errors
-
+set__syncyunohost() {
+    if [ "$syncyunohost_remove" -eq "1" ]; then
+        # If syncyunohost_remove was set to 0, set syncyunohost = 0
+        ynh_print_info "syncyunohost disable"
+        ynh_app_setting_set --key=syncyunohost --value=0
+    elif [ "$syncyunohost_install" -eq "1" ]; then
+        # If syncyunohost_install was set to 1, set syncyunohost = 1
+        ynh_print_info "syncyunohost enabled"
+        ynh_app_setting_set --key=syncyunohost --value=1
+    fi
+}
 ynh_app_config_apply() {
     _ynh_app_config_apply
 
-    if [ "${changed[syncyunohost]}" == "true" ] && [ $syncyunohost -eq 1 ]
+    if [ "${changed[syncyunohost_install]}" == "true" ] && [ $syncyunohost_install == "true" ]
+    then
+        syncyunohost_install
+    elif [ "${changed[syncyunohost_remove]}" == "true" ] && [ $syncyunohost_remove == "true" ]
+    then
+        syncyunohost_remove
+    fi
+    if [ "${changed[syncyunohost_enabled]}" == "true" ] && [ $syncyunohost_enabled == "true" ]
     then
         syncyunohost_modules_activate
-    elif [ "${changed[syncyunohost]}" == "true" ] && [ $syncyunohost -eq 0 ]
+    elif [ "${changed[syncyunohost_enabled]}" == "true" ] && [ $syncyunohost_enabled == "false" ]
     then
-        syncyunohost_modules_activate
+        syncyunohost_modules_deactivate
     fi
 }
 
