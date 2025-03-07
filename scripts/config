@@ -1,11 +1,11 @@
 #!/bin/bash
 source /usr/share/yunohost/helpers
 ynh_abort_if_errors
-getter__dolibarr_syncyunohost() {
-    if grep -q "syncyunohost' => 1" "__INSTALL_DIR__/conf/conf.php"; then
-        echo "true"
-    else
-        echo "false"
-    fi
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+
+ynh_app_config_validate() {
+    syncyunohost_modules_deactivate    
 }
 ynh_app_config_run $1
