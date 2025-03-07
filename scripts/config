@@ -5,8 +5,8 @@ source /usr/share/yunohost/helpers
 
 ynh_abort_if_errors
 set__syncyunohost() {
-    if [ "$syncyunohost_remove" -eq "1" ]; then
-        # If syncyunohost_remove was set to 0, set syncyunohost = 0
+    if [ "$syncyunohost_uninstall" -eq "1" ]; then
+        # If syncyunohost_uninstall was set to 0, set syncyunohost = 0
         ynh_print_info "syncyunohost disable"
         ynh_app_setting_set --key=syncyunohost --value=0
     elif [ "$syncyunohost_install" -eq "1" ]; then
@@ -21,7 +21,7 @@ ynh_app_config_apply() {
     if [ "${changed[syncyunohost_install]}" == "true" ] && [ $syncyunohost_install == "true" ]
     then
         syncyunohost_install
-    elif [ "${changed[syncyunohost_remove]}" == "true" ] && [ $syncyunohost_remove == "true" ]
+    elif [ "${changed[syncyunohost_uninstall]}" == "true" ] && [ $syncyunohost_uninstall == "true" ]
     then
         syncyunohost_remove
     fi
