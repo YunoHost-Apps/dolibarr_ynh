@@ -3,29 +3,30 @@ version = "1.0"
 [main]
 name.en = "SyncYunohost"
 name.fr = "SyncYunohost"
-services = ["__APP__"]
-        [main.syncyunohost]
-        ask.en = "SyncYunohost Configuration"
-        ask.fr = "SyncYunohost Configuration"
-        type = "boolean"
-        yes = "true"
-        no = "false"
-        [main.syncyunohost.syncyunohost_enabled]
-        ask.en = "Would you like to enable the SyncYunohost module to synchronize Dolibarr members with YunoHost?"
-        ask.fr = "Souhaitez-vous activer le module SyncYunohost pour synchroniser les membres dans Dolibarr avec  les utilisateurs de YunoHost?"
-        type = "boolean"
-        yes = "true"
-        no = "false"
-        visible = "syncyunohost"
-                
-        [main.syncyunohost.syncyunohost_base_domain]
-        ask.en = "Choose the domain for Yunohost user's email creation:"
-        ask.fr = "Choisissez le domaine pour la création des emails des utilisateurs Yunohost:"
-        type = "domain"
-        visible = "syncyunohost_enabled"
-                
-        [main.syncyunohost.syncyunohost_main_group]
-        ask.en = "Which Yunohost group do you want to sync Dolibarr's activated members with?"
-        ask.fr = "Avec quel groupe de yunohost souhaitez vous synchroniser les membres actifs de Dolibarr?"
-        type = "group"
-        visible = "syncyunohost_enabled"
+    [main.config]
+    [main.config.syncyunohost]
+    ask.en = "SyncYunohost Configuration"
+    ask.fr = "SyncYunohost Configuration"
+    type = "boolean"
+    yes = "true"
+    no = "false"
+
+    [main.config.syncyunohost_enabled]
+    ask.en = "Would you like to enable the SyncYunohost module to synchronize Dolibarr members with YunoHost?"
+    ask.fr = "Souhaitez-vous activer le module SyncYunohost pour synchroniser les membres dans Dolibarr avec les utilisateurs de YunoHost?"
+    type = "boolean"
+    yes = "true"
+    no = "false"
+    visible = "syncyunohost"
+
+    [main.config.syncyunohost_base_domain]
+    ask.en = "Choose the domain for Yunohost user's email creation:"
+    ask.fr = "Choisissez le domaine pour la création des emails des utilisateurs Yunohost:"
+    type = "domain"
+    visible = "syncyunohost_enabled"
+
+    [main.config.syncyunohost_main_group]
+    ask.en = "Which Yunohost group do you want to sync Dolibarr's activated members with?"
+    ask.fr = "Avec quel groupe de yunohost souhaitez vous synchroniser les membres actifs de Dolibarr?"
+    type = "group"
+    visible = "syncyunohost_enabled"
