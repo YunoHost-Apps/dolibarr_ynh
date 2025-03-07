@@ -20,10 +20,10 @@ ynh_app_config_apply() {
 
     if [ "${changed[syncyunohost_install]}" == "true" ] && [ $syncyunohost_install == "true" ]
     then
-        syncyunohost_install
+        syncyunohost_module_install
     elif [ "${changed[syncyunohost_uninstall]}" == "true" ] && [ $syncyunohost_uninstall == "true" ]
     then
-        syncyunohost_remove
+        syncyunohost_module_remove
     fi
     if [ "${changed[syncyunohost_enabled]}" == "true" ] && [ $syncyunohost_enabled == "true" ]
     then
