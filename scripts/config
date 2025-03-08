@@ -15,16 +15,21 @@ set__syncyunohost() {
         ynh_app_setting_set --key=syncyunohost --value=1
     fi
 }
+run__syncyunohost_install_action(){
+        # syncyunohost install and set syncyunohost = 1
+        ynh_print_info "syncyunohost install"
+        ynh_app_setting_set --key=syncyunohost --value=1
+        syncyunohost_module_install
+}
+run__syncyunohost_uninstall_action(){
+        # syncyunohost uninstall set syncyunohost = 0
+        ynh_print_info "syncyunohost uninstall"
+        ynh_app_setting_set --key=syncyunohost --value=0
+        syncyunohost_module_remove
+}
 ynh_app_config_apply() {
     _ynh_app_config_apply
 
-    if [ "${changed[syncyunohost_install]}" == "true" ] && [ $syncyunohost_install == "true" ]
-    then
-        syncyunohost_module_install
-    elif [ "${changed[syncyunohost_uninstall]}" == "true" ] && [ $syncyunohost_uninstall == "true" ]
-    then
-        syncyunohost_module_remove
-    fi
     if [ "${changed[syncyunohost_enabled]}" == "true" ] && [ $syncyunohost_enabled == "true" ]
     then
         syncyunohost_modules_activate
