@@ -5,17 +5,13 @@ name.en = "SyncYunohost"
 name.fr = "SyncYunohost"
     [main.syncyunohost]
     
-    [main.syncyunohost.amount]
-    ask = "Donation in the month : XX €
-    type = "alert"
-    style = "success"
-    
     [main.syncyunohost.syncyunohost]
     ask.en = "syncyunohost SyncYunohost"
     ask.fr = "syncyunohost SyncYunohost"
     type = "boolean"
     yes = "true"
     no = "false"
+    
     [main.syncyunohost.syncyunohost_install]
     ask.en = "Install SyncYunohost"
     ask.fr = "Install SyncYunohost"
