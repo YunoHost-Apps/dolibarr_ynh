@@ -4,20 +4,20 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 ynh_abort_if_errors
-
 ynh_app_config_apply() {
     _ynh_app_config_apply
-    
-    if [ "${changed[syncyunohost_install]}" == "true" ] && [ $syncyunohost_install == "false" ]
+
+    if [ "${changed[syncyunohost]}" == "true" ] && [ $syncyunohost == "true" ]
     then
         ynh_print_info "syncyunohost install"
-        syncyunohost_scripts_install
-        ynh_app_setting_set --key=syncyunohost --value=1
-    elif [ "${changed[syncyunohost_uninstall]}" == "true" ] && [ $syncyunohost_uninstall == "false" ]
+        syncyunohost_module_install
+        ynh_app_setting_set --key=syncyunohost_enabled --value=0
+    elif [ "${changed[syncyunohost]}" == "true" ] && [ $syncyunohost == "false" ]
     then
         ynh_print_info "syncyunohost uninstall"
-        syncyunohost_module_remove
-        ynh_app_setting_set --key=syncyunohost --value=0
+        syncyunohost_modules_deactivate
+        syncyunohost_scripts_remove
+        ynh_app_setting_set --key=syncyunohost_enabled --value=0
     fi
     if [ "${changed[syncyunohost_enabled]}" == "true" ] && [ $syncyunohost_enabled == "true" ]
     then
