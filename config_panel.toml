@@ -3,30 +3,15 @@ version = "1.0"
 [main]
 name.en = "SyncYunohost"
 name.fr = "SyncYunohost"
+
     [main.syncyunohost]
-    
+
     [main.syncyunohost.syncyunohost]
-    ask.en = "syncyunohost SyncYunohost"
-    ask.fr = "syncyunohost SyncYunohost"
+    ask.en = "SyncYunohost is active?"
+    ask.fr = "SyncYunohost est actif?"
     type = "boolean"
     yes = "true"
     no = "false"
-    
-    [main.syncyunohost.syncyunohost_install]
-    ask.en = "Install SyncYunohost"
-    ask.fr = "Install SyncYunohost"
-    type = "boolean"
-    yes = "true"
-    no = "false"
-    visible = "syncyunohost"
-    
-    [main.syncyunohost.syncyunohost_uninstall]
-    ask.en = "Uninstall SyncYunohost"
-    ask.fr = "Uninstall SyncYunohost"
-    type = "boolean"
-    yes = "true"
-    no = "false"
-    visible = "!syncyunohost"
 
     [main.syncyunohost.syncyunohost_enabled]
     ask.en = "Would you like to enable the SyncYunohost module to synchronize Dolibarr members with YunoHost?"
@@ -40,17 +25,10 @@ name.fr = "SyncYunohost"
     ask.en = "Choose the domain for Yunohost user's email creation:"
     ask.fr = "Choisissez le domaine pour la création des emails des utilisateurs Yunohost:"
     type = "domain"
-    visible = "syncyunohost_enabled"
+    visible = "syncyunohost_enabled && syncyunohost"
 
     [main.syncyunohost.syncyunohost_main_group]
     ask.en = "Which Yunohost group do you want to sync Dolibarr's activated members with?"
     ask.fr = "Avec quel groupe de yunohost souhaitez vous synchroniser les membres actifs de Dolibarr?"
     type = "group"
-    visible = "syncyunohost_enabled"
-    
-    [main.syncyunohost.syncyunohost_install_action]
-    type = "button"
-    ask = "Install Syncyunohost"
-    [main.syncyunohost.syncyunohost_uninstall_action]
-    type = "button"
-    ask = "Uninstall Syncyunohost"
+    visible = "syncyunohost_enabled && syncyunohost"
