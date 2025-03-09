@@ -4,32 +4,21 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 ynh_abort_if_errors
-set__syncyunohost() {
-    if [ "$syncyunohost_uninstall" -eq "1" ]; then
-        # If syncyunohost_uninstall was set to 0, set syncyunohost = 0
-        ynh_print_info "syncyunohost disable"
-        ynh_app_setting_set --key=syncyunohost --value=0
-    elif [ "$syncyunohost_install" -eq "1" ]; then
-        # If syncyunohost_install was set to 1, set syncyunohost = 1
-        ynh_print_info "syncyunohost enabled"
-        ynh_app_setting_set --key=syncyunohost --value=1
-    fi
-}
-run__syncyunohost_install_action(){
-        # syncyunohost install and set syncyunohost = 1
-        ynh_print_info "syncyunohost install"
-        ynh_app_setting_set --key=syncyunohost --value=1
-        syncyunohost_module_install
-}
-run__syncyunohost_uninstall_action(){
-        # syncyunohost uninstall set syncyunohost = 0
-        ynh_print_info "syncyunohost uninstall"
-        ynh_app_setting_set --key=syncyunohost --value=0
-        syncyunohost_module_remove
-}
+
 ynh_app_config_apply() {
     _ynh_app_config_apply
-
+    
+    if [ "${changed[syncyunohost_install]}" == "true" ] && [ $syncyunohost_install == "false" ]
+    then
+        ynh_print_info "syncyunohost install"
+        syncyunohost_module_install
+        ynh_app_setting_set --key=syncyunohost --value=1
+    elif [ "${changed[syncyunohost_uninstall]}" == "true" ] && [ $syncyunohost_uninstall == "false" ]
+    then
+        ynh_print_info "syncyunohost uninstall"
+        syncyunohost_module_remove
+        ynh_app_setting_set --key=syncyunohost --value=0
+    fi
     if [ "${changed[syncyunohost_enabled]}" == "true" ] && [ $syncyunohost_enabled == "true" ]
     then
         syncyunohost_modules_activate
