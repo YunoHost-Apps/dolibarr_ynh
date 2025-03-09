@@ -53,7 +53,8 @@ syncyunohost_module_install(){
     else
         ynh_print_warn --message="Source directory ../sources/extra_files/app/syncyunohost/ does not exist. Skipping copy."
     fi
-    
+}
+syncyunohost_scripts_install(){
     #=================================================
     # COPY SCRIPT TO /scripts/members
     #=================================================
@@ -78,17 +79,8 @@ syncyunohost_module_install(){
     chown dolibarr:dolibarr /usr/local/bin/syncyunohost.sh
     chmod 750 /usr/local/bin/syncyunohost.sh
     # Active modAdherent,modCron,modSyncYunoHost
-    syncyunohost_modules_activate
 }
-syncyunohost_module_remove(){
-    # Deactive modSyncYunoHost
-    syncyunohost_modules_deactivate
-    #=================================================
-    # REMOVE CUSTOM FILES
-    #=================================================
-    ynh_script_progression --message="Removing custom files from /htdocs/custom/syncyunohost/..." --weight=1
-    # Remove the custom directory securely
-    ynh_secure_remove --file="$install_dir/htdocs/custom/syncyunohost"
+syncyunohost_scripts_remove(){
     #=================================================
     # REMOVE CUSTOM SCRIPTS
     #=================================================
