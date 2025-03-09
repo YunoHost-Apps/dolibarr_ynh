@@ -11,7 +11,6 @@ ynh_app_config_apply() {
     then
         ynh_print_info "syncyunohost scripts install"
         syncyunohost_scripts_install
-        ynh_app_setting_set --key=syncyunohost_enabled --value=0
     elif [ "${changed[syncyunohost]}" == "true" ] && [ $syncyunohost == "false" ]
     then
         ynh_print_info "syncyunohost uninstall"
@@ -19,7 +18,7 @@ ynh_app_config_apply() {
         syncyunohost_scripts_remove
         ynh_app_setting_set --key=syncyunohost_enabled --value=0
     fi
-    if [ "${changed[syncyunohost_enabled]}" == "true" ] && [ $syncyunohost_enabled == "true" ]
+    if [ "${changed[syncyunohost_base_domain]}" == "true" || "${changed[syncyunohost_main_group]}" == "true" ] && [ $syncyunohost_enabled == "true" ]
     then
         syncyunohost_modules_activate
     elif [ "${changed[syncyunohost_enabled]}" == "true" ] && [ $syncyunohost_enabled == "false" ]
