@@ -4,6 +4,12 @@ version = "1.0"
 name.en = "SyncYunohost"
 name.fr = "SyncYunohost"
     [main.syncyunohost]
+    
+    [main.syncyunohost.amount]
+    ask = "Donation in the month : XX €
+    type = "alert"
+    style = "success"
+    
     [main.syncyunohost.syncyunohost]
     ask.en = "syncyunohost SyncYunohost"
     ask.fr = "syncyunohost SyncYunohost"
@@ -17,6 +23,7 @@ name.fr = "SyncYunohost"
     yes = "true"
     no = "false"
     visible = "syncyunohost"
+    
     [main.syncyunohost.syncyunohost_uninstall]
     ask.en = "Uninstall SyncYunohost"
     ask.fr = "Uninstall SyncYunohost"
@@ -44,6 +51,7 @@ name.fr = "SyncYunohost"
     ask.fr = "Avec quel groupe de yunohost souhaitez vous synchroniser les membres actifs de Dolibarr?"
     type = "group"
     visible = "syncyunohost_enabled"
+    
     [main.syncyunohost.syncyunohost_install_action]
     type = "button"
     ask = "Install Syncyunohost"
