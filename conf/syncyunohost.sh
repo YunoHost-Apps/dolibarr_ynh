@@ -23,14 +23,14 @@ ynh_create_user() {
     local password="$1"
     local fullname="$2"
     local forward_email="$3"
-    sudo yunohost user create "$USERNAME" \
+    yunohost user create "$USERNAME" \
         -p "$password" \
         -F "$fullname" \
         -d "$PARAM4"  
 
     # Add mail forward if provided
     if [ -n "$forward_email" ]; then
-        sudo yunohost user update "$USERNAME" \
+        yunohost user update "$USERNAME" \
             --add-mailforward "$forward_email"
     fi
     echo "User $username created successfully."
