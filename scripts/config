@@ -9,8 +9,8 @@ ynh_app_config_apply() {
 
     if [ "${changed[syncyunohost]}" == "true" ] && [ $syncyunohost == "true" ]
     then
-        ynh_print_info "syncyunohost install"
-        syncyunohost_module_install
+        ynh_print_info "syncyunohost scripts install"
+        syncyunohost_scripts_install
         ynh_app_setting_set --key=syncyunohost_enabled --value=0
     elif [ "${changed[syncyunohost]}" == "true" ] && [ $syncyunohost == "false" ]
     then
