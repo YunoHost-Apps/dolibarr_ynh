@@ -118,9 +118,12 @@ syncyunohost_module_install
 if [[ $syncyunohost == 1 ]]
 then
     syncyunohost_scripts_install
-    syncyunohost_modules_activate
     ynh_app_setting_set --app=$app --key=syncyunohost_install --value="true"
     ynh_app_setting_set --app=$app --key=syncyunohost_uninstall --value="false"
+    if [[ $syncyunohost == 1 ]]
+    then
+        syncyunohost_modules_activate
+    fi
 else
     ynh_app_setting_set --app=$app --key=syncyunohost_install --value="false"
     ynh_app_setting_set --app=$app --key=syncyunohost_uninstall --value="true"
