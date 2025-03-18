@@ -103,6 +103,10 @@ ram.runtime = "150M"
     [resources.permissions]
     main.url = "/"
 
+    api.url = "/api"
+    api.allowed = "visitors"
+    api.protected = false
+
     [resources.apt]
     packages = [
         "php8.3-mysql",
