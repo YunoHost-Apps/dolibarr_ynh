@@ -106,6 +106,12 @@ ram.runtime = "150M"
     api.url = "/api"
     api.allowed = "visitors"
     api.protected = false
+    api.show_tile = false
+
+    public.url = "/public"
+    public.allowed = "visitors"
+    public.protected = false
+    public.show_tile = false
 
     [resources.apt]
     packages = [
