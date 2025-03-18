@@ -46,10 +46,10 @@ ram.runtime = "150M"
     type = "user"
 
 [resources]
+
     [resources.sources.main]
     url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/19.0.3.tar.gz"
     sha256 = "52fcea5a354f8688fa328abffaa196bf9056f545164cd7fe882d1bb7de654163"
-    autoupdate.strategy = "latest_github_release"
 
     [resources.sources.main_18_0_1]
     url = "https://github.com/dolibarr/dolibarr/archive/18.0.1.tar.gz"
