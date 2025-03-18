@@ -79,8 +79,8 @@ ynh_exec_fully_quiet sleep 5
 
 # Setup HTTP auth in conf
 ynh_replace_string --target_file="$install_dir/htdocs/conf/conf.php" \
-    --match_string="dolibarr_main_authentication='dolibarr'" \
-    --replace_string="dolibarr_main_authentication='http'"
+    --match_string="\$dolibarr_main_authentication='dolibarr';" \
+    --replace_string="\$dolibarr_main_authentication='http,ldap';\n\$dolibarr_main_auth_ldap_host='127.0.0.1';\n\$dolibarr_main_auth_ldap_port='389';\n\$dolibarr_main_auth_ldap_version='3';\n\$dolibarr_main_auth_ldap_servertype='openldap';\n\$dolibarr_main_auth_ldap_dn='ou=users,dc=yunohost,dc=org';\n\$dolibarr_main_auth_ldap_login_attribute='uid';"
 
 # Calculate and store the config file checksum into the app settings
 ynh_store_file_checksum --file="$install_dir/htdocs/conf/conf.php"
