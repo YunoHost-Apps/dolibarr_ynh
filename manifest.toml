@@ -7,7 +7,7 @@ name = "Dolibarr"
 description.en = "Manage the various aspects of your business or association"
 description.fr = "Gérez les différents aspects de votre activité pro ou associative"
 
-version = "19.0.3~ynh1"
+version = "21.0.0~ynh1"
 
 maintainers = ["mastereur"]
 
@@ -24,8 +24,10 @@ cpe = "cpe:2.3:a:dolibarr:dolibarr"
 yunohost = ">= 11.2.27"
 architectures = "all"
 multi_instance = true
+
 ldap = true
 sso = true
+
 disk = "200M"
 ram.build = "150M"
 ram.runtime = "150M"
@@ -47,9 +49,14 @@ ram.runtime = "150M"
 
 [resources]
     [resources.sources.main]
-    url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/19.0.3.tar.gz"
-    sha256 = "52fcea5a354f8688fa328abffaa196bf9056f545164cd7fe882d1bb7de654163"
+    url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/21.0.0.tar.gz"
+    sha256 = "a6dea87aae465be69d113cb21d29b8bc770705848f134b6b5e9274f043550005"
     autoupdate.strategy = "latest_github_release"
+
+    [resources.sources.main_19_0_2]
+    url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/19.0.2.tar.gz"
+    sha256 = "7da083cff05bf6522e3140b6a19c9eb87cdbab2e06df4cbf3dbebd6dd47d886d"
+    prefetch = false
 
     [resources.sources.main_18_0_1]
     url = "https://github.com/dolibarr/dolibarr/archive/18.0.1.tar.gz"
@@ -115,20 +122,20 @@ ram.runtime = "150M"
 
     [resources.apt]
     packages = [
-        "php8.3-mysql",
-        "php8.3-imagick",
-        "php8.3-gd",
-        "php8.3-mbstring",
-        "php8.3-soap",
-        "php8.3-curl",
-        "php8.3-intl",
-        "php8.3-ldap",
-        "php8.3-opcache",
-        "php8.3-calendar",
-        "php8.3-zip",
-        "php8.3-xml",
-        "php8.3-fileinfo",
-        "php8.3-imap",
+        "php8.2-mysql",
+        "php8.2-imagick",
+        "php8.2-gd",
+        "php8.2-mbstring",
+        "php8.2-soap",
+        "php8.2-curl",
+        "php8.2-intl",
+        "php8.2-ldap",
+        "php8.2-opcache",
+        "php8.2-calendar",
+        "php8.2-zip",
+        "php8.2-xml",
+        "php8.2-fileinfo",
+        "php8.2-imap",
         "mariadb-server",
     ]
 
