@@ -50,7 +50,59 @@ ynh_script_progression --message="Reloading NGINX web server and PHP-FPM..." --w
 
 ynh_systemd_action --service_name="php$phpversion-fpm" --action=reload
 ynh_systemd_action --service_name=nginx --action=reload
+ynh_restore_file --origin_path="/usr/local/bin/syncyunohost.sh"
+echo "dolibarr ALL=(ALL) NOPASSWD: /usr/local/bin/syncyunohost.sh" | tee -a /etc/sudoers > /dev/null
+#=================================================
+# RESTORE syncyunohost.sh
+#=================================================
+visudo -c
+chown dolibarr:dolibarr /usr/local/bin/syncyunohost.sh
+chmod 750 /usr/local/bin/syncyunohost.sh
 
+#=================================================
+# RESTORE YUNOHOST GROUP USERS
+#=================================================
+
+GROUP_BACKUP_FILE="$install_dir/group_members.json"
+
+if [ -f "$GROUP_BACKUP_FILE" ]; then
+    ynh_script_progression --message="Restoring YunoHost group users..." --weight=1
+
+    MAIN_GROUP=$(yunohost app setting dolibarr syncyunohost_main_group --output-as plain)
+
+    if [ -z "$MAIN_GROUP" ]; then
+        ynh_print_warn --message="No main group set in syncyunohost_main_group, skipping group restoration."
+    else
+        ynh_print_info --message="Restoring users to YunoHost group: $MAIN_GROUP"
+
+        # Remove current members
+        CURRENT_MEMBERS=$(yunohost user group list --output-as json | jq -r ".groups[\"$MAIN_GROUP\"].members | join(\" \")")
+        
+        if [ ! -z "$CURRENT_MEMBERS" ]; then
+            yunohost user group remove "$MAIN_GROUP" $CURRENT_MEMBERS
+        fi
+
+        # Read users from backup
+        BACKED_UP_MEMBERS=$(jq -r '.[]' "$GROUP_BACKUP_FILE")
+
+        VALID_MEMBERS=()
+        for username in $BACKED_UP_MEMBERS; do
+            if yunohost user info "$username" &>/dev/null; then
+                VALID_MEMBERS+=("$username")
+            else
+                ynh_print_warn --message="User $username not found on system, skipping."
+            fi
+        done
+
+        if [ ${#VALID_MEMBERS[@]} -gt 0 ]; then
+            yunohost user group add "$MAIN_GROUP" "${VALID_MEMBERS[@]}"
+        else
+            ynh_print_warn --message="No valid users found to restore for group $MAIN_GROUP"
+        fi
+    fi
+else
+    ynh_print_warn --message="No group backup file found, skipping group restoration."
+fi
 #=================================================
 # END OF SCRIPT
 #=================================================
