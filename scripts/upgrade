@@ -104,10 +104,12 @@ ynh_add_fpm_config
 ynh_add_nginx_config
 
 ynh_use_logrotate --non-append
+
 #=================================================
 # COPY FOLDER TO TARGET PATH
 #=================================================
 syncyunohost_module_install
+
 #=================================================
 # END OF SCRIPT
 #=================================================
