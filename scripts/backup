@@ -34,6 +34,7 @@ ynh_backup --src_path="/etc/logrotate.d/$app"
 ynh_print_info --message="Backing up the MySQL database..."
 
 ynh_mysql_dump_db --database="$db_name" > db.sql
+
 #=================================================
 # BACKUP CUSTOM SCRIPTS
 #=================================================
@@ -43,7 +44,6 @@ ynh_backup --src_path="/usr/local/bin/syncyunohost.sh"
 #=================================================
 # BACKUP YUNOHOST GROUP USERS
 #=================================================
-
 # Get the main group name from Dolibarr's config
 MAIN_GROUP=$(yunohost app setting dolibarr syncyunohost_main_group --output-as plain)
 
@@ -68,6 +68,7 @@ else
     # Include the file in the backup
     ynh_backup --src_path="$GROUP_BACKUP_FILE"
 fi
+
 #=================================================
 # END OF SCRIPT
 #=================================================
