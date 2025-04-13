@@ -26,6 +26,7 @@ ynh_secure_remove --file="/etc/$app"
 
 # remove syncyunohost module
 syncyunohost_scripts_remove
+
 #=================================================
 # END OF SCRIPT
 #=================================================
