@@ -30,6 +30,7 @@ $action = '';
 $modules = '';
 $base_domain = '';
 $main_group = '';
+$old_members = '';
 
 // Process command-line arguments
 foreach ($argv as $val) {
