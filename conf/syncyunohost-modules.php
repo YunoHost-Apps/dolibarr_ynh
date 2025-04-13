@@ -87,6 +87,8 @@ if ($action == 'activate' || $action == 'deactivate') {
     echo "Error: Invalid action. Use 'activate' or 'deactivate'.\n";
     exit(1);
 }
+
+# Check that required fields are fulfiled
 function syncyunohost_adherent_required_fields($db, $conf){
 	$db->begin();
 	$res1 = $res2 = 0;
@@ -100,6 +102,8 @@ function syncyunohost_adherent_required_fields($db, $conf){
 		$db->commit();
 	}	
 }
+
+# Update Syncyunohost module settings
 function syncyunohost_update_settings($db, $conf, $base_domain = null, $main_group = null, $old_members = null) {
     if (!empty($base_domain) || !empty($main_group) || !empty($old_members)) {
         $db->begin();
