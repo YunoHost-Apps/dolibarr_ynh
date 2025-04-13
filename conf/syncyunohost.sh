@@ -13,6 +13,7 @@ ynh_user_exists() {
     yunohost user list --output-as json | jq -e ".users | has(\"$1\")" &>/dev/null
 }
 
+# Create Yunohost users
 ynh_create_user() {
     local password="$1"
     local fullname="$2"
@@ -57,6 +58,7 @@ ynh_modify_user_forward_email() {
 
     echo "Email $USERNAME updated."
 }
+
 # Modify user details
 ynh_modify_user_fullname() {
     local fullname=$1
@@ -66,6 +68,7 @@ ynh_modify_user_fullname() {
     fi
     echo "FullName $USERNAME updated."
 }
+
 # Modify user details
 ynh_modify_user_password() {
     local new_password=$1
@@ -88,7 +91,6 @@ ynh_delete_user() {
     yunohost user delete "$USERNAME" &>/dev/null
     echo "User $USERNAME deleted."
 }
-
 
 # Main logic for handling actions
 case $ACTION in
@@ -119,6 +121,7 @@ case $ACTION in
         fi
         ynh_modify_user_forward_email "$PARAM1" "$PARAM2"
         ;;
+
     modify_fullname)
         if [ -z "$PARAM1" ]; then
             echo "Error: New FullName is required."
@@ -126,6 +129,7 @@ case $ACTION in
         fi
         ynh_modify_user_fullname "$PARAM1"
         ;;
+
     deactivate)
         if ! ynh_user_exists "$USERNAME"; then
             echo "Error: User $USERNAME does not exist."
