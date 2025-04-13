@@ -120,6 +120,7 @@ then
 else
     ynh_script_progression --message="SyncYunohost module is disabled." --weight=1
 fi
+
 #=================================================
 # END OF SCRIPT
 #=================================================
