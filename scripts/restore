@@ -69,18 +69,16 @@ GROUP_BACKUP_FILE="$install_dir/group_members.json"
 if [ -f "$GROUP_BACKUP_FILE" ]; then
     ynh_script_progression --message="Restoring YunoHost group users..." --weight=1
 
-    MAIN_GROUP=$(yunohost app setting dolibarr syncyunohost_main_group --output-as plain)
-
-    if [ -z "$MAIN_GROUP" ]; then
+    if [ -z "$syncyunohost_main_group" ]; then
         ynh_print_warn --message="No main group set in syncyunohost_main_group, skipping group restoration."
     else
-        ynh_print_info --message="Restoring users to YunoHost group: $MAIN_GROUP"
+        ynh_print_info --message="Restoring users to YunoHost group: $syncyunohost_main_group"
 
         # Remove current members
-        CURRENT_MEMBERS=$(yunohost user group list --output-as json | jq -r ".groups[\"$MAIN_GROUP\"].members | join(\" \")")
+        CURRENT_MEMBERS=$(yunohost user group list --output-as json | jq -r ".groups[\"$syncyunohost_main_group\"].members | join(\" \")")
         
         if [ ! -z "$CURRENT_MEMBERS" ]; then
-            yunohost user group remove "$MAIN_GROUP" $CURRENT_MEMBERS
+            yunohost user group remove "$syncyunohost_main_group" $CURRENT_MEMBERS
         fi
 
         # Read users from backup
@@ -96,9 +94,9 @@ if [ -f "$GROUP_BACKUP_FILE" ]; then
         done
 
         if [ ${#VALID_MEMBERS[@]} -gt 0 ]; then
-            yunohost user group add "$MAIN_GROUP" "${VALID_MEMBERS[@]}"
+            yunohost user group add "$syncyunohost_main_group" "${VALID_MEMBERS[@]}"
         else
-            ynh_print_warn --message="No valid users found to restore for group $MAIN_GROUP"
+            ynh_print_warn --message="No valid users found to restore for group $syncyunohost_main_group"
         fi
     fi
 else
