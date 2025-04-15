@@ -44,8 +44,6 @@ syncyunohost_module_install(){
     #=================================================
     # COPY FOLDER TO DESTINATION
     #=================================================
-    ynh_script_progression --message="Copying syncyunohost folder to destination..." --weight=1
-    
     # Check if source directory exists
     if [ -d "../sources/extra_files/app/syncyunohost/" ]; then
         mkdir -p "$install_dir/htdocs/custom/syncyunohost/" # Ensure destination directory exists
@@ -59,14 +57,12 @@ syncyunohost_module_install(){
     #=================================================
     # COPY SCRIPT TO /scripts/members
     #=================================================
-    ynh_script_progression --message="Copying syncyunohost-modules.php to dolibarr $install_dir/scripts/members directory ..." --weight=1
     cp "../conf/syncyunohost-modules.php" "$install_dir/scripts/members/syncyunohost-modules.php"
     chown dolibarr:www-data -R "$install_dir/scripts/members/syncyunohost-modules.php"
 
     #=================================================
     # COPY SCRIPT TO /usr/local/bin
     #=================================================
-    ynh_script_progression --message="Copying syncyunohost.sh to /usr/local/bin/..." --weight=1
     ynh_add_config --template="syncyunohost.sh" --destination="/usr/local/bin/syncyunohost.sh"
 
     #=================================================
@@ -87,27 +83,22 @@ syncyunohost_scripts_remove(){
     #=================================================
     # REMOVE CUSTOM SCRIPTS
     #=================================================
-    ynh_script_progression --message="Removing syncyunohost-modules.php script from $install_dir/scripts/members/ ..." --weight=1
     ynh_secure_remove --file="$install_dir/scripts/members/syncyunohost-modules.php"
     
-    ynh_script_progression --message="Removing syncyunohost.sh script from /usr/local/bin/..." --weight=1
     ynh_secure_remove --file="/usr/local/bin/syncyunohost.sh"
 
     #=================================================
     # REMOVE SUDOERS ENTRY
     #=================================================
-    ynh_script_progression --message="Removing sudoers entry for dolibarr user..." --weight=1
     sed -i '/dolibarr ALL=(ALL) NOPASSWD: \/usr\/local\/bin\/syncyunohost.sh/d' /etc/sudoers
 }
 
 # Activate Syncyunohost module
 syncyunohost_modules_activate(){
-    ynh_script_progression --message="Active modAdherent,modCron,modSyncYunoHost ..." --weight=1
     php "$install_dir/scripts/members/syncyunohost-modules.php" --action=activate --modules=modAdherent,modCron,modSyncYunoHost --base_domain=$syncyunohost_base_domain --main_group=$syncyunohost_main_group
 }
 
 # Deactivate Syncyunohost module
 syncyunohost_modules_deactivate(){
-    ynh_script_progression --message="Deactive modSyncYunoHost ..." --weight=1
     php "$install_dir/scripts/members/syncyunohost-modules.php" --action=deactivate --modules=modSyncYunoHost
 }
