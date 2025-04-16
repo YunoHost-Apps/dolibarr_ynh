@@ -14,7 +14,7 @@ name.fr = "SyncYunohost"
     no = "false"
 
     [main.syncyunohost.syncyunohost_base_domain]
-        ask.en = "Choose the domain for YunoHost user's email creation"
+    ask.en = "Choose the domain for YunoHost user's email creation"
     ask.fr = "Choisissez le domaine pour la création des e-mails des utilisateurs YunoHost"
     type = "domain"
     visible = "syncyunohost_enabled"
