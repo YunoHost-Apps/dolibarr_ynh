@@ -55,7 +55,7 @@ ram.runtime = "150M"
     
     [install.syncyunohost_base_domain]
     type = "domain"
-     ask.en = "Choose the domain for YunoHost user's email creation"
+    ask.en = "Choose the domain for YunoHost user's email creation"
     ask.fr = "Choisissez le domaine pour la création des e-mails des utilisateurs YunoHost"
     visible = "syncyunohost_enabled"
     
