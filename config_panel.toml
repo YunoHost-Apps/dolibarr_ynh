@@ -20,7 +20,7 @@ name.fr = "SyncYunohost"
     visible = "syncyunohost_enabled"
 
     [main.syncyunohost.syncyunohost_main_group]
-    ask.en = "Which Yunohost group do you want to sync Dolibarr's activated members with?"
-    ask.fr = "Avec quel groupe de yunohost souhaitez vous synchroniser les membres actifs de Dolibarr?"
+    ask.en = "Which YunoHost group do you want to sync Dolibarr's activated members with?"
+    ask.fr = "Avec quel groupe de YunoHost souhaitez vous synchroniser les membres actifs de Dolibarr ?"
     type = "group"
     visible = "syncyunohost_enabled"
