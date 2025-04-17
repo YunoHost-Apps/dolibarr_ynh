@@ -8,7 +8,7 @@ name.fr = "SyncYunohost"
 
     [main.syncyunohost.syncyunohost_enabled]
     ask.en = "Would you like to enable the SyncYunohost module to synchronize Dolibarr members with YunoHost users?"
-    ask.fr = "Souhaitez-vous activer le module SyncYunohost pour synchroniser les membres de Dolibarr avec les utilisateurs de YunoHost?"
+    ask.fr = "Souhaitez-vous activer le module SyncYunohost pour synchroniser les membres de Dolibarr avec les utilisateurs de YunoHost ?"
     type = "boolean"
     yes = "true"
     no = "false"
