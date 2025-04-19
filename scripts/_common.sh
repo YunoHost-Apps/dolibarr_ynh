@@ -60,20 +60,22 @@ syncyunohost_module_install(){
     cp "../conf/syncyunohost-modules.php" "$install_dir/scripts/members/syncyunohost-modules.php"
     chown dolibarr:www-data -R "$install_dir/scripts/members/syncyunohost-modules.php"
 
-    #=================================================
-    # COPY SCRIPT TO /usr/local/bin
-    #=================================================
+    # =================================================
+    # Copy the syncyunohost script to /usr/local/bin
+    # =================================================
     ynh_add_config --template="syncyunohost.sh" --destination="/usr/local/bin/syncyunohost.sh"
-
-    #=================================================
-    # SYSTEM SETUP: GRANT PERMISSIONS TO `dolibarr` USER
-    #=================================================
-    # Add dolibarr user to sudoers to allow running syncyunohost.sh without a password
+    
+    # =================================================
+    # System Setup: Grant permissions to 'dolibarr' user
+    # =================================================
+    
+    # Allow 'dolibarr' user to execute the script without a password
     echo "dolibarr ALL=(ALL) NOPASSWD: /usr/local/bin/syncyunohost.sh" | tee -a /etc/sudoers > /dev/null
     
-    # Check sudoers file syntax
+    # Validate sudoers file syntax to prevent system lockout
     visudo -c
-    # Change ownership of the file to dolibarr after creation
+    
+    # Set ownership and permissions
     chown dolibarr:dolibarr /usr/local/bin/syncyunohost.sh
     chmod 750 /usr/local/bin/syncyunohost.sh
 }
