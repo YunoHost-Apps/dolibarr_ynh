@@ -1,0 +1,44 @@
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleSyncYunoHostName'
+ModuleSyncYunoHostName = SyncYunoHost
+# Module description 'ModuleSyncYunoHostDesc'
+ModuleSyncYunoHostDesc = SyncYunoHost description
+
+#
+# Admin page
+#
+SyncYunoHostSetup = SyncYunoHost setup
+Settings = Settings
+SyncYunoHostSetupPage = SyncYunoHost setup page
+YUNOHOST_BASE_DOMAIN = yunohost base domain
+YUNOHOST_BASE_DOMAINTooltip = Enter a main domain for creating Yunohost users. The domain must be set up in Yunohost.
+YUNOHOST_MAIN_GROUP=yunohost main group
+YUNOHOST_MAIN_GROUPTooltip=Enter a main group for users with subscriptions. The user group must be defined in Yunohost.
+YUNOHOST_OLD_MEMBERS=Synchronization for old members
+YUNOHOST_OLD_MEMBERSTooltip=By enabling this option, members who have previously registered will also be synchronized.
+
+
+#
+# About page
+#
+About = About
+SyncYunoHostAbout = About SyncYunoHost
+SyncYunoHostAboutPage = SyncYunoHost about page
+
+

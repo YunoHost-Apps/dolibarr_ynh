@@ -36,6 +36,38 @@ ynh_print_info --message="Backing up the MySQL database..."
 ynh_mysql_dump_db --database="$db_name" > db.sql
 
 #=================================================
+# BACKUP CUSTOM SCRIPTS
+#=================================================
+ynh_print_info --message="Backing up syncyunohost.sh script from /usr/local/bin/..."
+ynh_backup --src_path="/usr/local/bin/syncyunohost.sh"
+
+#=================================================
+# BACKUP YUNOHOST GROUP USERS
+#=================================================
+
+# Check if the group is set
+if [ -z "$syncyunohost_main_group" ]; then
+    ynh_print_warn --message="No main group set in syncyunohost_main_group, skipping group backup."
+else
+    ynh_print_info --message="Backing up user list from YunoHost group: $syncyunohost_main_group..."
+
+    # Get the list of all groups in JSON format
+    GROUPS_JSON=$(yunohost user group list --output-as json)
+
+    # Extract members of the main group
+    MEMBERS=$(echo "$GROUPS_JSON" | jq -r ".groups[\"$syncyunohost_main_group\"].members | @json")
+
+    # Define backup file path
+    GROUP_BACKUP_FILE="$install_dir/group_members.json"
+
+    # Save user list to JSON file
+    echo "$MEMBERS" > "$GROUP_BACKUP_FILE"
+
+    # Include the file in the backup
+    ynh_backup --src_path="$GROUP_BACKUP_FILE"
+fi
+
+#=================================================
 # END OF SCRIPT
 #=================================================
 
