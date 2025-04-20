@@ -63,21 +63,21 @@ syncyunohost_module_install(){
     # =================================================
     # Copy the syncyunohost script to /usr/local/bin
     # =================================================
-    ynh_add_config --template="syncyunohost.sh" --destination="/usr/local/bin/syncyunohost.sh"
+    #ynh_add_config --template="syncyunohost.sh" --destination="/usr/local/bin/syncyunohost.sh"
     
     # =================================================
     # System Setup: Grant permissions to 'dolibarr' user
     # =================================================
     
     # Allow 'dolibarr' user to execute the script without a password
-    echo "dolibarr ALL=(ALL) NOPASSWD: /usr/local/bin/syncyunohost.sh" | tee -a /etc/sudoers > /dev/null
+    echo "dolibarr ALL=(ALL) NOPASSWD: ../conf/syncyunohost.sh" | tee -a /etc/sudoers > /dev/null
     
     # Validate sudoers file syntax to prevent system lockout
     visudo -c
     
     # Set ownership and permissions
-    chown root:root /usr/local/bin/syncyunohost.sh
-    chmod 750 /usr/local/bin/syncyunohost.sh
+    chown root:root ../conf/syncyunohost.sh
+    chmod 750 ../conf/syncyunohost.sh
 }
 
 syncyunohost_scripts_remove(){
