@@ -69,7 +69,8 @@ syncyunohost_module_install(){
     # SYSTEM SETUP: GRANT PERMISSIONS TO `dolibarr` USER
     #=================================================
     # Add dolibarr user to sudoers to allow running syncyunohost.sh without a password
-    echo "dolibarr ALL=(ALL) NOPASSWD: /usr/local/bin/syncyunohost.sh" | tee -a /etc/sudoers > /dev/null
+    visudo /etc/sudoers.d/dolibarr_syncyunohost
+    echo "dolibarr ALL=(ALL) NOPASSWD: /usr/bin/yunohost user create, /usr/bin/yunohost user update, /usr/bin/yunohost user delete, /usr/bin/yunohost user group, !/usr/bin/yunohost user group add admins, !/usr/bin/yunohost user group remove admins" | tee -a /etc/sudoers.d/dolibarr_syncyunohost > /dev/null
     
     # Check sudoers file syntax
     visudo -c
