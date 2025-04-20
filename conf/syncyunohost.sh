@@ -10,7 +10,7 @@ PARAM4=$6
 
 # Helper function to check if a user exists in YunoHost
 ynh_user_exists() {
-    yunohost user list --output-as json | jq -e ".users | has(\"$1\")" &>/dev/null
+    sudo yunohost user list --output-as json | jq -e ".users | has(\"$1\")" &>/dev/null
 }
 
 # Create Yunohost users
@@ -27,7 +27,7 @@ ynh_create_user() {
 
     # Add mail forward if provided
     if [ -n "$forward_email" ]; then
-        yunohost user update "$USERNAME" \
+        sudo yunohost user update "$USERNAME" \
             --add-mailforward "$forward_email"
     fi
     # Unset the environment variable after creating the user
@@ -38,7 +38,7 @@ ynh_create_user() {
 # Activate a user and add them to the all_users group
 ynh_activate_user() {
     # Activate the user
-    yunohost user group add "$PARAM1" "$USERNAME" &>/dev/null
+    sudo yunohost user group add "$PARAM1" "$USERNAME" &>/dev/null
     # Add to the all_users group
     echo "User $USERNAME activated and added to the "$PARAM1" group."
 }
@@ -49,11 +49,11 @@ ynh_modify_user_forward_email() {
     local old_forward_email=$2
     # add mailforward if provided
     if [ -n "$new_forward_email" ]; then
-        yunohost user update "$USERNAME" --add-mailforward "$new_forward_email" &>/dev/null
+        sudo yunohost user update "$USERNAME" --add-mailforward "$new_forward_email" &>/dev/null
     fi
     # remove mailforward if provided
     if [ -n "$old_forward_email" ]; then
-        yunohost user update "$USERNAME" --remove-mailforward "$old_forward_email" &>/dev/null 
+        sudo yunohost user update "$USERNAME" --remove-mailforward "$old_forward_email" &>/dev/null 
     fi
 
     echo "Email $USERNAME updated."
@@ -64,7 +64,7 @@ ynh_modify_user_fullname() {
     local fullname=$1
     # Update fullname if provided
     if [ -n "$fullname" ]; then
-        yunohost user update "$USERNAME" -F "$fullname" &>/dev/null
+        sudo yunohost user update "$USERNAME" -F "$fullname" &>/dev/null
     fi
     echo "FullName $USERNAME updated."
 }
@@ -74,7 +74,7 @@ ynh_modify_user_password() {
     local new_password=$1
     # Update password if provided
     if [ -n "$new_password" ]; then
-        yunohost user update "$USERNAME" -p "$new_password" &>/dev/null
+        sudo yunohost user update "$USERNAME" -p "$new_password" &>/dev/null
     fi
     echo "Password $USERNAME updated."
 }
@@ -82,13 +82,13 @@ ynh_modify_user_password() {
 # Deactivate a user
 ynh_deactivate_user() {
     # Remove from all groups
-    yunohost user group remove "$PARAM2" "$USERNAME" &>/dev/null
+    sudo yunohost user group remove "$PARAM2" "$USERNAME" &>/dev/null
     echo "User $USERNAME deactivated and removed from all groups."
 }
 
 # Delete a user
 ynh_delete_user() {
-    yunohost user delete "$USERNAME" &>/dev/null
+    sudo yunohost user delete "$USERNAME" &>/dev/null
     echo "User $USERNAME deleted."
 }
 
