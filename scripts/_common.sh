@@ -70,14 +70,14 @@ syncyunohost_module_install(){
     # =================================================
     
     # Allow 'dolibarr' user to execute the script without a password
-    echo "dolibarr ALL=(ALL) NOPASSWD: ../conf/syncyunohost.sh" | tee -a /etc/sudoers > /dev/null
+    echo "dolibarr ALL=(ALL) NOPASSWD: /etc/yunohost/apps/dolibarr/conf/syncyunohost.sh" | tee -a /etc/sudoers > /dev/null
     
     # Validate sudoers file syntax to prevent system lockout
     visudo -c
     
     # Set ownership and permissions
-    chown root:root ../conf/syncyunohost.sh
-    chmod 750 ../conf/syncyunohost.sh
+    chown root:root /etc/yunohost/apps/dolibarr/conf/syncyunohost.sh
+    chmod 750 /etc/yunohost/apps/dolibarr/conf/syncyunohost.sh
 }
 
 syncyunohost_scripts_remove(){
