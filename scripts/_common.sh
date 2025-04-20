@@ -76,7 +76,7 @@ syncyunohost_module_install(){
     visudo -c
     
     # Set ownership and permissions
-    chown dolibarr:dolibarr /usr/local/bin/syncyunohost.sh
+    chown root:root /usr/local/bin/syncyunohost.sh
     chmod 750 /usr/local/bin/syncyunohost.sh
 }
 
