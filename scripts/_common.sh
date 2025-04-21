@@ -91,7 +91,8 @@ syncyunohost_scripts_remove(){
     #=================================================
     # REMOVE SUDOERS ENTRY
     #=================================================
-    sed -i '/dolibarr ALL=(ALL) NOPASSWD: \/usr\/local\/bin\/syncyunohost.sh/d' /etc/sudoers
+    ynh_secure_remove --file="/etc/sudoers.d/dolibarr_syncyunohost"
+    
 }
 
 # Activate Syncyunohost module
