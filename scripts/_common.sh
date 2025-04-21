@@ -75,6 +75,8 @@ syncyunohost_module_install(){
     
     # Check sudoers file syntax
     visudo -c
+    
+    ynh_print_info --message="syncyunohost.sh installed and sudo permissions granted safely."
 }
 
 syncyunohost_scripts_remove(){
