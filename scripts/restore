@@ -50,15 +50,18 @@ ynh_script_progression --message="Reloading NGINX web server and PHP-FPM..." --w
 
 ynh_systemd_action --service_name="php$phpversion-fpm" --action=reload
 ynh_systemd_action --service_name=nginx --action=reload
-ynh_restore_file --origin_path="/usr/local/bin/syncyunohost.sh"
-echo "dolibarr ALL=(ALL) NOPASSWD: /usr/local/bin/syncyunohost.sh" | tee -a /etc/sudoers > /dev/null
 
 #=================================================
 # RESTORE syncyunohost.sh
 #=================================================
+ynh_print_info --message="restoring syncyunohost.sh script to /usr/local/bin/..."
+ynh_restore_file --origin_path="/usr/local/bin/syncyunohost.sh"
+chmod 550 /usr/local/bin/syncyunohost.sh
+
+ynh_print_info --message="restoring sudoers.d file"
+ynh_restore_file --origin_path="/etc/sudoers.d/dolibarr_syncyunohost"
+chmod 440 /etc/sudoers.d/dolibarr_syncyunohost
 visudo -c
-chown dolibarr:dolibarr /usr/local/bin/syncyunohost.sh
-chmod 750 /usr/local/bin/syncyunohost.sh
 
 #=================================================
 # RESTORE YUNOHOST GROUP USERS
