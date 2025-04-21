@@ -64,6 +64,7 @@ syncyunohost_module_install(){
     # COPY SCRIPT TO /usr/local/bin
     #=================================================
     ynh_add_config --template="syncyunohost.sh" --destination="/usr/local/bin/syncyunohost.sh"
+    chmod 550 /usr/local/bin/syncyunohost.sh
 
     #=================================================
     # SYSTEM SETUP: GRANT PERMISSIONS TO `dolibarr` USER
@@ -74,9 +75,6 @@ syncyunohost_module_install(){
     
     # Check sudoers file syntax
     visudo -c
-    # Change ownership of the file to dolibarr after creation
-#    chown dolibarr:dolibarr /usr/local/bin/syncyunohost.sh
-    chmod 550 /usr/local/bin/syncyunohost.sh
 }
 
 syncyunohost_scripts_remove(){
