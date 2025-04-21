@@ -39,8 +39,8 @@ upgrade_dolibarr() {
 #=================================================
 # FUTURE OFFICIAL HELPERS
 #=================================================
-syncyunohost_module_install(){
 
+syncyunohost_module_install(){
     #=================================================
     # COPY FOLDER TO DESTINATION
     #=================================================
@@ -65,11 +65,9 @@ syncyunohost_module_install(){
     #=================================================
     ynh_add_config --template="syncyunohost.sh" --destination="/usr/local/bin/syncyunohost.sh"
     chmod 550 /usr/local/bin/syncyunohost.sh
-
 }
 
 syncyunohost_scripts_remove(){
-
     #=================================================
     # REMOVE CUSTOM SCRIPTS
     #=================================================
@@ -81,12 +79,10 @@ syncyunohost_scripts_remove(){
     # REMOVE SUDOERS ENTRY
     #=================================================
     ynh_secure_remove --file="/etc/sudoers.d/dolibarr_syncyunohost"
-    
 }
 
 # Activate Syncyunohost module
 syncyunohost_modules_activate(){
-
     php "$install_dir/scripts/members/syncyunohost-modules.php" --action=activate --modules=modAdherent,modCron,modSyncYunoHost --base_domain=$syncyunohost_base_domain --main_group=$syncyunohost_main_group
 
     #=================================================
@@ -100,10 +96,14 @@ syncyunohost_modules_activate(){
     visudo -c
     
     ynh_print_info --message="syncyunohost.sh activated and sudo permissions granted safely."
-
 }
 
 # Deactivate Syncyunohost module
 syncyunohost_modules_deactivate(){
     php "$install_dir/scripts/members/syncyunohost-modules.php" --action=deactivate --modules=modSyncYunoHost
+
+    #=================================================
+    # REMOVE SUDOERS ENTRY
+    #=================================================
+    ynh_secure_remove --file="/etc/sudoers.d/dolibarr_syncyunohost"
 }
