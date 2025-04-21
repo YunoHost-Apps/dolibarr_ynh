@@ -75,7 +75,7 @@ syncyunohost_module_install(){
     # Check sudoers file syntax
     visudo -c
     # Change ownership of the file to dolibarr after creation
-    chown dolibarr:dolibarr /usr/local/bin/syncyunohost.sh
+#    chown dolibarr:dolibarr /usr/local/bin/syncyunohost.sh
     chmod 550 /usr/local/bin/syncyunohost.sh
 }
 
