@@ -39,8 +39,8 @@ upgrade_dolibarr() {
 #=================================================
 # FUTURE OFFICIAL HELPERS
 #=================================================
-syncyunohost_module_install(){
 
+syncyunohost_module_install(){
     #=================================================
     # COPY FOLDER TO DESTINATION
     #=================================================
@@ -64,22 +64,10 @@ syncyunohost_module_install(){
     # COPY SCRIPT TO /usr/local/bin
     #=================================================
     ynh_add_config --template="syncyunohost.sh" --destination="/usr/local/bin/syncyunohost.sh"
-
-    #=================================================
-    # SYSTEM SETUP: GRANT PERMISSIONS TO `dolibarr` USER
-    #=================================================
-    # Add dolibarr user to sudoers to allow running syncyunohost.sh without a password
-    echo "dolibarr ALL=(ALL) NOPASSWD: /usr/local/bin/syncyunohost.sh" | tee -a /etc/sudoers > /dev/null
-    
-    # Check sudoers file syntax
-    visudo -c
-    # Change ownership of the file to dolibarr after creation
-    chown dolibarr:dolibarr /usr/local/bin/syncyunohost.sh
-    chmod 750 /usr/local/bin/syncyunohost.sh
+    chmod 550 /usr/local/bin/syncyunohost.sh
 }
 
 syncyunohost_scripts_remove(){
-
     #=================================================
     # REMOVE CUSTOM SCRIPTS
     #=================================================
@@ -90,15 +78,32 @@ syncyunohost_scripts_remove(){
     #=================================================
     # REMOVE SUDOERS ENTRY
     #=================================================
-    sed -i '/dolibarr ALL=(ALL) NOPASSWD: \/usr\/local\/bin\/syncyunohost.sh/d' /etc/sudoers
+    ynh_secure_remove --file="/etc/sudoers.d/dolibarr_syncyunohost"
 }
 
 # Activate Syncyunohost module
 syncyunohost_modules_activate(){
     php "$install_dir/scripts/members/syncyunohost-modules.php" --action=activate --modules=modAdherent,modCron,modSyncYunoHost --base_domain=$syncyunohost_base_domain --main_group=$syncyunohost_main_group
+
+    #=================================================
+    # SYSTEM SETUP: GRANT PERMISSIONS TO `dolibarr` USER
+    #=================================================
+    # Add dolibarr user to sudoers to allow running syncyunohost.sh without a password
+    echo "dolibarr ALL=(ALL) NOPASSWD: /usr/bin/yunohost user list --output-as json, /usr/bin/yunohost user create * -p * -F * -d *, /usr/bin/yunohost user update * --add-mailforward *, /usr/bin/yunohost user update * --remove-mailforward *, /usr/bin/yunohost user update * -F *, /usr/bin/yunohost user update * -p *, /usr/bin/yunohost user delete *, /usr/bin/yunohost user group add * *, !/usr/bin/yunohost user group add admins *, /usr/bin/yunohost user group remove * *, !/usr/bin/yunohost user group remove admins *" > /etc/sudoers.d/dolibarr_syncyunohost
+    chmod 440 /etc/sudoers.d/dolibarr_syncyunohost
+    
+    # Check sudoers file syntax
+    visudo -c
+    
+    ynh_print_info --message="syncyunohost.sh activated and sudo permissions granted safely."
 }
 
 # Deactivate Syncyunohost module
 syncyunohost_modules_deactivate(){
     php "$install_dir/scripts/members/syncyunohost-modules.php" --action=deactivate --modules=modSyncYunoHost
+
+    #=================================================
+    # REMOVE SUDOERS ENTRY
+    #=================================================
+    ynh_secure_remove --file="/etc/sudoers.d/dolibarr_syncyunohost"
 }

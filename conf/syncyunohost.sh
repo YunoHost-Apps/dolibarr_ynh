@@ -1,161 +1,141 @@
 #!/bin/bash
 
-# First parameter is the action, second is the username, the rest are optional
-ACTION=$1
-USERNAME=$2
-PARAM1=$3
-PARAM2=$4
-PARAM3=$5
-PARAM4=$6
+# Exit immediately on error, unset variables, or failed pipe commands
+set -euo pipefail
 
-# Helper function to check if a user exists in YunoHost
+ACTION="$1"
+USERNAME="$2"
+PARAM1="${3:-}"
+PARAM2="${4:-}"
+PARAM3="${5:-}"
+PARAM4="${6:-}"
+
+# ===== Input Validation =====
+
+# Allowed actions
+ALLOWED_ACTIONS=(create activate modify_email modify_fullname deactivate delete password)
+if [[ ! " ${ALLOWED_ACTIONS[*]} " =~ " ${ACTION} " ]]; then
+    echo "Invalid action '$ACTION'. Allowed actions: ${ALLOWED_ACTIONS[*]}"
+    exit 1
+fi
+
+# Valid username: lowercase letters, digits, and underscores
+if ! [[ "$USERNAME" =~ ^[a-z0-9_]{1,32}$ ]]; then
+    echo "Invalid username format: '$USERNAME'"
+    exit 1
+fi
+
+# ===== Helper Functions =====
+
+# Check if Yunohost user exists
 ynh_user_exists() {
-    yunohost user list --output-as json | jq -e ".users | has(\"$1\")" &>/dev/null
+    sudo yunohost user list --output-as json | jq -e ".users | has(\"$1\")" &>/dev/null
 }
 
-# Create Yunohost users
+# ===== User Operations =====
+
+# Create Yunohost user
 ynh_create_user() {
     local password="$1"
     local fullname="$2"
     local forward_email="$3"
-    # Set environment variable to disable the post_user_create hook
+
+    # Temporarily disable hook for post-user creation
     export DISABLE_HOOK=true
-    yunohost user create "$USERNAME" \
+
+    sudo yunohost user create "$USERNAME" \
         -p "$password" \
         -F "$fullname" \
-        -d "$PARAM4"  
+        -d "$PARAM4"
 
-    # Add mail forward if provided
-    if [ -n "$forward_email" ]; then
-        yunohost user update "$USERNAME" \
-            --add-mailforward "$forward_email"
+    # Optional: add mail forward
+    if [[ -n "$forward_email" ]]; then
+        sudo yunohost user update "$USERNAME" --add-mailforward "$forward_email"
     fi
-    # Unset the environment variable after creating the user
-    unset DISABLE_HOOK    
-    echo "User $USERNAME created successfully."
+
+    unset DISABLE_HOOK
+    echo "User '$USERNAME' created successfully."
 }
 
-# Activate a user and add them to the all_users group
+# Activate user and add to group
 ynh_activate_user() {
-    # Activate the user
-    yunohost user group add "$PARAM1" "$USERNAME" &>/dev/null
-    # Add to the all_users group
-    echo "User $USERNAME activated and added to the "$PARAM1" group."
+    sudo yunohost user group add "$PARAM1" "$USERNAME"
+    echo "User '$USERNAME' added to group '$PARAM1'."
 }
 
-# Modify user details
+# Modify user's mail forwarding settings
 ynh_modify_user_forward_email() {
-    local new_forward_email=$1
-    local old_forward_email=$2
-    # add mailforward if provided
-    if [ -n "$new_forward_email" ]; then
-        yunohost user update "$USERNAME" --add-mailforward "$new_forward_email" &>/dev/null
-    fi
-    # remove mailforward if provided
-    if [ -n "$old_forward_email" ]; then
-        yunohost user update "$USERNAME" --remove-mailforward "$old_forward_email" &>/dev/null 
-    fi
-
-    echo "Email $USERNAME updated."
+    [[ -n "$1" ]] && sudo yunohost user update "$USERNAME" --add-mailforward "$1"
+    [[ -n "$2" ]] && sudo yunohost user update "$USERNAME" --remove-mailforward "$2"
+    echo "User '$USERNAME' mail forwarding updated."
 }
 
-# Modify user details
+# Modify user's full name
 ynh_modify_user_fullname() {
-    local fullname=$1
-    # Update fullname if provided
-    if [ -n "$fullname" ]; then
-        yunohost user update "$USERNAME" -F "$fullname" &>/dev/null
-    fi
-    echo "FullName $USERNAME updated."
+    sudo yunohost user update "$USERNAME" -F "$1"
+    echo "User '$USERNAME' full name updated."
 }
 
-# Modify user details
+# Modify user's password
 ynh_modify_user_password() {
-    local new_password=$1
-    # Update password if provided
-    if [ -n "$new_password" ]; then
-        yunohost user update "$USERNAME" -p "$new_password" &>/dev/null
-    fi
-    echo "Password $USERNAME updated."
+    sudo yunohost user update "$USERNAME" -p "$1"
+    echo "User '$USERNAME' password updated."
 }
 
-# Deactivate a user
+# Deactivate user (remove from group)
 ynh_deactivate_user() {
-    # Remove from all groups
-    yunohost user group remove "$PARAM2" "$USERNAME" &>/dev/null
-    echo "User $USERNAME deactivated and removed from all groups."
+    sudo yunohost user group remove "$PARAM2" "$USERNAME"
+    echo "User '$USERNAME' removed from group '$PARAM2'."
 }
 
-# Delete a user
+# Delete user
 ynh_delete_user() {
-    yunohost user delete "$USERNAME" &>/dev/null
-    echo "User $USERNAME deleted."
+    sudo yunohost user delete "$USERNAME"
+    echo "User '$USERNAME' deleted."
 }
 
-# Main logic for handling actions
-case $ACTION in
+# ===== Main Execution Flow =====
+
+case "$ACTION" in
     create)
-        if [ -z "$PARAM1" ] || [ -z "$PARAM2" ]; then
-            echo "Error: Domain And FullName and Password are required for user creation."
+        if [[ -z "$PARAM1" || -z "$PARAM2" ]]; then
+            echo "Password and FullName are required to create a user."
             exit 1
         fi
         if ynh_user_exists "$USERNAME"; then
-            echo "Error: User $USERNAME does exist."
+            echo "User '$USERNAME' already exists."
             exit 1
         fi
-        ynh_create_user "$PARAM1" "$PARAM2" "$PARAM3" 
+        ynh_create_user "$PARAM1" "$PARAM2" "$PARAM3"
         ;;
-
     activate)
         if ! ynh_user_exists "$USERNAME"; then
-            echo "Error: User $USERNAME does not exist."
+            echo "User '$USERNAME' does not exist."
             exit 1
         fi
         ynh_activate_user
         ;;
-
     modify_email)
-        if [ -z "$PARAM1" ]; then
-            echo "Error: New Email is required."
-            exit 1
-        fi
         ynh_modify_user_forward_email "$PARAM1" "$PARAM2"
         ;;
-
     modify_fullname)
-        if [ -z "$PARAM1" ]; then
-            echo "Error: New FullName is required."
-            exit 1
-        fi
         ynh_modify_user_fullname "$PARAM1"
         ;;
-
     deactivate)
         if ! ynh_user_exists "$USERNAME"; then
-            echo "Error: User $USERNAME does not exist."
+            echo "User '$USERNAME' does not exist."
             exit 1
         fi
         ynh_deactivate_user
         ;;
-
     delete)
         if ! ynh_user_exists "$USERNAME"; then
-            echo "Error: User $USERNAME does not exist."
+            echo "User '$USERNAME' does not exist."
             exit 1
         fi
         ynh_delete_user
         ;;
-
     password)
-        if [ -z "$PARAM1" ]; then
-            echo "Error: New password is required."
-            exit 1
-        fi
         ynh_modify_user_password "$PARAM1"
-        ;;
-
-    *)
-        echo "Invalid action. Supported actions: create, activate, modify, deactivate, delete, password."
-        exit 1
         ;;
 esac
