@@ -129,6 +129,16 @@ ram.runtime = "150M"
     [resources.permissions]
     main.url = "/"
 
+    api.url = "/api"
+    api.allowed = "visitors"
+    api.protected = false
+    api.show_tile = false
+
+    public.url = "/public"
+    public.allowed = "visitors"
+    public.protected = false
+    public.show_tile = false
+
     [resources.apt]
     packages = [
         "php8.2-mysql",
