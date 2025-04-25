@@ -41,6 +41,13 @@ if [ "$charset" != "utf8" ]; then
     ynh_exec_fully_quiet sleep 5
 fi
 
+# If syncyunohost_enabled doesn't exist, create it
+if [ -z "${syncyunohost_enabled:-}" ]; then
+    syncyunohost_enabled=false
+    ynh_app_setting_set --app=$app --key=syncyunohost_enabled --value=$syncyunohost_enabled
+fi
+
+
 #=================================================
 # MAKE SEQUENTIAL UPGRADES FROM EACH MAJOR
 # VERSION TO THE NEXT ONE
@@ -104,6 +111,11 @@ ynh_add_fpm_config
 ynh_add_nginx_config
 
 ynh_use_logrotate --non-append
+
+#=================================================
+# COPY FOLDER TO TARGET PATH
+#=================================================
+syncyunohost_module_install
 
 #=================================================
 # END OF SCRIPT

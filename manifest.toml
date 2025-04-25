@@ -46,7 +46,26 @@ ram.runtime = "150M"
 
     [install.admin]
     type = "user"
-
+    
+    [install.syncyunohost_enabled]
+    type = "boolean"
+    ask.en = "Would you like to enable the SyncYunohost module to synchronize Dolibarr members with YunoHost users?"
+    ask.fr = "Souhaitez-vous activer le module SyncYunohost pour synchroniser les membres de Dolibarr avec les utilisateurs de YunoHost ?"
+    default = false
+    
+    [install.syncyunohost_base_domain]
+    type = "domain"
+    ask.en = "Choose the domain for YunoHost user's email creation"
+    ask.fr = "Choisissez le domaine pour la création des e-mails des utilisateurs YunoHost"
+    visible = "syncyunohost_enabled"
+    
+    [install.syncyunohost_main_group]
+    type = "group"
+    ask.en = "Which YunoHost group do you want to sync Dolibar's activated members with?"
+    ask.fr = "Avec quel groupe de YunoHost souhaitez vous synchroniser les membres actifs de Dolibarr ?"
+    default = "visitors"
+    visible = "syncyunohost_enabled"
+    
 [resources]
     [resources.sources.main]
     url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/21.0.1.tar.gz"
