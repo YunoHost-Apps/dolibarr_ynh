@@ -55,6 +55,7 @@ ynh_systemd_action --service_name=nginx --action=reload
 # RESTORE syncyunohost.sh
 #=================================================
 ynh_print_info --message="restoring syncyunohost.sh script to /usr/local/bin/..."
+
 ynh_restore_file --origin_path="/usr/local/bin/syncyunohost.sh"
 chmod 550 /usr/local/bin/syncyunohost.sh
 
