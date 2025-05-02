@@ -83,7 +83,7 @@ syncyunohost_scripts_remove(){
 
 # Activate Syncyunohost module
 syncyunohost_modules_activate(){
-    "php$php_version" "$install_dir/scripts/members/syncyunohost-modules.php" --action=activate --modules=modAdherent,modCron,modSyncYunoHost --base_domain=$syncyunohost_base_domain --main_group=$syncyunohost_main_group
+    php "$install_dir/scripts/members/syncyunohost-modules.php" --action=activate --modules=modAdherent,modCron,modSyncYunoHost --base_domain=$syncyunohost_base_domain --main_group=$syncyunohost_main_group
 
     #=================================================
     # SYSTEM SETUP: GRANT PERMISSIONS TO `dolibarr` USER
@@ -100,7 +100,7 @@ syncyunohost_modules_activate(){
 
 # Deactivate Syncyunohost module
 syncyunohost_modules_deactivate(){
-    "php$php_version" "$install_dir/scripts/members/syncyunohost-modules.php" --action=deactivate --modules=modSyncYunoHost
+    php "$install_dir/scripts/members/syncyunohost-modules.php" --action=deactivate --modules=modSyncYunoHost
 
     #=================================================
     # REMOVE SUDOERS ENTRY
