@@ -21,13 +21,13 @@ upgrade_dolibarr() {
     fi
 
     pushd "$install_dir/htdocs/install/"
-        "php$php_version" upgrade.php "$current_version" "$new_version"
+        "php${php_version}" upgrade.php "$current_version" "$new_version"
         ynh_exec_fully_quiet sleep 5
 
-        "php$php_version" upgrade2.php "$current_version" "$new_version"
+        "php${php_version}" upgrade2.php "$current_version" "$new_version"
         ynh_exec_fully_quiet sleep 5
 
-        "php$php_version" step5.php "$current_version" "$new_version"
+        "php${php_version}s" step5.php "$current_version" "$new_version"
         ynh_exec_fully_quiet sleep 5
     popd
 }
