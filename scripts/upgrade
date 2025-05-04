@@ -75,7 +75,7 @@ source_id="main"
 ynh_print_info --message="Upgrading app from $current_version to $new_version"
 upgrade_dolibarr
 
-if php${php_version} "$install_dir/scripts/user/sync_users_ldap2dolibarr.php" commitiferror --server=localhost -y; then
+if "php${php_version}" "$install_dir/scripts/user/sync_users_ldap2dolibarr.php" commitiferror --server=localhost -y; then
     ynh_print_info --message="LDAP user update ok"
 else
     ynh_print_info --message="LDAP user update ended with error"
