@@ -27,7 +27,7 @@ upgrade_dolibarr() {
         "php${phpversion}" upgrade2.php "$current_version" "$new_version"
         ynh_exec_fully_quiet sleep 5
 
-        "php${phpversion}s" step5.php "$current_version" "$new_version"
+        "php${phpversion}" step5.php "$current_version" "$new_version"
         ynh_exec_fully_quiet sleep 5
     popd
 }
