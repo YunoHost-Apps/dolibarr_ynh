@@ -83,7 +83,7 @@ syncyunohost_scripts_remove(){
 
 # Activate Syncyunohost module
 syncyunohost_modules_activate(){
-    "php${phpversion} "$install_dir/scripts/members/syncyunohost-modules.php" --action=activate --modules=modAdherent,modCron,modSyncYunoHost --base_domain=$syncyunohost_base_domain --main_group=$syncyunohost_main_group
+    "php${phpversion}" "$install_dir/scripts/members/syncyunohost-modules.php" --action=activate --modules=modAdherent,modCron,modSyncYunoHost --base_domain=$syncyunohost_base_domain --main_group=$syncyunohost_main_group
 
     #=================================================
     # SYSTEM SETUP: GRANT PERMISSIONS TO `dolibarr` USER
