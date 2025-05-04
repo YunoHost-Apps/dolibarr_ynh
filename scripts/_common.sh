@@ -100,7 +100,7 @@ syncyunohost_modules_activate(){
 
 # Deactivate Syncyunohost module
 syncyunohost_modules_deactivate(){
-    php${phpversion} "$install_dir/scripts/members/syncyunohost-modules.php" --action=deactivate --modules=modSyncYunoHost
+    "php${phpversion}" "$install_dir/scripts/members/syncyunohost-modules.php" --action=deactivate --modules=modSyncYunoHost
 
     #=================================================
     # REMOVE SUDOERS ENTRY
