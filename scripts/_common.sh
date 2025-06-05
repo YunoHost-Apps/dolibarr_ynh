@@ -7,8 +7,9 @@
 upgrade_dolibarr() {
     ynh_setup_source --source_id="$source_id" --dest_dir="$install_dir" --full_replace \
         --keep="htdocs/conf/conf.php htdocs/install/install.forced.php"
-    #REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod -R o-rwx "$install_dir"
-    #REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R "$app:www-data" "$install_dir"
+    #chmod -R o-rwx "$install_dir"
+    #chown -R "$app:www-data" "$install_dir"
+
     # Remove the lock if it exists
     lock=$install_dir/documents/install.lock
     if [ -f "$lock" ]; then
@@ -77,7 +78,7 @@ syncyunohost_modules_activate(){
     #=================================================
     # Add dolibarr user to sudoers to allow running syncyunohost.sh without a password
     echo "dolibarr ALL=(ALL) NOPASSWD: /usr/bin/yunohost user list --output-as json, /usr/bin/yunohost user create * -p * -F * -d *, /usr/bin/yunohost user update * --add-mailforward *, /usr/bin/yunohost user update * --remove-mailforward *, /usr/bin/yunohost user update * -F *, /usr/bin/yunohost user update * -p *, /usr/bin/yunohost user delete *, /usr/bin/yunohost user group add * *, !/usr/bin/yunohost user group add admins *, /usr/bin/yunohost user group remove * *, !/usr/bin/yunohost user group remove admins *" > "/etc/sudoers.d/dolibarr_syncyunohost"
-    #REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 440 /etc/sudoers.d/dolibarr_syncyunohost
+    chmod 440 /etc/sudoers.d/dolibarr_syncyunohost
 
     # Check sudoers file syntax
     visudo -c

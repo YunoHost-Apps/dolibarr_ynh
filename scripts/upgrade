@@ -14,18 +14,6 @@ ynh_app_setting_set_default --key=php_memory_limit --value=256M
 #=================================================
 ynh_script_progression "Ensuring downward compatibility..."
 
-# If fpm_footprint doesn't exist, create it
-if [ -z "${fpm_footprint:-}" ]; then
-    fpm_footprint=medium
-#REMOVEME? Everything about fpm_footprint is removed in helpers2.1... |     ynh_app_setting_set --key=fpm_footprint --value=$fpm_footprint
-fi
-
-# If fpm_usage doesn't exist, create it
-if [ -z "${fpm_usage:-}" ]; then
-    fpm_usage=medium
-#REMOVEME? Everything about fpm_usage is removed in helpers2.1... |     ynh_app_setting_set --key=fpm_usage --value=$fpm_usage
-fi
-
 # Delete existing ini configuration file (backward compatibility)
 if [ -f /etc/php/$YNH_PHP_VERSION/fpm/conf.d/20-$app.ini ]; then
     ynh_safe_rm /etc/php/$YNH_PHP_VERSION/fpm/conf.d/20-$app.ini
@@ -58,11 +46,11 @@ ynh_script_progression "Upgrading source files..."
 
 # Sort --version-sort cdécembrean handle underscore in versions numbers
 mapfile -t main_versions < <(
-    ynh_read_manifest | keys[]" | grep "main_" | sort --version-sort
+    ynh_read_manifest | keys[] | grep "main_" | sort --version-sort
 )
-current_version="$YNH_APP_CURRENT_VERSION"
-for version in "${main_versions[@]}"; do
-    new_version=$(echo "$version" | sed 's|main_||' | sed 's|_|.|g')
+current_version=$YNH_APP_CURRENT_VERSION
+for version in ${main_versions[@]}; do
+    new_version=$(echo $version | sed 's|main_||' | sed 's|_|.|g')
     if dpkg --compare-versions "$current_version" ge "$new_version"; then
         continue
     fi
@@ -95,9 +83,9 @@ if [ ! -f "$install_dir/documents/install.lock" ]; then
     chmod 440 "$install_dir/documents/install.lock"
 fi
 
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 750 "$install_dir"
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod -R o-rwx "$install_dir"
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R "$app:www-data" "$install_dir"
+#chmod 750 "$install_dir"
+#Rchmod -R o-rwx "$install_dir"
+#chown -R "$app:www-data" "$install_dir"
 # mkdir -p "$data_dir"
 # chown -R $app: "$data_dir"
 # chmod go-w $data_dir
