@@ -10,20 +10,20 @@ source /usr/share/yunohost/helpers
 #=================================================
 # MODIFY URL IN NGINX CONF
 #=================================================
-ynh_script_progression --message="Updating NGINX web server configuration..." --weight=1
+ynh_script_progression "Updating NGINX web server configuration..."
 
-ynh_change_url_nginx_config
+ynh_config_change_url_nginx
 
 #=================================================
 # UPDATE conf file
 #=================================================
 
-ynh_replace_string --target_file="$install_dir/htdocs/conf/conf.php" \
-    --match_string="$old_domain$old_path" \
-    --replace_string="$new_domain$new_path"
+ynh_replace --file="$install_dir/htdocs/conf/conf.php" \
+    --match="$old_domain$old_path" \
+    --replace="$new_domain$new_path"
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Change of URL completed for $app" --last
+ynh_script_progression "Change of URL completed for $app"
