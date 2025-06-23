@@ -69,7 +69,6 @@ ynh_print_info --message="Backing up sudoers.d file"
 ynh_backup --src_path="/etc/sudoers.d/dolibarr_syncyunohost"
 fi
 
-
 #=================================================
 # END OF SCRIPT
 #=================================================
