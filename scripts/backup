@@ -41,8 +41,10 @@ ynh_mysql_dump_db --database="$db_name" > db.sql
 ynh_print_info --message="Backing up syncyunohost.sh script from /usr/local/bin/..."
 ynh_backup --src_path="/usr/local/bin/syncyunohost.sh"
 
+if [ $syncyunohost_enabled  == true ]
 ynh_print_info --message="Backing up sudoers.d file"
 ynh_backup --src_path="/etc/sudoers.d/dolibarr_syncyunohost"
+fi
 
 #=================================================
 # BACKUP YUNOHOST GROUP USERS
