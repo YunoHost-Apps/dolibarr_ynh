@@ -72,6 +72,11 @@ ram.runtime = "150M"
     sha256 = "8851c2689fe6c5dbc893efe8e980274c0fde6af0e8f283ea4385bab0dd7364c3"
     autoupdate.strategy = "latest_github_release"
 
+    [resources.sources.main_20_0_4]
+    url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/20.0.4.tar.gz"
+    sha256 = "b6554fe6c9854b209ba020a4759fbb0494078ace96c3ee1e0223fe9fd35f5667"
+    prefetch = false
+
     [resources.sources.main_19_0_2]
     url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/19.0.2.tar.gz"
     sha256 = "7da083cff05bf6522e3140b6a19c9eb87cdbab2e06df4cbf3dbebd6dd47d886d"
