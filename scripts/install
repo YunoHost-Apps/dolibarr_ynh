@@ -51,7 +51,7 @@ ynh_use_logrotate --logfile="$install_dir/documents/dolibarr.log"
 #=================================================
 # SETUP APPLICATION WITH CURL
 #=================================================
-ynh_script_progression --message="Configuring $app ..." --weight=1
+ynh_script_progression --message="Configuring $app..." --weight=1
 
 # Create necessary files
 touch "$install_dir/htdocs/conf/conf.php"
