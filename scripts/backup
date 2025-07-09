@@ -6,6 +6,29 @@ source /usr/share/yunohost/helpers
 ynh_print_info "Declaring files to be backed up..."
 
 #=================================================
+# BACKUP YUNOHOST GROUP USERS
+#=================================================
+
+# Check if the group is set
+if [ -z "$syncyunohost_main_group" ]; then
+    ynh_print_warn "No main group set in syncyunohost_main_group, skipping group backup."
+else
+    ynh_print_info "Backing up user list from YunoHost group: $syncyunohost_main_group..."
+
+    # Get the list of all groups in JSON format
+    GROUPS_JSON=$(yunohost user group list --output-as json)
+
+    # Extract members of the main group
+    MEMBERS=$(echo "$GROUPS_JSON" | jq -r ".groups[\"$syncyunohost_main_group\"].members | @json")
+
+    # Define backup file path
+    GROUP_BACKUP_FILE="$install_dir/group_members.json"
+
+    # Save user list to JSON file
+    echo "$MEMBERS" > "$GROUP_BACKUP_FILE"
+fi
+
+#=================================================
 # BACKUP THE APP MAIN DIR
 #=================================================
 
