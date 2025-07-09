@@ -1,6 +1,6 @@
-## Module SyncYunohost
+## Module SyncYunoHost
 
-By activating the SyncYunohost module in the config panel, you must choose a Group from the Yunohost directory. Dolibarr will then activate the Members module. 
+By activating the SyncYunoHost module in the config panel, you must choose a Group from the YunoHost directory. Dolibarr will then activate the Members module. 
 * You'll first need to create a membership fee in the Members module, with a price and duration. 
 * By adding a membership, you add a user with his personal e-mail address, which will create a Yunohost user. 
 * When his subscription is up to date, he is automatically added to the Group selected in the LDAP directory. 
