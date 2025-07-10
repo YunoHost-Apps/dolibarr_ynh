@@ -7,7 +7,7 @@ name = "Dolibarr"
 description.en = "Manage the various aspects of your business or association"
 description.fr = "Gérez les différents aspects de votre activité pro ou associative"
 
-version = "19.0.3~ynh1"
+version = "21.0.1~ynh4"
 
 maintainers = ["mastereur"]
 
@@ -24,8 +24,10 @@ cpe = "cpe:2.3:a:dolibarr:dolibarr"
 yunohost = ">= 11.2.27"
 architectures = "all"
 multi_instance = true
+
 ldap = true
 sso = true
+
 disk = "200M"
 ram.build = "150M"
 ram.runtime = "150M"
@@ -44,12 +46,41 @@ ram.runtime = "150M"
 
     [install.admin]
     type = "user"
-
+    
+    [install.syncyunohost_enabled]
+    type = "boolean"
+    ask.en = "Would you like to enable the SyncYunohost module to synchronize Dolibarr members with YunoHost users?"
+    ask.fr = "Souhaitez-vous activer le module SyncYunohost pour synchroniser les membres de Dolibarr avec les utilisateurs de YunoHost ?"
+    default = false
+    
+    [install.syncyunohost_base_domain]
+    type = "domain"
+    ask.en = "Choose the domain for YunoHost user's email creation"
+    ask.fr = "Choisissez le domaine pour la création des e-mails des utilisateurs YunoHost"
+    visible = "syncyunohost_enabled"
+    
+    [install.syncyunohost_main_group]
+    type = "group"
+    ask.en = "Which YunoHost group do you want to sync Dolibar's activated members with?"
+    ask.fr = "Avec quel groupe de YunoHost souhaitez vous synchroniser les membres actifs de Dolibarr ?"
+    default = "visitors"
+    visible = "syncyunohost_enabled"
+    
 [resources]
     [resources.sources.main]
-    url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/19.0.3.tar.gz"
-    sha256 = "52fcea5a354f8688fa328abffaa196bf9056f545164cd7fe882d1bb7de654163"
+    url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/21.0.1.tar.gz"
+    sha256 = "8851c2689fe6c5dbc893efe8e980274c0fde6af0e8f283ea4385bab0dd7364c3"
     autoupdate.strategy = "latest_github_release"
+
+    [resources.sources.main_20_0_4]
+    url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/20.0.4.tar.gz"
+    sha256 = "b6554fe6c9854b209ba020a4759fbb0494078ace96c3ee1e0223fe9fd35f5667"
+    prefetch = false
+
+    [resources.sources.main_19_0_2]
+    url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/19.0.2.tar.gz"
+    sha256 = "7da083cff05bf6522e3140b6a19c9eb87cdbab2e06df4cbf3dbebd6dd47d886d"
+    prefetch = false
 
     [resources.sources.main_18_0_1]
     url = "https://github.com/dolibarr/dolibarr/archive/18.0.1.tar.gz"
@@ -102,6 +133,16 @@ ram.runtime = "150M"
 
     [resources.permissions]
     main.url = "/"
+
+    api.url = "/api"
+    api.allowed = "visitors"
+    api.protected = false
+    api.show_tile = false
+
+    public.url = "/public"
+    public.allowed = "visitors"
+    public.protected = false
+    public.show_tile = false
 
     [resources.apt]
     packages = [

@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# Check if the environment variable is set to disable the hook
+if sudo -E [ "$DISABLE_HOOK" == "true" ]; then
+    echo "post_user_create hook is disabled."
+    exit 0
+fi
+
 # Extract the app name from the script name, which is supposed to be something like "50-app_id"
 app="$(basename "$0" | cut -d- -f 2-)"
 
@@ -7,7 +13,7 @@ src_path=$(yunohost app setting "$app" install_dir)
 # member=__MEMBER__
 
 # Sync users
-if sudo php "$src_path/scripts/user/sync_users_ldap2dolibarr.php" commitiferror --server=localhost -y; then
+if sudo php "$src_path/scripts/user/sync_users_ldap2dolibarr.php" commitiferror --server=ldap://localhost -y; then
     echo "LDAP user update succeeded"
 else
     echo "LDAP user update ended with error"

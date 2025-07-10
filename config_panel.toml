@@ -1,0 +1,26 @@
+version = "1.0"
+
+[main]
+name.en = "SyncYunoHost"
+name.fr = "SyncYunoHost"
+
+    [main.syncyunohost]
+
+    [main.syncyunohost.syncyunohost_enabled]
+    ask.en = "Would you like to enable the SyncYunoHost module to synchronize Dolibarr members with YunoHost users?"
+    ask.fr = "Souhaitez-vous activer le module SyncYunoHost pour synchroniser les membres de Dolibarr avec les utilisateurs de YunoHost ?"
+    type = "boolean"
+    yes = "true"
+    no = "false"
+
+    [main.syncyunohost.syncyunohost_base_domain]
+    ask.en = "Choose the domain for YunoHost user's email creation"
+    ask.fr = "Choisissez le domaine pour la création des e-mails des utilisateurs YunoHost"
+    type = "domain"
+    visible = "syncyunohost_enabled"
+
+    [main.syncyunohost.syncyunohost_main_group]
+    ask.en = "Which YunoHost group do you want to sync Dolibarr's activated members with?"
+    ask.fr = "Avec quel groupe de YunoHost souhaitez vous synchroniser les membres actifs de Dolibarr ?"
+    type = "group"
+    visible = "syncyunohost_enabled"
