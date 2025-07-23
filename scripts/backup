@@ -17,7 +17,7 @@ ynh_print_info --message="Declaring files to be backed up..."
 #=================================================
 
 # Check if the group is set
-if [ -z "$syncyunohost_main_group" ]; then
+if [ -z "${syncyunohost_main_group:-}" ]; then
     ynh_print_warn --message="No main group set in syncyunohost_main_group, skipping group backup."
 else
     ynh_print_info --message="Backing up user list from YunoHost group: $syncyunohost_main_group..."
