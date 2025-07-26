@@ -58,6 +58,9 @@ for version in ${main_versions[@]}; do
     source_id="$version"
     upgrade_dolibarr
     current_version="$new_version"
+    if dpkg --compare-versions "$new_version" eq "20.0.4"; then
+         ynh_mysql_connect_as --user="$db_name" --password="$db_pwd" --database="$db_name" < ../conf/sql/ldap.sql
+    fi
 done
 
 # Final upgrade to the final version
@@ -66,7 +69,7 @@ source_id="main"
 ynh_print_info "Upgrading app from $current_version to $new_version"
 upgrade_dolibarr
 
-if "php${php_version}" "$install_dir/scripts/user/sync_users_ldap2dolibarr.php" commitiferror --server=localhost -y; then
+if "php${php_version}" "$install_dir/scripts/user/sync_users_ldap2dolibarr.php" commitiferror --server=ldap://localhost -y; then
     ynh_print_info "LDAP user update ok"
 else
     ynh_print_info "LDAP user update ended with error"

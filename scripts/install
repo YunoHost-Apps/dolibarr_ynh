@@ -79,8 +79,8 @@ sleep 5
 
 # Setup HTTP auth in conf
 ynh_replace --file="$install_dir/htdocs/conf/conf.php" \
-    --match="dolibarr_main_authentication='dolibarr'" \
-    --replace="dolibarr_main_authentication='http'"
+    --match="\$dolibarr_main_authentication='dolibarr';" \
+    --replace="\$dolibarr_main_authentication='http,ldap';\n\$dolibarr_main_auth_ldap_host='127.0.0.1';\n\$dolibarr_main_auth_ldap_port='389';\n\$dolibarr_main_auth_ldap_version='3';\n\$dolibarr_main_auth_ldap_servertype='openldap';\n\$dolibarr_main_auth_ldap_dn='ou=users,dc=yunohost,dc=org';\n\$dolibarr_main_auth_ldap_login_attribute='uid';"
 
 # Calculate and store the config file checksum into the app settings
 ynh_store_file_checksum "$install_dir/htdocs/conf/conf.php"
@@ -107,7 +107,7 @@ ynh_mysql_db_shell < ../conf/sql/ldap.sql
 # Populate the database with YNH users.
 ynh_mysql_db_shell < ../conf/sql/ldap_user.sql
 
-if "php$php_version" "$install_dir/scripts/user/sync_users_ldap2dolibarr.php" commitiferror --server=localhost -y; then
+if "php$php_version" "$install_dir/scripts/user/sync_users_ldap2dolibarr.php" commitiferror --server=ldap://localhost -y; then
     ynh_print_info "LDAP user update ok"
 else
     ynh_print_info "LDAP user update ended with error"

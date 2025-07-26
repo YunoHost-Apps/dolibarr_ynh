@@ -58,11 +58,13 @@ ynh_print_info "restoring syncyunohost.sh script to /usr/local/bin/..."
 ynh_restore "/usr/local/bin/syncyunohost.sh"
 chmod 550 /usr/local/bin/syncyunohost.sh
 
+if [ $syncyunohost_enabled  == true ]; then
 ynh_print_info "restoring sudoers.d file"
 ynh_restore "/etc/sudoers.d/dolibarr_syncyunohost"
 
 chmod 440 /etc/sudoers.d/dolibarr_syncyunohost
 visudo -c
+fi
 
 #=================================================
 # RESTORE YUNOHOST GROUP USERS

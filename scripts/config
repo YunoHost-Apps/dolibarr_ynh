@@ -7,7 +7,7 @@ source /usr/share/yunohost/helpers
 ynh_app_config_apply() {
     _ynh_app_config_apply
 
-    if [ "${changed[syncyunohost_base_domain]}" == "true" || "${changed[syncyunohost_main_group]}" == "true"  || "${changed[syncyunohost_enabled]}" == "true" ] && [ $syncyunohost_enabled == "true" ]
+    if [[ "${changed[syncyunohost_base_domain]}" == "true" || "${changed[syncyunohost_main_group]}" == "true"  || "${changed[syncyunohost_enabled]}" == "true" ]] && [ $syncyunohost_enabled == "true" ]
     then
         syncyunohost_modules_activate
     elif [ "${changed[syncyunohost_enabled]}" == "true" ] && [ $syncyunohost_enabled == "false" ]
