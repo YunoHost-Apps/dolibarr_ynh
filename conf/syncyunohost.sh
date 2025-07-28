@@ -103,7 +103,7 @@ case "$ACTION" in
             exit 1
         fi
         if ynh_user_exists "$USERNAME"; then
-            echo "User $USERNAME does exist"
+            echo "User $USERNAME exists already"
             exit 1
         fi
         ynh_create_user "$PARAM1" "$PARAM2" "$PARAM3"
