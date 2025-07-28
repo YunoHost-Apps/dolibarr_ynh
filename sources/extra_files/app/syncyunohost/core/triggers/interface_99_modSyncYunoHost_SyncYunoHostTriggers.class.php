@@ -213,7 +213,7 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 		}
 	}
 	private function check_user_created_or_exist($create_output, $username){
-		if (strpos($create_output, 'User '.trim($username).' created successfully') !== false ||  strpos($create_output, 'User '.trim($username).' does exist') !== false) {
+		if (strpos($create_output, 'User '.trim($username).' created successfully') !== false ||  strpos($create_output, 'User '.trim($username).' exists already') !== false) {
 			return true;
 		} else{
 			return false;
