@@ -108,7 +108,6 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 	        ? sprintf("%s", $object->company) 
 	        : sprintf("%s %s", $object->firstname, $object->lastname);
 	}
-
 	private function handleSubscriptionCreate($object, $baseDomain, $mainGroup)
 	{
 		$member = new Adherent($this->db);
@@ -134,7 +133,6 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 			}
 		}
 	}
-
 	private function handleSubscriptionDelete($object, $baseDomain, $mainGroup)
 	{
 		$member = new Adherent($this->db);
@@ -276,10 +274,10 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 		$param2Arg = $param2 ? escapeshellarg($param2) : '';
 		$param3Arg = $param3 ? escapeshellarg($param3) : '';
 		$param4Arg = $param4 ? escapeshellarg($param4) : '';
-		
+
 		// Construct the command
 		$cmd = "/usr/local/bin/syncyunohost.sh $action $username $param1Arg $param2Arg $param3Arg $param4Arg";
-		
+
 		// Execute the command and return output
 		return shell_exec($cmd);
 	}
