@@ -38,7 +38,7 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 			case 'MEMBER_CREATE':
 				$fullName = $this->getFullName($object);
 				$this->memberToUser($object->id);
-				$create_output = $this->runCommand('create', $object->login, $object->pass, $fullName, $object->email, $yunohostBaseDomain);
+				$this->runCommand('create', $object->login, $object->pass, $fullName, $object->email, $yunohostBaseDomain);
 				$this->updateMemberExtraField($object->id, 'synced_with_yunohost', 1);
 			break;
 
@@ -59,7 +59,6 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 					$fullName = $this->getFullName($object);
 					$newPass = $this->generateSecurePassword(20);
 					$create_output = $this->runCommand('create', $object->login, $newPass, $fullName, $object->email, $yunohostBaseDomain);
-					dol_syslog("create_output from modSyncYunoHost = $create_output", LOG_DEBUG);
 					if ($this->check_user_exist($create_output, $object->login)) {
 						$this->updateMemberExtraField($object->id, 'synced_with_yunohost', 1);
 						$get_synced_with_yunohost = 1;
@@ -118,7 +117,6 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 				$fullName = $this->getFullName($member);
 				$newPass = $this->generateSecurePassword(20);
 				$create_output = $this->runCommand('create', $member->login, $newPass, $fullName, $member->email, $baseDomain);
-				dol_syslog("create_output from modSyncYunoHost = $create_output", LOG_DEBUG);
 				if ($this->check_user_exist($create_output, $object->login)) {
 		        		$this->memberToUser($object->fk_adherent);
 		           		$synced_with_yunohost = 1;
@@ -143,7 +141,6 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 				$fullName = $this->getFullName($member);
 				$newPass = $this->generateSecurePassword(20);
 				$create_output = $this->runCommand('create', $member->login, $newPass, $fullName, $member->email, $baseDomain);
-				dol_syslog("create_output from modSyncYunoHost = $create_output", LOG_DEBUG);
 				if ($this->check_user_exist($create_output, $object->login)) {
 					$this->memberToUser($object->fk_adherent);
 					$synced_with_yunohost = 1;
