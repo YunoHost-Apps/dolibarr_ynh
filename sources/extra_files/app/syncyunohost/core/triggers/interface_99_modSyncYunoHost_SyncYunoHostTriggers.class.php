@@ -38,8 +38,10 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 			case 'MEMBER_CREATE':
 				$fullName = $this->getFullName($object);
 				$this->memberToUser($object->id);
-				$this->runCommand('create', $object->login, $object->pass, $fullName, $object->email, $yunohostBaseDomain);
-				$this->updateMemberExtraField($object->id, 'synced_with_yunohost', 1);
+				$create_output = $this->runCommand('create', $object->login, $object->pass, $fullName, $object->email, $yunohostBaseDomain);
+				if ($this->check_user_created_or_exist($create_output, $object->login)) {
+					$this->updateMemberExtraField($object->id, 'synced_with_yunohost', 1);
+				}
 			break;
 
 			case 'MEMBER_SUBSCRIPTION_CREATE':
@@ -59,7 +61,7 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 					$fullName = $this->getFullName($object);
 					$newPass = $this->generateSecurePassword(20);
 					$create_output = $this->runCommand('create', $object->login, $newPass, $fullName, $object->email, $yunohostBaseDomain);
-					if ($this->check_user_exist($create_output, $object->login)) {
+					if ($this->check_user_created_or_exist($create_output, $object->login)) {
 						$this->updateMemberExtraField($object->id, 'synced_with_yunohost', 1);
 						$get_synced_with_yunohost = 1;
 						$this->member_subscription($object, $yunohostMainGroup);
@@ -117,7 +119,7 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 				$fullName = $this->getFullName($member);
 				$newPass = $this->generateSecurePassword(20);
 				$create_output = $this->runCommand('create', $member->login, $newPass, $fullName, $member->email, $baseDomain);
-				if ($this->check_user_exist($create_output, $object->login)) {
+				if ($this->check_user_created_or_exist($create_output, $object->login)) {
 		        		$this->memberToUser($object->fk_adherent);
 		           		$synced_with_yunohost = 1;
 		           		$this->updateMemberExtraField($object->fk_adherent, 'synced_with_yunohost', 1);
@@ -141,7 +143,7 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 				$fullName = $this->getFullName($member);
 				$newPass = $this->generateSecurePassword(20);
 				$create_output = $this->runCommand('create', $member->login, $newPass, $fullName, $member->email, $baseDomain);
-				if ($this->check_user_exist($create_output, $object->login)) {
+				if ($this->check_user_created_or_exist($create_output, $object->login)) {
 					$this->memberToUser($object->fk_adherent);
 					$synced_with_yunohost = 1;
 					$this->updateMemberExtraField($object->fk_adherent, 'synced_with_yunohost', 1);
@@ -166,8 +168,7 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 			$oldFullName = $this->getFullName($object->oldcopy);
 			$newPass = $this->generateSecurePassword(20);
 			$create_output = $this->runCommand('create', $object->login, $newPass, $oldFullName, $object->oldcopy->email, $baseDomain);
-			dol_syslog("create_output from modSyncYunoHost = $create_output", LOG_DEBUG);
-			if ($this->check_user_exist($create_output, $object->login)) {
+			if ($this->check_user_created_or_exist($create_output, $object->login)) {
 				$this->memberToUser($object->id);
 				$synced_with_yunohost = 1;
 				$this->updateMemberExtraField($object->id, 'synced_with_yunohost', 1);
@@ -207,8 +208,9 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 			}
 		}
 	}
-	private function check_user_exist($create_output, $username){
-		if (strpos($create_output, 'User '.trim($username).' exists already') !== false) {
+	private function check_user_created_or_exist($create_output, $username){
+		dol_syslog("create_output from modSyncYunoHost = $create_output", LOG_DEBUG);
+		if (strpos($create_output, 'User '.trim($username).' created successfully') !== false ||  strpos($create_output, 'User '.trim($username).' exists already') !== false) {
 			return true;
 		} else{
 			return false;
