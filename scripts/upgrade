@@ -85,7 +85,7 @@ else
 fi
 
 # Setup env prod if not set in conf
-if [ $(grep "\$dolibarr_main_prod='0';" "$install_dir/htdocs/conf/conf.php") ], then
+if [ $(grep "\$dolibarr_main_prod='0';" "$install_dir/htdocs/conf/conf.php") ]; then
 ynh_replace_string --match_string="\$dolibarr_main_prod='0';" --replace_string="\$dolibarr_main_prod='1';" --target_file="$install_dir/htdocs/conf/conf.php"
 fi
 
