@@ -82,9 +82,7 @@ ynh_replace_string --target_file="$install_dir/htdocs/conf/conf.php" \
     --replace_string="\$dolibarr_main_authentication='http,ldap';\n\$dolibarr_main_auth_ldap_host='127.0.0.1';\n\$dolibarr_main_auth_ldap_port='389';\n\$dolibarr_main_auth_ldap_version='3';\n\$dolibarr_main_auth_ldap_servertype='openldap';\n\$dolibarr_main_auth_ldap_dn='ou=users,dc=yunohost,dc=org';\n\$dolibarr_main_auth_ldap_login_attribute='uid';"
 
 # Setup env prod in conf
-ynh_replace_string --target_file="$install_dir/htdocs/conf/conf.php" \
-    --match_string="\$dolibarr_main_prod='0';" \
-    --replce_string="$dolibarr_main_prod='1';"
+ynh_replace_string --match_string="\$dolibarr_main_prod='0';" --replace_string="\$dolibarr_main_prod='1';" --target_file="$install_dir/htdocs/conf/conf.php"
 
 # Calculate and store the config file checksum into the app settings
 ynh_store_file_checksum --file="$install_dir/htdocs/conf/conf.php"
