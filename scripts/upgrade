@@ -67,7 +67,7 @@ for version in "${main_versions[@]}"; do
     source_id="$version"
     upgrade_dolibarr
     current_version="$new_version"
-    if dpkg --compare-versions "$new_version" eq "21.0.4"; then
+    if dpkg --compare-versions "$new_version" eq "20.0.4"; then
          ynh_mysql_connect_as --user="$db_name" --password="$db_pwd" --database="$db_name" < ../conf/sql/ldap.sql
     fi
 done
