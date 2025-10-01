@@ -19,7 +19,7 @@ chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
 chown -R "$app:www-data" "$install_dir"
 
-chmod 644 "$install_dir/htdocs/conf/conf.php"
+chmod 400 "$install_dir/htdocs/conf/conf.php"
 
 #=================================================
 # RESTORE THE MYSQL DATABASE
