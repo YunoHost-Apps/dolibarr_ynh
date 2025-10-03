@@ -84,6 +84,15 @@ else
     ynh_print_info --message="LDAP user update ended with error"
 fi
 
+# Setup env prod if not set in conf
+if [ -n $(grep "\$dolibarr_main_prod='0';" "$install_dir/htdocs/conf/conf.php") ]; then
+ynh_replace_string --match_string="\$dolibarr_main_prod='0';" --replace_string="\$dolibarr_main_prod='1';" --target_file="$install_dir/htdocs/conf/conf.php"
+fi
+
+# Calculate and store the config file checksum into the app settings
+ynh_store_file_checksum --file="$install_dir/htdocs/conf/conf.php"
+chmod 644 "$install_dir/htdocs/conf/conf.php"
+
 ynh_backup_if_checksum_is_different --file="$install_dir/htdocs/conf/conf.php"
 # Recalculate and store the checksum of the file for the next upgrade.
 ynh_store_file_checksum --file="$install_dir/htdocs/conf/conf.php"
@@ -98,10 +107,7 @@ fi
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
 chown -R "$app:www-data" "$install_dir"
-
-# mkdir -p "$data_dir"
-# chown -R $app: "$data_dir"
-# chmod go-w $data_dir
+chmod 400 "$install_dir/htdocs/conf/conf.php"
 
 #=================================================
 # REAPPLY SYSTEM CONFIGURATIONS
