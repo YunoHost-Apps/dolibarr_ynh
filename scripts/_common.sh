@@ -7,8 +7,8 @@
 upgrade_dolibarr() {
     ynh_setup_source --source_id="$source_id" --dest_dir="$install_dir" --full_replace \
         --keep="htdocs/conf/conf.php htdocs/install/install.forced.php"
-    #chmod -R o-rwx "$install_dir"
-    #chown -R "$app:www-data" "$install_dir"
+    chmod -R o-rwx "$install_dir"
+    chown -R "$app:www-data" "$install_dir"
 
     # Remove the lock if it exists
     lock=$install_dir/documents/install.lock
