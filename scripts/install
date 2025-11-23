@@ -25,8 +25,8 @@ ynh_setup_source --source_id="main" --dest_dir="$install_dir"
 
 mkdir -p "$install_dir/documents"
 
-#chmod 750 "$install_dir"
-#chmod -R o-rwx "$install_dir"
+chmod 750 "$install_dir"
+chmod -R o-rwx "$install_dir"
 chmod go-w "$install_dir/documents"
 
 #=================================================
