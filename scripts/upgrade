@@ -58,7 +58,7 @@ ynh_script_progression "Upgrading source files..."
 
 # Sort --version-sort cdécembrean handle underscore in versions numbers
 mapfile -t main_versions < <(
-    ynh_read_manifest | keys[] | grep "main_" | sort --version-sort
+    ynh_read_manifest | key[] | grep "main_" | sort --version-sort
 )
 current_version=$YNH_APP_CURRENT_VERSION
 for version in ${main_versions[@]}; do
