@@ -27,8 +27,8 @@ if [ -z "${fpm_usage:-}" ]; then
 fi
 
 # Delete existing ini configuration file (backward compatibility)
-if [ -f /etc/php/$YNH_PHP_VERSION/fpm/conf.d/20-$app.ini ]; then
-    ynh_safe_rm /etc/php/$YNH_PHP_VERSION/fpm/conf.d/20-$app.ini
+if [ -f /etc/php/${php_version}/fpm/conf.d/20-$app.ini ]; then
+    ynh_safe_rm /etc/php/${php_version}/fpm/conf.d/20-$app.ini
 fi
 
 if [ -n "${version:-}" ]; then
