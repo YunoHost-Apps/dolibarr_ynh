@@ -92,14 +92,15 @@ if [ -n $(grep "\$dolibarr_main_prod='0';" "$install_dir/htdocs/conf/conf.php") 
 ynh_replace --match="\$dolibarr_main_prod='0';" --replace="\$dolibarr_main_prod='1';" --file="$install_dir/htdocs/conf/conf.php"
 fi
 
-chmod 644 "$install_dir/htdocs/conf/conf.php"
 # Calculate and store the config file checksum into the app settings
-#ynh_store_file_checksum --file="$install_dir/htdocs/conf/conf.php"
+ynh_store_file_checksum --file="$install_dir/htdocs/conf/conf.php"
+chmod 644 "$install_dir/htdocs/conf/conf.php"
 
 ynh_backup_if_checksum_is_different "$install_dir/htdocs/conf/conf.php"
 
 # Recalculate and store the checksum of the file for the next upgrade.
 ynh_store_file_checksum "$install_dir/htdocs/conf/conf.php"
+chmod 644 "$install_dir/htdocs/conf/conf.php"
 
 if [ ! -f "$install_dir/documents/install.lock" ]; then
     echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$install_dir/documents/install.lock"
