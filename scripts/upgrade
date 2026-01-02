@@ -14,6 +14,18 @@ ynh_app_setting_set_default --key=php_memory_limit --value=256M
 #=================================================
 ynh_script_progression "Ensuring downward compatibility..."
 
+# If fpm_footprint doesn't exist, create it
+if [ -z "${fpm_footprint:-}" ]; then
+    fpm_footprint=medium
+    ynh_app_setting_set --app=$app --key=fpm_footprint --value=$fpm_footprint
+fi
+
+# If fpm_usage doesn't exist, create it
+if [ -z "${fpm_usage:-}" ]; then
+    fpm_usage=medium
+    ynh_app_setting_set --app=$app --key=fpm_usage --value=$fpm_usage
+fi
+
 # Delete existing ini configuration file (backward compatibility)
 if [ -f /etc/php/$YNH_PHP_VERSION/fpm/conf.d/20-$app.ini ]; then
     ynh_safe_rm /etc/php/$YNH_PHP_VERSION/fpm/conf.d/20-$app.ini
