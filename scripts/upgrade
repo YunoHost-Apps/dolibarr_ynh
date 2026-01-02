@@ -89,7 +89,7 @@ fi
 
 # Setup env prod if not set in conf
 if [ -n $(grep "\$dolibarr_main_prod='0';" "$install_dir/htdocs/conf/conf.php") ]; then
-ynh_replace_string --match_string="\$dolibarr_main_prod='0';" --replace_string="\$dolibarr_main_prod='1';" --target_file="$install_dir/htdocs/conf/conf.php"
+ynh_replace --match="\$dolibarr_main_prod='0';" --replace="\$dolibarr_main_prod='1';" --file="$install_dir/htdocs/conf/conf.php"
 fi
 
 # Calculate and store the config file checksum into the app settings
