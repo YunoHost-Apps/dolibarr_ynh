@@ -40,10 +40,7 @@ ynh_create_user() {
     local fullname="$2"
     local forward_email="$3"
 
-    # Temporarily disable hook for post-user creation
-    export DISABLE_HOOK=true
-
-    sudo yunohost user create "$USERNAME" \
+sudo DISABLE_HOOK=true yunohost user create "$USERNAME" \
         -p "$password" \
         -F "$fullname" \
         -d "$PARAM4"
