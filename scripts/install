@@ -57,6 +57,7 @@ ynh_script_progression "Configuring $app ..."
 
 # Create necessary files
 touch "$install_dir/htdocs/conf/conf.php"
+chmod 666 "$install_dir/htdocs/conf/conf.php"
 
 # Set right permissions for curl install
 #chown -R "$app:" "$install_dir"
