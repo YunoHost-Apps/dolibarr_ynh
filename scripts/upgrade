@@ -23,6 +23,14 @@ if [ -n "${version:-}" ]; then
     ynh_app_setting_delete --key="version"
 fi
 
+if [ -n "${fpm_usage:-}" ]; then
+    ynh_app_setting_delete --key="fpm_usage"
+fi
+
+if [ -n "${fpm_footprint:-}" ]; then
+    ynh_app_setting_delete --key="fpm_footprint"
+fi
+
 charset=$(mysql -ss -N -e "SELECT default_character_set_name FROM information_schema.SCHEMATA WHERE schema_name = '$db_name'")
 if [ "$charset" != "utf8" ]; then
     ynh_print_info "Changing Database charset to utf8"
@@ -32,7 +40,6 @@ if [ "$charset" != "utf8" ]; then
 fi
 
 # If syncyunohost_enabled doesn't exist, create it
-# FIXMEhelpers2.1: maybe replace with: ynh_app_setting_set_default --key=syncyunohost_enabled --value=false
 if [ -z "${syncyunohost_enabled:-}" ]; then
     syncyunohost_enabled=false
     ynh_app_setting_set_default --key=syncyunohost_enabled --value=false
