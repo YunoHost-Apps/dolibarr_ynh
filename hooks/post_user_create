@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Check if the environment variable is set to disable the hook
-if sudo -E [ "$DISABLE_HOOK" == "true" ]; then
+if [ "$DISABLE_HOOK" == "true" ]; then
     echo "post_user_create hook is disabled."
     exit 0
 fi
