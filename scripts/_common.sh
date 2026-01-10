@@ -53,7 +53,7 @@ syncyunohost_module_install(){
     #=================================================
     ynh_config_add --template="syncyunohost.sh" --destination="/usr/local/bin/syncyunohost.sh"
     chmod 550 /usr/local/bin/syncyunohost.sh
-    chown dolibarr: /usr/local/bin/syncyunohost.sh
+    chown "$app:" /usr/local/bin/syncyunohost.sh
 }
 
 syncyunohost_scripts_remove(){
