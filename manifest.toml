@@ -7,7 +7,7 @@ name = "Dolibarr"
 description.en = "Manage the various aspects of your business or association"
 description.fr = "Gérez les différents aspects de votre activité pro ou associative"
 
-version = "22.0.4~ynh2"
+version = "22.0.4~ynh3"
 
 maintainers = ["mastereur"]
 
