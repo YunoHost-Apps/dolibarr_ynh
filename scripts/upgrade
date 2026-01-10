@@ -68,6 +68,11 @@ for version in ${main_versions[@]}; do
     if dpkg --compare-versions "$new_version" eq "20.0.4"; then
         ynh_mysql_db_shell < ../conf/sql/ldap.sql
     fi
+    if ynh_app_upgrading_from_version_before 22.0.4~ynh1 && [ $(ynh_app_setting_get --key="syncyunohost_enabled") = true ]
+    syncyunohost_modules_deactivate
+    sleep 5
+    syncyunohost_modules_activate
+    fi
 done
 
 # Final upgrade to the final version
