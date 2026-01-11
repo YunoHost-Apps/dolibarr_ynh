@@ -7,7 +7,7 @@ name = "Dolibarr"
 description.en = "Manage the various aspects of your business or association"
 description.fr = "Gérez les différents aspects de votre activité pro ou associative"
 
-version = "22.0.4~ynh2"
+version = "22.0.4~ynh3"
 
 maintainers = ["mastereur"]
 
@@ -21,7 +21,7 @@ code = "https://github.com/Dolibarr/dolibarr"
 cpe = "cpe:2.3:a:dolibarr:dolibarr"
 
 [integration]
-yunohost = ">= 12.1.17"
+yunohost = ">= 12.1.38"
 helpers_version = "2.1"
 architectures = "all"
 multi_instance = true

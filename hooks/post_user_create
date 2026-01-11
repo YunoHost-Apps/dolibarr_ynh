@@ -13,8 +13,8 @@ src_path=$(yunohost app setting "$app" install_dir)
 # member=__MEMBER__
 
 # Sync users
-phpversion=$(yunohost app setting "$app" phpversion)
-if sudo php${phpversion} "$src_path/scripts/user/sync_users_ldap2dolibarr.php" commitiferror --server=ldap://localhost -y; then
+php_version=$(yunohost app setting "$app" php_version)
+if sudo php${php_version} "$src_path/scripts/user/sync_users_ldap2dolibarr.php" commitiferror --server=ldap://localhost -y; then
     echo "LDAP user update succeeded"
 else
     echo "LDAP user update ended with error"
