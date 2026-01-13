@@ -6,7 +6,7 @@ source /usr/share/yunohost/helpers
 ynh_abort_if_errors
 
 ynh_app_config_validate() {
-    if [ "$syncyunohost_enabled" == "false" ] && [ -f "/usr/bin/local/syncyunohost.sh" ]; then
+    if [ $syncyunohost_enabled == "false" ] && [[ -f "/usr/bin/local/syncyunohost.sh" ]]; then
         ynh_die --message="You can't activate two times a dolibarr app syncyunohost"
     fi
 
