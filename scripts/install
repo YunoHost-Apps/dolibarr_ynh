@@ -128,9 +128,9 @@ else
     ynh_script_progression "SyncYunohost module is disabled."
 fi
 
-#chown -R "$app:www-data" "$install_dir"
 chown -R "$app:" "$install_dir/documents"
 chmod 400 "$install_dir/htdocs/conf/conf.php"
+chown  -R  "$app:www-data" "$install_dir/htdocs/conf"
 
 #=================================================
 # END OF SCRIPT
