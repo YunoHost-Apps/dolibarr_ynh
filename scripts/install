@@ -120,10 +120,10 @@ if [ ! -f "$install_dir/documents/install.lock" ]; then
     chmod 440 "$install_dir/documents/install.lock"
 fi
 
+syncyunohost_module_install
 # Check if the user has enabled the SyncYunohost module
 if [[ $syncyunohost_enabled == 1 ]]
 then
-    syncyunohost_module_install
     syncyunohost_modules_activate
 else
     ynh_script_progression "SyncYunohost module is disabled."
