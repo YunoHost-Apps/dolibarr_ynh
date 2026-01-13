@@ -36,7 +36,7 @@ syncyunohost_module_install(){
     if [ -d "../sources/extra_files/app/syncyunohost/" ]; then
         mkdir -p "$install_dir/htdocs/custom/syncyunohost/" # Ensure destination directory exists
         cp -r "../sources/extra_files/app/syncyunohost/"* "$install_dir/htdocs/custom/syncyunohost/"
-        chown dolibarr:www-data -R "$install_dir/htdocs/custom/syncyunohost/"
+        chown "$app:www-data" -R "$install_dir/htdocs/custom/syncyunohost/"
         ynh_print_info "Files copied successfully to $install_dir/htdocs/custom/"
     else
         ynh_print_warn "Source directory ../sources/extra_files/app/syncyunohost/ does not exist. Skipping copy."
@@ -46,7 +46,7 @@ syncyunohost_module_install(){
     # COPY SCRIPT TO /scripts/members
     #=================================================
     cp "../conf/syncyunohost-modules.php" "$install_dir/scripts/members/syncyunohost-modules.php"
-    chown dolibarr:www-data -R "$install_dir/scripts/members/syncyunohost-modules.php"
+    chown "$app:www-data" -R "$install_dir/scripts/members/syncyunohost-modules.php"
 
     #=================================================
     # COPY SCRIPT TO /usr/local/bin
@@ -78,7 +78,7 @@ syncyunohost_modules_activate(){
     # SYSTEM SETUP: GRANT PERMISSIONS TO `dolibarr` USER
     #=================================================
     # Add dolibarr user to sudoers to allow running syncyunohost.sh without a password
-    echo "dolibarr ALL=(ALL) NOPASSWD:SETENV: /usr/bin/yunohost user list --output-as json, /usr/bin/yunohost user create * -p * -F * -d *, /usr/bin/yunohost user update * --add-mailforward *, /usr/bin/yunohost user update * --remove-mailforward *, /usr/bin/yunohost user update * -F *, /usr/bin/yunohost user update * -p *, /usr/bin/yunohost user delete *, /usr/bin/yunohost user group add * *, !/usr/bin/yunohost user group add admins *, /usr/bin/yunohost user group remove * *, !/usr/bin/yunohost user group remove admins *" > "/etc/sudoers.d/dolibarr_syncyunohost"
+    echo "$app ALL=(ALL) NOPASSWD:SETENV: /usr/bin/yunohost user list --output-as json, /usr/bin/yunohost user create * -p * -F * -d *, /usr/bin/yunohost user update * --add-mailforward *, /usr/bin/yunohost user update * --remove-mailforward *, /usr/bin/yunohost user update * -F *, /usr/bin/yunohost user update * -p *, /usr/bin/yunohost user delete *, /usr/bin/yunohost user group add * *, !/usr/bin/yunohost user group add admins *, /usr/bin/yunohost user group remove * *, !/usr/bin/yunohost user group remove admins *" > "/etc/sudoers.d/dolibarr_syncyunohost"
     chmod 440 /etc/sudoers.d/dolibarr_syncyunohost
 
     # Check sudoers file syntax
