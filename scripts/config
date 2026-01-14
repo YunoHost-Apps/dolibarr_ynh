@@ -3,26 +3,23 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
-ynh_abort_if_errors
-
-ynh_app_config_validate() {
-    if [ $syncyunohost_enabled == "false" ] && [[ -f "/usr/bin/local/syncyunohost.sh" ]]; then
-        ynh_die --message="You can't activate two times a dolibarr app syncyunohost"
-    fi
-
-    _ynh_app_config_validate
-}
-
 # Apply Yunohost app's config
 ynh_app_config_apply() {
     _ynh_app_config_apply
 
-    if [[ "${changed[syncyunohost_base_domain]}" == "true" || "${changed[syncyunohost_main_group]}" == "true"  || "${changed[syncyunohost_enabled]}" == "true" ]] && [ $syncyunohost_enabled == "true" ]
-    then
+    if [[ ("${changed[syncyunohost_base_domain]}" == "true" \
+       || "${changed[syncyunohost_main_group]}" == "true" \
+       || "${changed[syncyunohost_enabled]}" == "true") \
+       && "$syncyunohost_enabled" == "true" ]]; then
+          if [ -f "/usr/local/bin/syncyunohost.sh" ]; then
+	        ynh_app_setting_set --key=syncyunohost_enabled --value="false"
+            ynh_die --message="You can't activate the syncyunohost Dolibarr app twice"
+	      fi
+
         syncyunohost_module_install
         syncyunohost_modules_activate
-    elif [ "${changed[syncyunohost_enabled]}" == "true" ] && [ $syncyunohost_enabled == "false" ]
-    then
+
+    elif [[ "${changed[syncyunohost_enabled]}" == "true" && $syncyunohost_enabled == "false" ]]; then
         syncyunohost_modules_deactivate
         syncyunohost_scripts_remove
     fi
