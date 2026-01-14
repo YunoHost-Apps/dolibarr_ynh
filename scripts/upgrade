@@ -133,11 +133,11 @@ ynh_config_add_logrotate
 syncyunohost_module_install
 
 # Check if the user has enabled the SyncYunohost module
-if [[ $syncyunohost_enabled == 1 ]]
+if [[ $syncyunohost_enabled == "true" ]]
 then
     syncyunohost_modules_activate
 else
-    ynh_script_progression "SyncYunohost module is disabled."
+    ynh_script_progression "SyncYunohost module is disabled, removing script"
     ynh_safe_rm "$install_dir/scripts/members/syncyunohost-modules.php"
     ynh_safe_rm "/usr/local/bin/syncyunohost.sh"
 fi
