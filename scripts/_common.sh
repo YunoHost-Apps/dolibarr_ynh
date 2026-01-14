@@ -44,21 +44,6 @@ syncyunohost_module_install(){
 
 }
 
-syncyunohost_scripts_add(){
-    #=================================================
-    # COPY SCRIPT TO /scripts/members
-    #=================================================
-    cp "../conf/syncyunohost-modules.php" "$install_dir/scripts/members/syncyunohost-modules.php"
-    chown "$app:www-data" -R "$install_dir/scripts/members/syncyunohost-modules.php"
-
-    #=================================================
-    # COPY SCRIPT TO /usr/local/bin
-    #=================================================
-    ynh_config_add --template="syncyunohost.sh" --destination="/usr/local/bin/syncyunohost.sh"
-    chmod 550 /usr/local/bin/syncyunohost.sh
-    chown "$app:" /usr/local/bin/syncyunohost.sh
-}
-
 syncyunohost_scripts_remove(){
     #=================================================
     # REMOVE CUSTOM SCRIPTS
@@ -75,6 +60,19 @@ syncyunohost_scripts_remove(){
 
 # Activate Syncyunohost module
 syncyunohost_modules_activate(){
+    #=================================================
+    # COPY SCRIPT TO /scripts/members
+    #=================================================
+    cp "../conf/syncyunohost-modules.php" "$install_dir/scripts/members/syncyunohost-modules.php"
+    chown "$app:www-data" -R "$install_dir/scripts/members/syncyunohost-modules.php"
+
+    #=================================================
+    # COPY SCRIPT TO /usr/local/bin
+    #=================================================
+    ynh_config_add --template="syncyunohost.sh" --destination="/usr/local/bin/syncyunohost.sh"
+    chmod 550 /usr/local/bin/syncyunohost.sh
+    chown "$app:" /usr/local/bin/syncyunohost.sh
+
     "php${php_version}" "$install_dir/scripts/members/syncyunohost-modules.php" --action=activate --modules=modAdherent,modCron,modSyncYunoHost --base_domain=$syncyunohost_base_domain --main_group=$syncyunohost_main_group
 
     #=================================================

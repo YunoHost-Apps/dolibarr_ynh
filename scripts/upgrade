@@ -42,7 +42,7 @@ fi
 # If syncyunohost_enabled doesn't exist, create it
 if [ -z "${syncyunohost_enabled:-}" ]; then
     syncyunohost_enabled=false
-    ynh_app_setting_set_default --key=syncyunohost_enabled --value=false
+    ynh_app_setting_set_default --key="syncyunohost_enabled" --value="false"
 fi
 
 #=================================================
@@ -135,11 +135,9 @@ syncyunohost_module_install
 # Check if the user has enabled the SyncYunohost module
 if [[ $syncyunohost_enabled == "true" ]]
 then
-    syncyunohost_scripts_add
     syncyunohost_modules_activate
 else
     ynh_script_progression "SyncYunohost module is disabled, removing script"
-    ynh_safe_rm "$install_dir/scripts/members/syncyunohost-modules.php"    
 fi
 
 #=================================================
