@@ -104,16 +104,17 @@ ynh_backup_if_checksum_is_different "$install_dir/htdocs/conf/conf.php"
 ynh_store_file_checksum "$install_dir/htdocs/conf/conf.php"
 chmod 644 "$install_dir/htdocs/conf/conf.php"
 
-if [ ! -f "$install_dir/documents/install.lock" ]; then
-    echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$install_dir/documents/install.lock"
-    chown "$app:$app" "$install_dir/documents/install.lock"
-    chmod 440 "$install_dir/documents/install.lock"
-fi
 
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
 chown -R "$app:www-data" "$install_dir"
 chmod 400 "$install_dir/htdocs/conf/conf.php"
+
+if [ ! -f "$install_dir/documents/install.lock" ]; then
+    echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$install_dir/documents/install.lock"
+    chown "$app:$app" "$install_dir/documents/install.lock"
+    chmod 440 "$install_dir/documents/install.lock"
+fi
 
 #=================================================
 # REAPPLY SYSTEM CONFIGURATIONS
@@ -130,6 +131,16 @@ ynh_config_add_logrotate
 # COPY FOLDER TO TARGET PATH
 #=================================================
 syncyunohost_module_install
+
+# Check if the user has enabled the SyncYunohost module
+if [[ $syncyunohost_enabled == 1 ]]
+then
+    syncyunohost_modules_activate
+else
+    ynh_script_progression "SyncYunohost module is disabled."
+    ynh_safe_rm "$install_dir/scripts/members/syncyunohost-modules.php"
+    ynh_safe_rm "/usr/local/bin/syncyunohost.sh"
+fi
 
 #=================================================
 # END OF SCRIPT
