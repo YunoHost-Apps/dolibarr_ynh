@@ -17,7 +17,6 @@ ynh_app_config_apply() {
 	      fi
 
         syncyunohost_module_install
-        syncyunohost_scripts_add
         syncyunohost_modules_activate
 
     elif [[ "${changed[syncyunohost_enabled]}" == "true" && "$syncyunohost_enabled" == "false" ]]; then
