@@ -61,7 +61,7 @@ ynh_mysql_dump_db > db.sql
 ynh_print_info "Backing up syncyunohost.sh script from /usr/local/bin/..."
 ynh_backup "/usr/local/bin/syncyunohost.sh"
 
-if [ $syncyunohost_enabled  == true ]; then
+if [ "$syncyunohost_enabled"  == "true" ]; then
     ynh_print_info "Backing up sudoers.d file"
     ynh_backup "/etc/sudoers.d/dolibarr_syncyunohost"
 fi
