@@ -58,6 +58,7 @@ ynh_mysql_dump_db > db.sql
 #=================================================
 # BACKUP CUSTOM SCRIPTS
 #=================================================
+ynh_print_info "Backing up scripts if syncyunohost activated"
 
 if [ "$syncyunohost_enabled"  == "true" ]; then 
 
