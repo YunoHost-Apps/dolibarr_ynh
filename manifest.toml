@@ -7,7 +7,7 @@ name = "Dolibarr"
 description.en = "Manage the various aspects of your business or association"
 description.fr = "Gérez les différents aspects de votre activité pro ou associative"
 
-version = "22.0.4~ynh3"
+version = "22.0.4~ynh4"
 
 maintainers = ["mastereur"]
 
@@ -47,32 +47,32 @@ ram.runtime = "150M"
 
     [install.admin]
     type = "user"
-    
+
     [install.syncyunohost_enabled]
     type = "boolean"
     ask.en = "Would you like to enable the SyncYunohost module to synchronize Dolibarr members with YunoHost users?"
     ask.fr = "Souhaitez-vous activer le module SyncYunohost pour synchroniser les membres de Dolibarr avec les utilisateurs de YunoHost ?"
     default = false
-    
+
     [install.syncyunohost_base_domain]
     type = "domain"
     ask.en = "Choose the domain for YunoHost user's email creation"
     ask.fr = "Choisissez le domaine pour la création des e-mails des utilisateurs YunoHost"
     visible = "syncyunohost_enabled"
-    
+
     [install.syncyunohost_main_group]
     type = "group"
     ask.en = "Which YunoHost group do you want to sync Dolibar's activated members with?"
     ask.fr = "Avec quel groupe de YunoHost souhaitez vous synchroniser les membres actifs de Dolibarr ?"
     default = "visitors"
     visible = "syncyunohost_enabled"
-    
+
 [resources]
     [resources.sources.main]
     url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/22.0.4.tar.gz"
     sha256 = "bd994ec1fd76ee3e45c504b65b5f610436b2d6f7604a942b74c0c9e1fe37e495"
     autoupdate.strategy = "latest_github_release"
-    
+
     [resources.sources.main_21_0_4]
     url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/21.0.4.tar.gz"
     sha256 = "308602c1f2784d4f473a47263b8882e9d46d1370164f8c4115e1cd687889511e"

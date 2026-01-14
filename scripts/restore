@@ -55,10 +55,12 @@ ynh_systemctl --service=nginx --action=reload
 #=================================================
 ynh_print_info "restoring syncyunohost.sh script to /usr/local/bin/..."
 
+
+if [[ ! -f "/usr/local/bin/syncyunohost.sh" && "$syncyunohost_enabled" == "true" ]]; then
 ynh_restore "/usr/local/bin/syncyunohost.sh"
 chmod 550 /usr/local/bin/syncyunohost.sh
+chown "$app:" /usr/local/bin/syncyunohost.sh
 
-if [ $syncyunohost_enabled  == true ]; then
 ynh_print_info "restoring sudoers.d file"
 ynh_restore "/etc/sudoers.d/dolibarr_syncyunohost"
 

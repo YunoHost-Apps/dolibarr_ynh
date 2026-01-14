@@ -42,7 +42,7 @@ fi
 # If syncyunohost_enabled doesn't exist, create it
 if [ -z "${syncyunohost_enabled:-}" ]; then
     syncyunohost_enabled=false
-    ynh_app_setting_set_default --key=syncyunohost_enabled --value=false
+    ynh_app_setting_set_default --key="syncyunohost_enabled" --value="false"
 fi
 
 #=================================================
@@ -79,7 +79,7 @@ upgrade_dolibarr
 if ynh_app_upgrading_from_version_before_or_equal_to 22.0.4~ynh2 && [[ "$syncyunohost_enabled" == "true" ]]; then
     ynh_safe_rm "/etc/sudoers.d/dolibarr_syncyunohost"
     # Add dolibarr user to sudoers to allow running syncyunohost.sh without a password
-    echo "dolibarr ALL=(ALL) NOPASSWD:SETENV: /usr/bin/yunohost user list --output-as json, /usr/bin/yunohost user create * -p * -F * -d *, /usr/bin/yunohost user update * --add-mailforward *, /usr/bin/yunohost user update * --remove-mailforward *, /usr/bin/yunohost user update * -F *, /usr/bin/yunohost user update * -p *, /usr/bin/yunohost user delete *, /usr/bin/yunohost user group add * *, !/usr/bin/yunohost user group add admins *, /usr/bin/yunohost user group remove * *, !/usr/bin/yunohost user group remove admins *" > "/etc/sudoers.d/dolibarr_syncyunohost"
+    echo "$app ALL=(ALL) NOPASSWD:SETENV: /usr/bin/yunohost user list --output-as json, /usr/bin/yunohost user create * -p * -F * -d *, /usr/bin/yunohost user update * --add-mailforward *, /usr/bin/yunohost user update * --remove-mailforward *, /usr/bin/yunohost user update * -F *, /usr/bin/yunohost user update * -p *, /usr/bin/yunohost user delete *, /usr/bin/yunohost user group add * *, !/usr/bin/yunohost user group add admins *, /usr/bin/yunohost user group remove * *, !/usr/bin/yunohost user group remove admins *" > "/etc/sudoers.d/dolibarr_syncyunohost"
     chmod 440 "/etc/sudoers.d/dolibarr_syncyunohost"
 fi
 
@@ -104,16 +104,17 @@ ynh_backup_if_checksum_is_different "$install_dir/htdocs/conf/conf.php"
 ynh_store_file_checksum "$install_dir/htdocs/conf/conf.php"
 chmod 644 "$install_dir/htdocs/conf/conf.php"
 
-if [ ! -f "$install_dir/documents/install.lock" ]; then
-    echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$install_dir/documents/install.lock"
-    chown "$app:$app" "$install_dir/documents/install.lock"
-    chmod 440 "$install_dir/documents/install.lock"
-fi
 
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
 chown -R "$app:www-data" "$install_dir"
 chmod 400 "$install_dir/htdocs/conf/conf.php"
+
+if [ ! -f "$install_dir/documents/install.lock" ]; then
+    echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$install_dir/documents/install.lock"
+    chown "$app:$app" "$install_dir/documents/install.lock"
+    chmod 440 "$install_dir/documents/install.lock"
+fi
 
 #=================================================
 # REAPPLY SYSTEM CONFIGURATIONS
@@ -130,6 +131,14 @@ ynh_config_add_logrotate
 # COPY FOLDER TO TARGET PATH
 #=================================================
 syncyunohost_module_install
+
+# Check if the user has enabled the SyncYunohost module
+if [[ $syncyunohost_enabled == "true" ]]
+then
+    syncyunohost_modules_activate
+else
+    ynh_script_progression "SyncYunohost module is disabled, removing script"
+fi
 
 #=================================================
 # END OF SCRIPT

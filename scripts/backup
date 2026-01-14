@@ -58,12 +58,15 @@ ynh_mysql_dump_db > db.sql
 #=================================================
 # BACKUP CUSTOM SCRIPTS
 #=================================================
+ynh_print_info "Backing up scripts if syncyunohost activated"
+
+if [ "$syncyunohost_enabled"  == "true" ]; then 
+
 ynh_print_info "Backing up syncyunohost.sh script from /usr/local/bin/..."
 ynh_backup "/usr/local/bin/syncyunohost.sh"
 
-if [ $syncyunohost_enabled  == true ]; then
-    ynh_print_info "Backing up sudoers.d file"
-    ynh_backup "/etc/sudoers.d/dolibarr_syncyunohost"
+ynh_print_info "Backing up sudoers.d file"
+ynh_backup "/etc/sudoers.d/dolibarr_syncyunohost"
 fi
 
 #=================================================
