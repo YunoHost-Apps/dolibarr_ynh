@@ -122,7 +122,7 @@ fi
 
 syncyunohost_module_install
 # Check if the user has enabled the SyncYunohost module
-if [[ $syncyunohost_enabled == 1 ]]
+if [[ "$syncyunohost_enabled" == "true" ]]
 then
     syncyunohost_scripts_add
     syncyunohost_modules_activate
