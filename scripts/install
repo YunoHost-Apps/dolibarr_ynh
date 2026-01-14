@@ -124,11 +124,11 @@ syncyunohost_module_install
 # Check if the user has enabled the SyncYunohost module
 if [[ $syncyunohost_enabled == 1 ]]
 then
+    syncyunohost_scripts_add
     syncyunohost_modules_activate
 else
     ynh_script_progression "SyncYunohost module is disabled."
     ynh_safe_rm "$install_dir/scripts/members/syncyunohost-modules.php"
-    ynh_safe_rm "/usr/local/bin/syncyunohost.sh"
 fi
 
 #=================================================

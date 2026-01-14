@@ -79,7 +79,7 @@ upgrade_dolibarr
 if ynh_app_upgrading_from_version_before_or_equal_to 22.0.4~ynh2 && [[ "$syncyunohost_enabled" == "true" ]]; then
     ynh_safe_rm "/etc/sudoers.d/dolibarr_syncyunohost"
     # Add dolibarr user to sudoers to allow running syncyunohost.sh without a password
-    echo "dolibarr ALL=(ALL) NOPASSWD:SETENV: /usr/bin/yunohost user list --output-as json, /usr/bin/yunohost user create * -p * -F * -d *, /usr/bin/yunohost user update * --add-mailforward *, /usr/bin/yunohost user update * --remove-mailforward *, /usr/bin/yunohost user update * -F *, /usr/bin/yunohost user update * -p *, /usr/bin/yunohost user delete *, /usr/bin/yunohost user group add * *, !/usr/bin/yunohost user group add admins *, /usr/bin/yunohost user group remove * *, !/usr/bin/yunohost user group remove admins *" > "/etc/sudoers.d/dolibarr_syncyunohost"
+    echo "$app ALL=(ALL) NOPASSWD:SETENV: /usr/bin/yunohost user list --output-as json, /usr/bin/yunohost user create * -p * -F * -d *, /usr/bin/yunohost user update * --add-mailforward *, /usr/bin/yunohost user update * --remove-mailforward *, /usr/bin/yunohost user update * -F *, /usr/bin/yunohost user update * -p *, /usr/bin/yunohost user delete *, /usr/bin/yunohost user group add * *, !/usr/bin/yunohost user group add admins *, /usr/bin/yunohost user group remove * *, !/usr/bin/yunohost user group remove admins *" > "/etc/sudoers.d/dolibarr_syncyunohost"
     chmod 440 "/etc/sudoers.d/dolibarr_syncyunohost"
 fi
 
@@ -139,7 +139,6 @@ then
 else
     ynh_script_progression "SyncYunohost module is disabled, removing script"
     ynh_safe_rm "$install_dir/scripts/members/syncyunohost-modules.php"
-    ynh_safe_rm "/usr/local/bin/syncyunohost.sh"
 fi
 
 #=================================================

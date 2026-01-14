@@ -42,6 +42,9 @@ syncyunohost_module_install(){
         ynh_print_warn "Source directory ../sources/extra_files/app/syncyunohost/ does not exist. Skipping copy."
     fi
 
+}
+
+syncyunohost_scripts_add(){
     #=================================================
     # COPY SCRIPT TO /scripts/members
     #=================================================
