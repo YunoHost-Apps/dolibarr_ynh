@@ -9,6 +9,9 @@ source /usr/share/yunohost/helpers
 
 ynh_app_setting_set --key=php_memory_limit --value=256M
 
+if [ -f "/usr/local/bin/syncyunohost.sh" ]  && [ "$syncyunohost_enabled" -eq 1 ]; then
+  ynh_die "You can't activate syncyunohost twice"
+fi
 
 #=================================================
 # CREATE A MYSQL DATABASE
@@ -122,12 +125,13 @@ if [ ! -f "$install_dir/documents/install.lock" ]; then
 fi
 
 syncyunohost_module_install
+
 # Check if the user has enabled the SyncYunohost module
 if [[ "$syncyunohost_enabled" == "true" ]]
 then
     syncyunohost_modules_activate
 else
-    ynh_script_progression "SyncYunohost module is disabled."
+    ynh_print_info "SyncYunohost module is disabled."
 fi
 
 #=================================================
