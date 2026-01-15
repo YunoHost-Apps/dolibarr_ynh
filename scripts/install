@@ -123,10 +123,8 @@ fi
 
 syncyunohost_module_install
 # Check if the user has enabled the SyncYunohost module
-if [[ !-f "/usr/local/bin/syncyunohost.sh"  &&  "$syncyunohost_enabled" == "true" ]]
+if [[ -f "/usr/local/bin/syncyunohost.sh"  && "$syncyunohost_enabled" == "true" ]]
 then
-    syncyunohost_modules_activate
-elif [[ -f "/usr/local/bin/syncyunohost.sh"  && "$syncyunohost_enabled" == "true" ]]; then
     ynh_print_info "You can't activate the syncyunohost Dolibarr app twice"
     ynh_app_setting_set --key="syncyunohost_enabled" --value="false"
     ynh_script_progression "SyncYunohost module is disabled."
