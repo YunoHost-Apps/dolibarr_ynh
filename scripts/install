@@ -9,7 +9,7 @@ source /usr/share/yunohost/helpers
 
 ynh_app_setting_set --key=php_memory_limit --value=256M
 
-if [[ -f "/usr/local/bin/syncyunohost.sh" && "$syncyunohost_enabled" == "true" ]]; then
+if [ -f "/usr/local/bin/syncyunohost.sh" ] && [ "$syncyunohost_enabled" == "true" ]; then
     ynh_die --message="You can't activate the syncyunohost Dolibarr app twice"
 fi
 
