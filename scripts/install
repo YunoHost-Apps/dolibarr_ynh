@@ -9,6 +9,10 @@ source /usr/share/yunohost/helpers
 
 ynh_app_setting_set --key=php_memory_limit --value=256M
 
+if [ -f "/usr/local/bin/syncyunohost.sh" ]  && [ "$syncyunohost_enabled" -eq 1 ]; then
+  ynh_die "You can't activate syncyunohost twice"
+fi
+
 #=================================================
 # CREATE A MYSQL DATABASE
 #=================================================
@@ -59,8 +63,6 @@ ynh_script_progression "Configuring $app ..."
 touch "$install_dir/htdocs/conf/conf.php"
 chmod 666 "$install_dir/htdocs/conf/conf.php"
 
-# Set right permissions for curl install
-#chown -R "$app:" "$install_dir"
 ynh_local_curl "/install/fileconf.php" "testpost=ok"
 sleep 5
 
@@ -112,6 +114,9 @@ ynh_replace --match="\$dolibarr_main_prod='0';" --replace="\$dolibarr_main_prod=
 ynh_store_file_checksum "$install_dir/htdocs/conf/conf.php"
 chmod 644 "$install_dir/htdocs/conf/conf.php"
 
+chown -R "$app:www-data" "$install_dir/"
+chmod 400 "$install_dir/htdocs/conf/conf.php"
+
 # Set permissions on app files
 if [ ! -f "$install_dir/documents/install.lock" ]; then
     echo 'This is a lock file to prevent use of install pages (set with permission 440)' > "$install_dir/documents/install.lock"
@@ -120,17 +125,14 @@ if [ ! -f "$install_dir/documents/install.lock" ]; then
 fi
 
 syncyunohost_module_install
+
 # Check if the user has enabled the SyncYunohost module
-if [[ $syncyunohost_enabled == 1 ]]
+if [[ "$syncyunohost_enabled" == "true" ]]
 then
     syncyunohost_modules_activate
 else
-    ynh_script_progression "SyncYunohost module is disabled."
+    ynh_print_info "SyncYunohost module is disabled."
 fi
-
-#chown -R "$app:www-data" "$install_dir"
-chown -R "$app:" "$install_dir/documents"
-chmod 400 "$install_dir/htdocs/conf/conf.php"
 
 #=================================================
 # END OF SCRIPT

@@ -5,15 +5,21 @@ source /usr/share/yunohost/helpers
 
 # Apply Yunohost app's config
 ynh_app_config_apply() {
-    _ynh_app_config_apply
+   _ynh_app_config_apply
 
-    if [[ "${changed[syncyunohost_base_domain]}" == "true" || "${changed[syncyunohost_main_group]}" == "true"  || "${changed[syncyunohost_enabled]}" == "true" ]] && [ $syncyunohost_enabled == "true" ]
-    then
-        syncyunohost_modules_activate
-    elif [ "${changed[syncyunohost_enabled]}" == "true" ] && [ $syncyunohost_enabled == "false" ]
-    then
-        syncyunohost_modules_deactivate
-    fi
+   if [[ ("${changed[syncyunohost_base_domain]}" == "true" \
+      || "${changed[syncyunohost_main_group]}" == "true" \
+      || "${changed[syncyunohost_enabled]}" == "true") \
+      && "$syncyunohost_enabled" == "true" ]]; then
+      if [ -f "/usr/local/bin/syncyunohost.sh" ]; then
+	     ynh_app_setting_set --key="syncyunohost_enabled" --value="false"
+        ynh_die --message="You can't activate the syncyunohost Dolibarr app twice"
+	   fi
+      syncyunohost_modules_activate
+   elif [[ "${changed[syncyunohost_enabled]}" == "true" && "$syncyunohost_enabled" == "false" ]]; then
+      syncyunohost_modules_deactivate
+      syncyunohost_scripts_remove
+   fi
 }
 
 ynh_app_config_run $1
