@@ -94,6 +94,11 @@ if [ -n $(grep "\$dolibarr_main_prod='0';" "$install_dir/htdocs/conf/conf.php") 
 ynh_replace --match="\$dolibarr_main_prod='0';" --replace="\$dolibarr_main_prod='1';" --file="$install_dir/htdocs/conf/conf.php"
 fi
 
+# fix is necesary ldap conf
+if [ -n $(grep "\$dolibarr_main_auth_ldap_host='127.0.0.1';" "$install_dir/htdocs/conf/conf.php") ]; then
+ynh_replace --match="\$dolibarr_main_auth_ldap_host='127.0.0.1';" --replace="\$dolibarr_main_auth_ldap_host='ldap:\/\/127.0.0.1';" --file="$install_dir/htdocs/conf/conf.php"
+fi
+
 # Calculate and store the config file checksum into the app settings
 ynh_store_file_checksum "$install_dir/htdocs/conf/conf.php"
 chmod 644 "$install_dir/htdocs/conf/conf.php"
