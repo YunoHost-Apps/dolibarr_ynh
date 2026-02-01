@@ -82,7 +82,7 @@ syncyunohost_modules_activate(){
     chmod 440 /etc/sudoers.d/dolibarr_syncyunohost
 
     # Check sudoers file syntax
-    visudo -c
+    visudo -c -f /etc/sudoers.d/dolibarr_syncyunohost
 
     ynh_print_info "syncyunohost.sh activated and sudo permissions granted safely."
 }
