@@ -10,3 +10,7 @@ Dolibarr will then activate the Membership module.
 * When his subscription is up to date, he is automatically added to the Group selected in the LDAP directory.
 * When the user's subscription is no longer up to date, he/she will be removed from the chosen Group.
 * By deleting it from Dolibarr, the Yunohost user is deleted (for security reasons, it is not possible to delete a user from the admins group).
+
+## Releases
+
+Two previous versions of Dolibarr, 21 and 22, will remain accessible on the v21.0.4 and v22.0.4 branches.

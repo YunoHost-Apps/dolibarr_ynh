@@ -9,4 +9,8 @@ Dolibarr va ensuite activer le module Adhérents.
 * En Ajoutant une cotisation, vous ajoutez un utilisateur avec son mail personnel, cela va créer un utilisateur Yunohost. 
 * Quand sa cotisation est à jour, il est automatiquement ajouter au Groupe choisi dans l'annuaire LDAP. 
 * Quand sa cotisation n'est plus à jour, il sera retiré du Groupe choisi.
-* En le supprimant depuis Dolibarr, l'utilisateur Yunohost est supprimé (par sécurité, il n'est pas possible de supprimer un utilisateur du groupe admins)
+* En le supprimant depuis Dolibarr, l'utilisateur Yunohost est supprimé (par sécurité, il n'est pas possible de supprimer un utilisateur du groupe admins).
+
+## Publications
+
+Deux versions précédentes de Dolibarr, 21 et 22 resteront accessibles sur les branches v21.0.4 et v22.0.4.
