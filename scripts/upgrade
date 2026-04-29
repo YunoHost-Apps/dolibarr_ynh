@@ -126,6 +126,14 @@ fi
 #=================================================
 ynh_script_progression "Upgrading system configurations related to $app..."
 
+if [[ $YNH_DEBIAN_VERSION == "bookworm" ]]; then
+timezone=$(cat /etc/timezone)
+ynh_app_setting_set_default --key="timezone" --value="$timezone"
+elif [[ $YNH_DEBIAN_VERSION == "trixie" ]]; then
+timezone=$(timedatectl show -p Timezone --value)
+ynh_app_setting_set_default --key="timezone" --value="$timezone"
+fi
+
 ynh_config_add_phpfpm
 
 ynh_config_add_nginx
