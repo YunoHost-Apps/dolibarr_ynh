@@ -27,22 +27,22 @@ class Syncyunohost extends CommonObject
      */
     public function doScheduledJob()
     {
+        global $user;
         $error = 0;
         $this->output = '';
         $this->error = '';
         $now = dol_now();
-        $past_date = $now - 24 * 3600; // 24 hours ago
-
+        
         // Use prepared statement for security and better readability
         $sql = "SELECT s.fk_adherent";
         $sql .= " FROM " . MAIN_DB_PREFIX . "subscription AS s";
-        $sql .= " WHERE s.datefin BETWEEN ? AND ?";
-        $sql .= " ORDER BY s.datefin"; // Optional sorting
+        $sql .= " WHERE s.datef < " . $now;
+        $sql .= " ORDER BY s.datef"; // Optional sorting
 
         dol_syslog(get_class($this) . "::doScheduledJob", LOG_DEBUG);
 
         try {
-            $result = $this->db->query($sql, array($this->db->idate($past_date), $this->db->idate($now)));
+            $result = $this->db->query($sql);
 
             if ($result) {
                 require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
@@ -55,7 +55,7 @@ class Syncyunohost extends CommonObject
                     if ($fetchResult > 0) {
                         // Error handling for trigger call
                         try {
-                            $this->call_trigger('MEMBER_SUBSCRIPTION_EXPIRED', $member);
+                            $member->call_trigger('MEMBER_SUBSCRIPTION_EXPIRED', $user);
                         } catch (Exception $e) {
                             $error++;
                             dol_syslog(__METHOD__ . " Error in trigger for member {$obj->fk_adherent}: " . $e->getMessage(), LOG_ERR);
