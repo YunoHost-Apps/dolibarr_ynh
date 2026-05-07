@@ -31,12 +31,11 @@ class Syncyunohost extends CommonObject
         $error = 0;
         $this->output = '';
         $this->error = '';
-        $now = dol_now();
         
         // Use prepared statement for security and better readability
         $sql = "SELECT s.fk_adherent";
         $sql .= " FROM " . MAIN_DB_PREFIX . "subscription AS s";
-        $sql .= " WHERE s.datef < " . $now;
+        $sql .= " WHERE s.datef < NOW()";
         $sql .= " ORDER BY s.datef"; // Optional sorting
 
         dol_syslog(get_class($this) . "::doScheduledJob", LOG_DEBUG);
