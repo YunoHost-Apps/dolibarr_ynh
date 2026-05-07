@@ -22,10 +22,10 @@ class Syncyunohost extends CommonObject
     }
 
     /**
-     * Execute scheduled synchronization job
+     * Execute scheduled synchronization job on a periode of time between today and some weeks before, by default one week. It accept a parameter to choose this number of week.
      * @return int 0 if OK, >0 if KO
      */
-    public function doScheduledJob()
+    public function doScheduledJob($nbWeeks = '1')
     {
         global $user;
         $error = 0;
@@ -35,7 +35,7 @@ class Syncyunohost extends CommonObject
         // Use prepared statement for security and better readability
         $sql = "SELECT s.fk_adherent";
         $sql .= " FROM " . MAIN_DB_PREFIX . "subscription AS s";
-        $sql .= " WHERE s.datef < NOW()";
+        $sql .= " WHERE s.datef BETWEEN (NOW() - INTERVAL " . $nbWeeks . " WEEK) AND NOW()";
         $sql .= " ORDER BY s.datef"; // Optional sorting
 
         dol_syslog(get_class($this) . "::doScheduledJob", LOG_DEBUG);
