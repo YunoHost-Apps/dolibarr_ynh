@@ -22,31 +22,30 @@ class Syncyunohost extends CommonObject
     }
 
     /**
-     * Execute scheduled synchronization job
+     * Execute scheduled synchronization job on a periode of time between today and some weeks before, by default one week. It accept a parameter to choose this number of week.
      * @return int 0 if OK, >0 if KO
      */
-    public function doScheduledJob()
+    public function doScheduledJob($nbWeeks = '1')
     {
+        global $user;
         $error = 0;
         $this->output = '';
         $this->error = '';
-        $now = dol_now();
-        $past_date = $now - 24 * 3600; // 24 hours ago
 
         // Use prepared statement for security and better readability
         $sql = "SELECT s.fk_adherent";
         $sql .= " FROM " . MAIN_DB_PREFIX . "subscription AS s";
-        $sql .= " WHERE s.datefin BETWEEN ? AND ?";
-        $sql .= " ORDER BY s.datefin"; // Optional sorting
+        $sql .= " WHERE s.datef BETWEEN (NOW() - INTERVAL " . $nbWeeks . " WEEK) AND NOW()";
+        $sql .= " ORDER BY s.datef"; // Optional sorting
 
         dol_syslog(get_class($this) . "::doScheduledJob", LOG_DEBUG);
 
         try {
-            $result = $this->db->query($sql, array($this->db->idate($past_date), $this->db->idate($now)));
+            $result = $this->db->query($sql);
 
             if ($result) {
                 require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
-                
+
                 // Optimized loop using direct fetch
                 while ($obj = $this->db->fetch_object($result)) {
                     $member = new Adherent($this->db);
@@ -55,7 +54,7 @@ class Syncyunohost extends CommonObject
                     if ($fetchResult > 0) {
                         // Error handling for trigger call
                         try {
-                            $this->call_trigger('MEMBER_SUBSCRIPTION_EXPIRED', $member);
+                            $member->call_trigger('MEMBER_SUBSCRIPTION_EXPIRED', $user);
                         } catch (Exception $e) {
                             $error++;
                             dol_syslog(__METHOD__ . " Error in trigger for member {$obj->fk_adherent}: " . $e->getMessage(), LOG_ERR);
@@ -65,13 +64,13 @@ class Syncyunohost extends CommonObject
                         dol_syslog(__METHOD__ . " Failed to fetch member {$obj->fk_adherent}", LOG_ERR);
                     }
                 }
-                
+
                 $this->db->free($result); // Free result resources
             }
 
             // Commit only if there are write operations
             // $this->db->commit();
-            
+
             dol_syslog(__METHOD__ . " Action Expired Member done successfully", LOG_INFO);
 
         } catch (Exception $e) {
