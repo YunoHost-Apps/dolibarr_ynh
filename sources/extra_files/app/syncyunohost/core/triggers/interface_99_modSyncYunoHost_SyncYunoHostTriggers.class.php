@@ -49,8 +49,10 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 			break;
 
 			case 'MEMBER_SUBSCRIPTION_DELETE':
-			case 'MEMBER_SUBSCRIPTION_EXPIRED': // custum trigger by Syncyunohost
 				$this->handleSubscriptionDelete($object, $yunohostBaseDomain, $yunohostMainGroup);
+			break;
+			case 'MEMBER_SUBSCRIPTION_EXPIRED': // custum trigger by Syncyunohost
+				$this->handleSubscriptionExpired($object, $yunohostBaseDomain, $yunohostMainGroup);
 			break;
 
 			case 'MEMBER_VALIDATE':
@@ -102,8 +104,8 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 	private function getFullName($object)
 	{
 		// Generate full name based on company or personal name
-		return $object->company 
-	        ? sprintf("%s", $object->company) 
+		return $object->company
+	        ? sprintf("%s", $object->company)
 	        : sprintf("%s %s", $object->firstname, $object->lastname);
 	}
 	private function handleSubscriptionCreate($object, $baseDomain, $mainGroup)
@@ -154,6 +156,27 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 			}
 		}
 	}
+	private function handleSubscriptionExpired($object, $baseDomain, $mainGroup)
+	{
+		$check_dont_sync_with_yunohost = $this->check_dont_sync_with_yunohost($object);
+		if($check_dont_sync_with_yunohost){
+			return 0;
+		}
+		$synced_with_yunohost = $this->get_synced_with_yunohost($object);
+		if (!$synced_with_yunohost) {
+			$fullName = $this->getFullName($object);
+			$newPass = $this->generateSecurePassword(20);
+			$create_output = $this->runCommand('create', $object->login, $newPass, $fullName, $object->email, $baseDomain);
+			if ($this->check_user_created_or_exist($create_output, $object->login)) {
+				$this->memberToUser($object->id);
+				$synced_with_yunohost = 1;
+				$this->updateMemberExtraField($object->id, 'synced_with_yunohost', 1);
+			}
+		}
+		if($synced_with_yunohost){
+			$this->runCommand('deactivate', $object->login, $baseDomain, $mainGroup);
+		}
+	}
 	private function removeSubDontSync($object, $baseDomain, $mainGroup){
 		$synced_with_yunohost = $this->get_synced_with_yunohost($object);
 		if($synced_with_yunohost){
@@ -182,12 +205,12 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 			if ($object->oldcopy->email !== $object->email) {
 				$this->runCommand('modify_email', $object->login, $object->email, $object->oldcopy->email);
 			}
-			
+
 			// Update full name if it has changed
 			if ($fullName !== $this->getFullName($object->oldcopy)) {
 				$this->runCommand('modify_fullname', $object->login, $fullName);
 			}
-			
+
 			// Update password if provided
 			if ($object->pass) {
 				$this->runCommand('password', $object->login, $object->pass);
@@ -228,7 +251,7 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 	}
 	private function updateMemberExtraField($member_id, $field_key, $field_value)
 	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent_extrafields 
+		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent_extrafields
 			SET ".$field_key." = ".$this->db->escape($field_value)."
    			WHERE fk_object = ".$this->db->escape($member_id);
 		$this->db->query($sql);
