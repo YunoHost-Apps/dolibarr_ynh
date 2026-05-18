@@ -18,26 +18,26 @@
 # Module label 'ModuleSyncYunoHostName'
 ModuleSyncYunoHostName = SyncYunoHost
 # Module description 'ModuleSyncYunoHostDesc'
-ModuleSyncYunoHostDesc = SyncYunoHost description
+ModuleSyncYunoHostDesc = Description de SyncYunoHost
 
 #
 # Admin page
 #
-SyncYunoHostSetup = SyncYunoHost setup
-Settings = Settings
-SyncYunoHostSetupPage = SyncYunoHost setup page
-YUNOHOST_BASE_DOMAIN = yunohost base domain
-YUNOHOST_BASE_DOMAINTooltip = Enter a main domain for creating Yunohost users. The domain must be set up in Yunohost.
-YUNOHOST_MAIN_GROUP=yunohost main group
-YUNOHOST_MAIN_GROUPTooltip=Enter a main group for users with subscriptions. The user group must be defined in Yunohost.
-YUNOHOST_OLD_MEMBERS=Synchronization for old members
-YUNOHOST_OLD_MEMBERSTooltip=By enabling this option, members who have previously registered will also be synchronized.
-SyncYunoHostLoginInvalidCharacters=L'identifiant de l'adhérent ne peut contenir que des lettres, des chiffres, des points et des _ (underscore aussi appelé tiret du huit).
+SyncYunoHostSetup = Paramètres de SyncYunoHost
+Settings = Paramètres
+SyncYunoHostSetupPage = Page des paramètres de SyncYunoHost
+YUNOHOST_BASE_DOMAIN = Nom de domaine de base de yunohost
+YUNOHOST_BASE_DOMAINTooltip = Choisissez le nom de domaine qui doit servir à construire les emails des utilisateurs de Yunohost. Le nom de domaine doit être géré par Yunohost.
+YUNOHOST_MAIN_GROUP = Groupe yunohost des utilisateurs membres
+YUNOHOST_MAIN_GROUPTooltip = Choisissez un groupe dans lequel regrouper les utilisateurs Yunohost des membres à jour de leur cotisation. Ce groupe doit exister dans Yunohost.
+YUNOHOST_OLD_MEMBERS = Synchronisation des anciesn membres
+YUNOHOST_OLD_MEMBERSTooltip = En choisissant cette option, les membres non à jour de leur cotisation seront eux aussi synchronisés.
+SyncYunoHostLoginInvalidCharacters = L'identifiant de l'adhérent ne peut contenir que des lettres, des chiffres, des points et des _ (underscore aussi appelé tiret du huit).
 
 #
 # About page
 #
-About = About
-SyncYunoHostAbout = About SyncYunoHost
-SyncYunoHostAboutPage = SyncYunoHost about page
+About = À propos
+SyncYunoHostAbout = À propos de SyncYunoHost
+SyncYunoHostAboutPage = Page à propos de SyncYunoHost
 
