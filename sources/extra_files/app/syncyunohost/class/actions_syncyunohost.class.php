@@ -45,30 +45,43 @@ class ActionsSyncYunoHost extends CommonHookActions
 	}
 	public function doActions($parameters, &$object, &$action, $hookmanager)
 	{
-		global $langs;
-
 		$context = explode(':', $parameters['context'] ?? '');
-		// Public member form
 		if ($action == 'add' && in_array('publicnewmembercard', $context, true)) {
 			$login = GETPOST('login', 'alphanohtml');
-			if ($login !== '' && !preg_match('/^[a-z0-9_.]+$/', $login)) {
-				$langs->loadLangs(array('syncyunohost@syncyunohost'));
-				$this->errors[] = $langs->trans('SyncYunoHostLoginInvalidCharacters');
-				$action = 'create';
+			if ($this->rejectInvalidYunoHostLogin($login)) {
+				$action = 'create'; //to remain on the same page keeping values
 				return -1;
 			}
 		}
+		if (in_array('membercard', $context, true)) {
+			if ($action == 'add') {
+				$login = GETPOST('member_login', 'alphanohtml');
+				if ($this->rejectInvalidYunoHostLogin($login)) {
+					$action = 'create'; //to remain on the same page keeping values
+					return -1;
+				}
+			}
+			if ($action == 'update') {
+				$login = GETPOST('login', 'alphanohtml');
+				if ($this->rejectInvalidYunoHostLogin($login)) {
+					$action = 'edit'; //to remain on the same page keeping values
+					return -1;
+				}
+			}
+		}
 
-		// Internal member form
-		if ($action == 'add' && in_array('membercard', $context, true)) {
-			$login = GETPOST('member_login', 'alphanohtml');
-			if ($login !== '' && !preg_match('/^[a-z0-9_.]+$/', $login)) {
-				$langs->loadLangs(array('syncyunohost@syncyunohost'));
-				$this->errors[] = $langs->trans('SyncYunoHostLoginInvalidCharacters');
-				$action = 'create';
-				return -1;
-            }
-        }
 		return 0; // or return 1 to replace standard code
+	}
+	private function rejectInvalidYunoHostLogin($login)
+	{
+		global $langs;
+
+		if ($login !== '' && !preg_match('/^[a-z0-9_.]+$/', $login)) {
+			$langs->loadLangs(array('syncyunohost@syncyunohost'));
+			$this->errors[] = $langs->trans('SyncYunoHostLoginInvalidCharacters');
+			return true;
+		}
+
+		return false;
 	}
 }
