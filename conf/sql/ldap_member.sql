@@ -1,6 +1,6 @@
 REPLACE INTO llx_const (`name`, `value`, `type`) VALUES 
 ('LDAP_MEMBER_DN', 'ou=users,dc=yunohost,dc=org', 'chaine'),
-('LDAP_MEMBER_FILTER', '&(objectClass=posixAccount)(permission=cn=__APP__.main,ou=permission,dc=yunohost,dc=org)', 'chaine'),
+('LDAP_MEMBER_FILTER', '&(objectClass=posixAccount)(permission=cn='__APP__'.main,ou=permission,dc=yunohost,dc=org)', 'chaine'),
 ('LDAP_MEMBER_OBJECT_CLASS', 'organizationalUnit,top', 'chaine'),
 ('LDAP_MEMBER_ACTIVE', 'ldap2dolibarr', 'chaine');
 
