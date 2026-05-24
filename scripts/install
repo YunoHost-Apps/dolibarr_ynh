@@ -91,10 +91,14 @@ ynh_replace --match="\$dolibarr_main_authentication='dolibarr';" \
 ynh_script_progression "Configuring LDAP for $app..."
 
 # Populate the LDAP parameters
-ynh_mysql_db_shell < ../conf/sql/ldap.sql
+ynh_config_add --template=../conf/sql/ldap.sql --destination=$install_dir/ldap.sql
+ynh_mysql_db_shell < $install_dir/ldap.sql
+ynh_safe_rm $install_dir/ldap.sql
 
 # Populate the database with YNH users.
-ynh_mysql_db_shell < ../conf/sql/ldap_user.sql
+ynh_config_add --template=../conf/sql/ldap_user.sql --destination=$install_dir/ldap_user.sql
+ynh_mysql_db_shell < $install_dir/ldap_user.sql
+ynh_safe_rm $install_dir/ldap_user.sql
 
 if "php$php_version" "$install_dir/scripts/user/sync_users_ldap2dolibarr.php" commitiferror --server=ldap://localhost -y; then
     ynh_print_info "LDAP user update ok"
