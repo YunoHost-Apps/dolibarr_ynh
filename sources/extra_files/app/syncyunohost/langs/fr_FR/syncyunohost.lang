@@ -1,0 +1,43 @@
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleSyncYunoHostName'
+ModuleSyncYunoHostName = SyncYunoHost
+# Module description 'ModuleSyncYunoHostDesc'
+ModuleSyncYunoHostDesc = Description de SyncYunoHost
+
+#
+# Admin page
+#
+SyncYunoHostSetup = Paramètres de SyncYunoHost
+Settings = Paramètres
+SyncYunoHostSetupPage = Page des paramètres de SyncYunoHost
+YUNOHOST_BASE_DOMAIN = Nom de domaine de base de yunohost
+YUNOHOST_BASE_DOMAINTooltip = Choisissez le nom de domaine qui doit servir à construire les emails des utilisateurs de Yunohost. Le nom de domaine doit être géré par Yunohost.
+YUNOHOST_MAIN_GROUP = Groupe yunohost des utilisateurs membres
+YUNOHOST_MAIN_GROUPTooltip = Choisissez un groupe dans lequel regrouper les utilisateurs Yunohost des membres à jour de leur cotisation. Ce groupe doit exister dans Yunohost.
+YUNOHOST_OLD_MEMBERS = Synchronisation des anciesn membres
+YUNOHOST_OLD_MEMBERSTooltip = En choisissant cette option, les membres non à jour de leur cotisation seront eux aussi synchronisés.
+SyncYunoHostLoginInvalidCharacters = L'identifiant de l'adhérent ne peut contenir que des lettres, des chiffres, des points et des _ (underscore aussi appelé tiret du huit).
+
+#
+# About page
+#
+About = À propos
+SyncYunoHostAbout = À propos de SyncYunoHost
+SyncYunoHostAboutPage = Page à propos de SyncYunoHost
+

@@ -32,7 +32,7 @@ class modSyncYunoHost extends DolibarrModules
             'theme' => 0,
             'css' => array(),
             'js' => array(),
-            'hooks' => array(),
+            'hooks' => array('publicnewmembercard', 'membercard'),
             'moduleforexternal' => 0,
         );
 
