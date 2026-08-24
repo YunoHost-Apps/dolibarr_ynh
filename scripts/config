@@ -18,7 +18,6 @@ ynh_app_config_apply() {
       syncyunohost_modules_activate
    elif [[ "${changed[syncyunohost_enabled]}" == "true" && "$syncyunohost_enabled" == "false" ]]; then
       syncyunohost_modules_deactivate
-      syncyunohost_scripts_remove
    fi
 }
 
