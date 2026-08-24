@@ -1,0 +1,6 @@
+[Unit]
+Description=Launch syncyunohost script
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/syncyunohost_launcher.sh

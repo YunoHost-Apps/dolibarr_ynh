@@ -43,20 +43,6 @@ syncyunohost_module_install(){
     fi
 }
 
-syncyunohost_scripts_remove(){
-    #=================================================
-    # REMOVE CUSTOM SCRIPTS
-    #=================================================
-    ynh_safe_rm "$install_dir/scripts/members/syncyunohost-modules.php"
-
-    ynh_safe_rm "/usr/local/bin/syncyunohost.sh"
-
-    #=================================================
-    # REMOVE SUDOERS ENTRY
-    #=================================================
-    ynh_safe_rm "/etc/sudoers.d/dolibarr_syncyunohost"
-}
-
 # Activate Syncyunohost module
 syncyunohost_modules_activate(){
     #=================================================
@@ -72,27 +58,72 @@ syncyunohost_modules_activate(){
     chmod 550 /usr/local/bin/syncyunohost.sh
     chown "$app:" /usr/local/bin/syncyunohost.sh
 
+    maindomain=$(yunohost domain main-domain | awk '{print $2}')
+    admin_mail="admin@$maindomain"
+    ynh_app_setting_set --app="$app" --key=admin_mail --value="$admin_mail"
+    ynh_config_add --template="syncyunohost_launcher.sh" --destination="/usr/local/bin/syncyunohost_launcher.sh"
+    chmod 550 /usr/local/bin/syncyunohost_launcher.sh
+    chown "$app:" /usr/local/bin/syncyunohost_launcher.sh
+
+    #=================================================
+    # SYSTEMD CONFIGURATION
+    #=================================================
+    ynh_script_progression "Adding systemd configurations related to syncyunohost $app module..."
+    mkdir -p "/dev/shm/$app"
+    chown "$app:" "/dev/shm/$app"
+    ynh_config_add --template="dolibarr_syncyunohost.path" --destination="/etc/systemd/system/$app-syncyunohost.path"
+    ynh_config_add_systemd --template="dolibarr_syncyunohost.service" --service="$app-syncyunohost"
+    systemctl daemon-reload
+
+    systemctl enable --now "$app-syncyunohost.path" --quiet
+
+    #=================================================
+    # INTEGRATE SERVICES IN YUNOHOST
+    #=================================================
+# Todo some day, when path will be managed by YNH
+#    ynh_script_progression "Integrating services in YunoHost..."
+#    yunohost service add "$app-syncyunohost.path" --description="$app's syncyunohost module"
+    
+    #=================================================
+    # Activate module
+    #=================================================
+    ynh_script_progression "Activate syncyunohost $app module..."
     "php${php_version}" "$install_dir/scripts/members/syncyunohost-modules.php" --action=activate --modules=modAdherent,modCron,modSyncYunoHost --base_domain=$syncyunohost_base_domain --main_group=$syncyunohost_main_group
-
-    #=================================================
-    # SYSTEM SETUP: GRANT PERMISSIONS TO `dolibarr` USER
-    #=================================================
-    # Add dolibarr user to sudoers to allow running syncyunohost.sh without a password
-    echo "$app ALL=(ALL) NOPASSWD:SETENV: /usr/bin/yunohost user list --output-as json, /usr/bin/yunohost user create * -p * -F * -d *, /usr/bin/yunohost user update * --add-mailforward *, /usr/bin/yunohost user update * --remove-mailforward *, /usr/bin/yunohost user update * -F *, /usr/bin/yunohost user update * -p *, /usr/bin/yunohost user delete *, /usr/bin/yunohost user group add * *, !/usr/bin/yunohost user group add admins *, /usr/bin/yunohost user group remove * *, !/usr/bin/yunohost user group remove admins *" > "/etc/sudoers.d/dolibarr_syncyunohost"
-    chmod 440 /etc/sudoers.d/dolibarr_syncyunohost
-
-    # Check sudoers file syntax
-    visudo -c -f /etc/sudoers.d/dolibarr_syncyunohost
-
-    ynh_print_info "syncyunohost.sh activated and sudo permissions granted safely."
 }
 
 # Deactivate Syncyunohost module
 syncyunohost_modules_deactivate(){
+    #=================================================
+    # REMOVE SERVICE INTEGRATION IN YUNOHOST
+    #=================================================
+# Todo some day, when path will be managed by YNH
+#    ynh_script_progression "remove services integration in YunoHost..."
+#    yunohost service remove "$app-syncyunohost.path"
+
+    #=================================================
+    # STOP AND REMOVE SYSTEMD SERVICES
+    #=================================================
+    ynh_script_progression "Stopping and removing systemd services..."
+
+    # Remove the dedicated systemd config
+    systemctl stop "$app-syncyunohost.path" --quiet
+    systemctl disable "$app-syncyunohost.path" --quiet
+    ynh_safe_rm "/etc/systemd/system/$app-syncyunohost.path"
+
+    ynh_config_remove_systemd "$app-syncyunohost"
+
+    ynh_safe_rm /dev/shm/$app
+
+    #=================================================
+    # Deactivate module
+    #=================================================
+    ynh_script_progression "Deactivating SyncYunohost module..."
     "php${php_version}" "$install_dir/scripts/members/syncyunohost-modules.php" --action=deactivate --modules=modSyncYunoHost
 
     #=================================================
-    # REMOVE SUDOERS ENTRY
+    # REMOVE CUSTOM SCRIPTS
     #=================================================
-    ynh_safe_rm "/etc/sudoers.d/dolibarr_syncyunohost"
+    ynh_script_progression "Removing custom scripts..."
+    ynh_safe_rm "/usr/local/bin/syncyunohost.sh"
+    ynh_safe_rm "/usr/local/bin/syncyunohost_launcher.sh"
 }
