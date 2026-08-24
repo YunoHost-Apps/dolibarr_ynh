@@ -43,20 +43,6 @@ syncyunohost_module_install(){
     fi
 }
 
-syncyunohost_scripts_remove(){
-    #=================================================
-    # REMOVE CUSTOM SCRIPTS
-    #=================================================
-    ynh_safe_rm "$install_dir/scripts/members/syncyunohost-modules.php"
-
-    ynh_safe_rm "/usr/local/bin/syncyunohost.sh"
-
-    #=================================================
-    # REMOVE SUDOERS ENTRY
-    #=================================================
-#    ynh_safe_rm "/etc/sudoers.d/dolibarr_syncyunohost"
-}
-
 # Activate Syncyunohost module
 syncyunohost_modules_activate(){
     #=================================================
@@ -139,6 +125,13 @@ syncyunohost_modules_deactivate(){
     # Deactivate module
     #=================================================
     "php${php_version}" "$install_dir/scripts/members/syncyunohost-modules.php" --action=deactivate --modules=modSyncYunoHost
+
+    #=================================================
+    # REMOVE CUSTOM SCRIPTS
+    #=================================================
+    ynh_safe_rm "$install_dir/scripts/members/syncyunohost-modules.php"
+
+    ynh_safe_rm "/usr/local/bin/syncyunohost.sh"
 
     #=================================================
     # REMOVE SUDOERS ENTRY
