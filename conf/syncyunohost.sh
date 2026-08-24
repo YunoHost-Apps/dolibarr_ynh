@@ -5,7 +5,6 @@ set -euo pipefail
 
 newfile="$(ls -t /dev/shm/dolibarr/ | head -n1)"
 
-
 filename="/dev/shm/dolibarr/$newfile"
 ACTION="$(cat "$filename" | jq -r .action)"
 USERNAME="$(cat "$filename" | jq -r .username)"
