@@ -80,8 +80,9 @@ if [[ ! -f "/usr/local/bin/syncyunohost.sh" && "$syncyunohost_enabled" == "true"
 
     systemctl enable --now "$app-syncyunohost.path" --quiet
 
-    ynh_script_progression "Integrating services in YunoHost..."
-    yunohost service add "$app-syncyunohost.path" --description="$app's syncyunohost module"
+# Todo some day, when path will be managed by YNH
+#    ynh_script_progression "Integrating services in YunoHost..."
+#    yunohost service add "$app-syncyunohost.path" --description="$app's syncyunohost module"
 fi
 
 #=================================================
