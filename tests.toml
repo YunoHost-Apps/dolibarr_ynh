@@ -9,5 +9,6 @@ test_format = 1.0
     # -------------------------------
 
     test_upgrade_from.ae88807e44f106f7dbacb3b459d6569b48eb2b01.name = "Upgrade from 19.0.3"
-#    test_upgrade_from.7fe322da61737fe7060a4ccd638760ae06538484.name = "Upgrade from 21.0.4"
-#    test_upgrade_from.90d17ffa43765a9f66786534adc46881f79e6f72.name = "Upgrade from 22.0.4"
+    test_upgrade_from.4b206d38cd106bf918bd6606f819be09812a77db.name = "Upgrade from 21.0.2"
+    test_upgrade_from.90d17ffa43765a9f66786534adc46881f79e6f72.name = "Upgrade from 22.0.4"
+    test_upgrade_from.839f711227a101bf323d182cce50a5e7afcbc00e.name = "Upgrade from 23.0.3"
