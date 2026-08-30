@@ -68,7 +68,7 @@ syncyunohost_modules_activate(){
     #=================================================
     # SYSTEMD CONFIGURATION
     #=================================================
-    ynh_script_progression "Adding systemd configurations related to syncyunohost $app module..."
+    ynh_print_info "Adding systemd configurations related to syncyunohost $app module..."
     mkdir -p "/dev/shm/$app"
     chown "$app:" "/dev/shm/$app"
     ynh_config_add --template="dolibarr_syncyunohost.path" --destination="/etc/systemd/system/$app-syncyunohost.path"
@@ -81,13 +81,13 @@ syncyunohost_modules_activate(){
     # INTEGRATE SERVICES IN YUNOHOST
     #=================================================
 # Todo some day, when path will be managed by YNH
-#    ynh_script_progression "Integrating services in YunoHost..."
+#    ynh_print_info "Integrating services in YunoHost..."
 #    yunohost service add "$app-syncyunohost.path" --description="$app's syncyunohost module"
     
     #=================================================
     # Activate module
     #=================================================
-    ynh_script_progression "Activate syncyunohost $app module..."
+    ynh_print_info "Activate syncyunohost $app module..."
     "php${php_version}" "$install_dir/scripts/members/syncyunohost-modules.php" --action=activate --modules=modAdherent,modCron,modSyncYunoHost --base_domain=$syncyunohost_base_domain --main_group=$syncyunohost_main_group
 }
 
@@ -97,13 +97,13 @@ syncyunohost_modules_deactivate(){
     # REMOVE SERVICE INTEGRATION IN YUNOHOST
     #=================================================
 # Todo some day, when path will be managed by YNH
-#    ynh_script_progression "remove services integration in YunoHost..."
+#    ynh_print_info "remove services integration in YunoHost..."
 #    yunohost service remove "$app-syncyunohost.path"
 
     #=================================================
     # STOP AND REMOVE SYSTEMD SERVICES
     #=================================================
-    ynh_script_progression "Stopping and removing systemd services..."
+    ynh_print_info "Stopping and removing systemd services..."
 
     # Remove the dedicated systemd config
     systemctl stop "$app-syncyunohost.path" --quiet
@@ -117,13 +117,13 @@ syncyunohost_modules_deactivate(){
     #=================================================
     # Deactivate module
     #=================================================
-    ynh_script_progression "Deactivating SyncYunohost module..."
+    ynh_print_info "Deactivating SyncYunohost module..."
     "php${php_version}" "$install_dir/scripts/members/syncyunohost-modules.php" --action=deactivate --modules=modSyncYunoHost
 
     #=================================================
     # REMOVE CUSTOM SCRIPTS
     #=================================================
-    ynh_script_progression "Removing custom scripts..."
+    ynh_print_info "Removing custom scripts..."
     ynh_safe_rm "/usr/local/bin/syncyunohost.sh"
     ynh_safe_rm "/usr/local/bin/syncyunohost_launcher.sh"
 }
