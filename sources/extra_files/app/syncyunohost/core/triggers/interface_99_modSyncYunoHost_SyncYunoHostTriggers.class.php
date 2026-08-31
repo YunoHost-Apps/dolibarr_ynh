@@ -38,44 +38,51 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 			case 'MEMBER_CREATE':
 				$fullName = $this->getFullName($object);
 				$this->memberToUser($object->id);
-				$create_output = $this->runCommand('create', $object->login, $object->pass, $fullName, $object->email, $yunohostBaseDomain);
-				if ($this->check_user_created_or_exist($create_output, $object->login)) {
+				$create_output = $this->runCommand(array('action' => 'create', 'username' => $object->login, 'password' => $object->pass, 'fullname' => $fullName, 'email' => $object->email, 'domain' => $yunohostBaseDomain));
 					$this->updateMemberExtraField($object->id, 'synced_with_yunohost', 1);
-				}
 			break;
 
 			case 'MEMBER_SUBSCRIPTION_CREATE':
-				$this->handleSubscriptionCreate($object, $yunohostBaseDomain, $yunohostMainGroup);
+			case 'MEMBER_SUBSCRIPTION_DELETE':
+                $member = new Adherent($this->db);
+                if ($member->fetch($object->fk_adherent) > 0) {
+					$check_dont_sync_with_yunohost = $this->check_dont_sync_with_yunohost($member);
+					if($check_dont_sync_with_yunohost){
+						return 0;
+					}
+					$synced_with_yunohost = $this->get_synced_with_yunohost($member);
+					if($synced_with_yunohost){
+						if ($action === 'MEMBER_SUBSCRIPTION_CREATE') {
+							$this->member_subscription($member, $yunohostBaseDomain, $yunohostMainGroup);
+						}
+						if ($action === 'MEMBER_SUBSCRIPTION_DELETE') {
+							$this->runCommand(array('action' => 'deactivate', 'username' => $member->login, 'domain' => $yunohostBaseDomain, 'maingroup' => $yunohostMainGroup));
+						}
+					}
+				}
 			break;
 
-			case 'MEMBER_SUBSCRIPTION_DELETE':
-				$this->handleSubscriptionDelete($object, $yunohostBaseDomain, $yunohostMainGroup);
-			break;
 			case 'MEMBER_SUBSCRIPTION_EXPIRED': // custum trigger by Syncyunohost
-				$this->handleSubscriptionExpired($object, $yunohostBaseDomain, $yunohostMainGroup);
+                $check_dont_sync_with_yunohost = $this->check_dont_sync_with_yunohost($object);
+                if($check_dont_sync_with_yunohost){
+                        return 0;
+                }
+                $synced_with_yunohost = $this->get_synced_with_yunohost($object);
+
+                if($synced_with_yunohost){
+                        $this->runCommand(array('action' => 'deactivate', 'username' => $object->login, 'domain' => $yunohostBaseDomain, 'maingroup' => $yunohostMainGroup));
+                }
 			break;
 
 			case 'MEMBER_VALIDATE':
-			case 'MEMBER_RESILIATE':
-			case 'MEMBER_NEW_PASSWORD':
-				$get_synced_with_yunohost = $this->get_synced_with_yunohost($object);
-				if (!$get_synced_with_yunohost) {
-					$fullName = $this->getFullName($object);
-					$newPass = $this->generateSecurePassword(20);
-					$create_output = $this->runCommand('create', $object->login, $newPass, $fullName, $object->email, $yunohostBaseDomain);
-					if ($this->check_user_created_or_exist($create_output, $object->login)) {
-						$this->updateMemberExtraField($object->id, 'synced_with_yunohost', 1);
-						$get_synced_with_yunohost = 1;
-						$this->member_subscription($object, $yunohostMainGroup);
-					}
-				}
-				if ($get_synced_with_yunohost) {
-					if ($action === 'MEMBER_NEW_PASSWORD') {
-						$this->runCommand('password', $object->login, $object->pass);
-					}
-				}
+				$this->member_subscription($object, $yunohostBaseDomain, $yunohostMainGroup);
 			break;
 
+			case 'MEMBER_RESILIATE':
+				$this->runCommand(array('action' => 'deactivate', 'username' => $object->login, 'domain' => $yunohostBaseDomain, 'maingroup' => $yunohostMainGroup));
+			break;
+
+//			case 'MEMBER_NEW_PASSWORD':
 			case 'MEMBER_MODIFY':
 				$this->handleMemberModify($object, $yunohostBaseDomain, $yunohostMainGroup);
 			break;
@@ -83,7 +90,7 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 			case 'MEMBER_DELETE':
 				$get_synced_with_yunohost = $this->get_synced_with_yunohost($object);
 				if ($get_synced_with_yunohost) {
-					$this->runCommand('delete', $object->login);
+					$this->runCommand(array('action' => 'delete', 'username' => $object->login));
 					$this->deleteMemberUser($object);
 				}
 			break;
@@ -108,79 +115,10 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 	        ? sprintf("%s", $object->company)
 	        : sprintf("%s %s", $object->firstname, $object->lastname);
 	}
-	private function handleSubscriptionCreate($object, $baseDomain, $mainGroup)
-	{
-		$member = new Adherent($this->db);
-		if ($member->fetch($object->fk_adherent) > 0) {
-			$check_dont_sync_with_yunohost = $this->check_dont_sync_with_yunohost($member);
-			if($check_dont_sync_with_yunohost){
-				return 0;
-			}
-			$synced_with_yunohost = $this->get_synced_with_yunohost($member);
-			if (!$synced_with_yunohost) {
-				$fullName = $this->getFullName($member);
-				$newPass = $this->generateSecurePassword(20);
-				$create_output = $this->runCommand('create', $member->login, $newPass, $fullName, $member->email, $baseDomain);
-				if ($this->check_user_created_or_exist($create_output, $object->login)) {
-		        		$this->memberToUser($object->fk_adherent);
-		           		$synced_with_yunohost = 1;
-		           		$this->updateMemberExtraField($object->fk_adherent, 'synced_with_yunohost', 1);
-		        	}
-			}
-			if($synced_with_yunohost){
-				$this->member_subscription($member, $mainGroup);
-			}
-		}
-	}
-	private function handleSubscriptionDelete($object, $baseDomain, $mainGroup)
-	{
-		$member = new Adherent($this->db);
-		if ($member->fetch($object->fk_adherent) > 0) {
-			$check_dont_sync_with_yunohost = $this->check_dont_sync_with_yunohost($member);
-			if($check_dont_sync_with_yunohost){
-				return 0;
-			}
-			$synced_with_yunohost = $this->get_synced_with_yunohost($member);
-			if (!$synced_with_yunohost) {
-				$fullName = $this->getFullName($member);
-				$newPass = $this->generateSecurePassword(20);
-				$create_output = $this->runCommand('create', $member->login, $newPass, $fullName, $member->email, $baseDomain);
-				if ($this->check_user_created_or_exist($create_output, $object->login)) {
-					$this->memberToUser($object->fk_adherent);
-					$synced_with_yunohost = 1;
-					$this->updateMemberExtraField($object->fk_adherent, 'synced_with_yunohost', 1);
-				}
-			}
-			if($synced_with_yunohost){
-				$this->runCommand('deactivate', $member->login, $baseDomain, $mainGroup);
-			}
-		}
-	}
-	private function handleSubscriptionExpired($object, $baseDomain, $mainGroup)
-	{
-		$check_dont_sync_with_yunohost = $this->check_dont_sync_with_yunohost($object);
-		if($check_dont_sync_with_yunohost){
-			return 0;
-		}
-		$synced_with_yunohost = $this->get_synced_with_yunohost($object);
-		if (!$synced_with_yunohost) {
-			$fullName = $this->getFullName($object);
-			$newPass = $this->generateSecurePassword(20);
-			$create_output = $this->runCommand('create', $object->login, $newPass, $fullName, $object->email, $baseDomain);
-			if ($this->check_user_created_or_exist($create_output, $object->login)) {
-				$this->memberToUser($object->id);
-				$synced_with_yunohost = 1;
-				$this->updateMemberExtraField($object->id, 'synced_with_yunohost', 1);
-			}
-		}
-		if($synced_with_yunohost){
-			$this->runCommand('deactivate', $object->login, $baseDomain, $mainGroup);
-		}
-	}
 	private function removeSubDontSync($object, $baseDomain, $mainGroup){
 		$synced_with_yunohost = $this->get_synced_with_yunohost($object);
 		if($synced_with_yunohost){
-			$this->runCommand('deactivate', $object->login, $baseDomain, $mainGroup);
+			$this->runCommand(array('action' => 'deactivate', 'username' => $object->login, 'domain' => $baseDomain, 'maingroup' => $mainGroup));
 			$this->updateMemberExtraField($object->id, 'synced_with_yunohost', 0);
 		}
 	}
@@ -188,36 +126,29 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 	{
 		$synced_with_yunohost = $this->get_synced_with_yunohost($object);
 		if (!$synced_with_yunohost) {
-			$oldFullName = $this->getFullName($object->oldcopy);
-			$newPass = $this->generateSecurePassword(20);
-			$create_output = $this->runCommand('create', $object->login, $newPass, $oldFullName, $object->oldcopy->email, $baseDomain);
-			if ($this->check_user_created_or_exist($create_output, $object->login)) {
-				$this->memberToUser($object->id);
 				$synced_with_yunohost = 1;
 				$this->updateMemberExtraField($object->id, 'synced_with_yunohost', 1);
-				$this->member_subscription($object, $mainGroup);
-			}
 		}
 		if($synced_with_yunohost){
 			$fullName = $this->getFullName($object);
+            $newPass = $this->generateSecurePassword(20);
 
 			// Update email if it has changed
 			if ($object->oldcopy->email !== $object->email) {
-				$this->runCommand('modify_email', $object->login, $object->email, $object->oldcopy->email);
+				$this->runCommand(array('action' => 'modify_email', 'username' => $object->login, 'password' => $newPass, 'fullname' => $fullName, 'email' => $object->email, 'oldemail' => $object->oldcopy->email, 'domain' => $baseDomain));
 			}
-
 			// Update full name if it has changed
 			if ($fullName !== $this->getFullName($object->oldcopy)) {
-				$this->runCommand('modify_fullname', $object->login, $fullName);
+				$this->runCommand(array('action' => 'modify_fullname', 'username' => $object->login, 'password' => $newPass, 'fullname' => $fullName, 'email' => $object->email, 'domain' => $baseDomain));
 			}
-
 			// Update password if provided
 			if ($object->pass) {
-				$this->runCommand('password', $object->login, $object->pass);
+				$this->runCommand(array('action' => 'modify_password', 'username' => $object->login, 'password' => $object->pass, 'fullname' => $fullName, 'email' => $object->email, 'domain' => $baseDomain));
 			}
+			$this->member_subscription($object, $baseDomain, $mainGroup);
 		}
 	}
-	private function member_subscription($object, $mainGroup){
+	private function member_subscription($object, $baseDomain, $mainGroup){
 		$activate =  false;
 		$now = dol_now();
 		if($object->subscriptions){
@@ -227,16 +158,10 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 				}
 			}
 			if($activate){
-				$this->runCommand('activate', $object->login, $mainGroup);
+				$fullName = $this->getFullName($object);
+	            $newPass = $this->generateSecurePassword(20);
+				$this->runCommand(array('action' => 'activate', 'username' => $object->login, 'maingroup' => $mainGroup, 'password' => $newPass, 'fullname' => $fullName, 'email' => $object->email, 'domain' => $baseDomain));
 			}
-		}
-	}
-	private function check_user_created_or_exist($create_output, $username){
-		dol_syslog("create_output from modSyncYunoHost = $create_output", LOG_DEBUG);
-		if (strpos($create_output, 'User '.trim($username).' created successfully') !== false ||  strpos($create_output, 'User '.trim($username).' exists already') !== false) {
-			return true;
-		} else{
-			return false;
 		}
 	}
 	private function generateSecurePassword($length = 12)
@@ -285,19 +210,15 @@ class InterfaceSyncYunoHostTriggers extends DolibarrTriggers
 			}
 		}
 	}
-	private function runCommand($action, $username, $param1 = null, $param2 = null, $param3 = null, $param4 = null)
+	private function runCommand($arr)
 	{
-		// Sanitize arguments to prevent injection
-		$username = escapeshellarg($username);
-		$param1Arg = $param1 ? escapeshellarg($param1) : '';
-		$param2Arg = $param2 ? escapeshellarg($param2) : '';
-		$param3Arg = $param3 ? escapeshellarg($param3) : '';
-		$param4Arg = $param4 ? escapeshellarg($param4) : '';
-
-		// Construct the command
-		$cmd = "/usr/local/bin/syncyunohost.sh $action $username $param1Arg $param2Arg $param3Arg $param4Arg";
-
-		// Execute the command and return output
-		return shell_exec($cmd);
+                $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                $random_string = '';
+                $charsLength = strlen($chars) - 1;
+                for ($i = 0; $i < 12; $i++) {
+                        $random_string .= $chars[random_int(0, $charsLength)];
+                }
+		$file = "/dev/shm/dolibarr/$random_string.json";
+		file_put_contents($file, json_encode($arr));
 	}
 }

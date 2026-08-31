@@ -7,7 +7,7 @@ name = "Dolibarr"
 description.en = "Manage the various aspects of your business or association"
 description.fr = "Gérez les différents aspects de votre activité pro ou associative"
 
-version = "24.0.0~ynh1"
+version = "24.0.0~ynh2"
 
 maintainers = ["mastereur"]
 
@@ -53,6 +53,8 @@ ram.runtime = "150M"
     ask.en = "Would you like to enable the SyncYunohost module to synchronize Dolibarr members with YunoHost users?"
     ask.fr = "Souhaitez-vous activer le module SyncYunohost pour synchroniser les membres de Dolibarr avec les utilisateurs de YunoHost ?"
     default = false
+    yes = "true"
+    no = "false"
 
     [install.syncyunohost_base_domain]
     type = "domain"
@@ -71,6 +73,11 @@ ram.runtime = "150M"
     [resources.sources.main]
     url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/24.0.0.tar.gz"
     sha256 = "0c26291f407e12b8a50de38b621266bc6ab512207c30e0a4a0464082d5373c23"
+    autoupdate.strategy = "latest_github_release"
+
+    [resources.sources.main_23_0_3]
+    url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/23.0.3.tar.gz"
+    sha256 = "01e6fa4631ba6cc6aa5843906fa3a92b016d3280f8c924fce5aba164d29fdb72"
     autoupdate.strategy = "latest_github_release"
 
     [resources.sources.main_22_0_4]
@@ -158,20 +165,19 @@ ram.runtime = "150M"
 
     [resources.apt]
     packages = [
-        "php8.3-mysql",
-        "php8.3-imagick",
-        "php8.3-gd",
-        "php8.3-mbstring",
-        "php8.3-soap",
-        "php8.3-curl",
-        "php8.3-intl",
-        "php8.3-ldap",
-        "php8.3-opcache",
-        "php8.3-calendar",
-        "php8.3-zip",
-        "php8.3-xml",
-        "php8.3-fileinfo",
-        "php8.3-imap",
+        "php8.5-mysql",
+        "php8.5-imagick",
+        "php8.5-gd",
+        "php8.5-mbstring",
+        "php8.5-soap",
+        "php8.5-curl",
+        "php8.5-intl",
+        "php8.5-ldap",
+        "php8.5-calendar",
+        "php8.5-zip",
+        "php8.5-xml",
+        "php8.5-fileinfo",
+        "php8.5-imap",
         "mariadb-server",
     ]
 

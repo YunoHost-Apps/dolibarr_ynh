@@ -51,29 +51,39 @@ ynh_systemctl --service="php$php_version-fpm" --action=reload
 ynh_systemctl --service=nginx --action=reload
 
 #=================================================
-# RESTORE syncyunohost.sh
+# RESTORE SYNCYUNOHOST MODULE
 #=================================================
 
 if [[ -f "/usr/local/bin/syncyunohost.sh" && "$syncyunohost_enabled" == "true" ]]; then
-ynh_print_info "You can't twice activate syncyunohost, desactivating syncyunohost"
-"php${php_version}" "$install_dir/scripts/members/syncyunohost-modules.php" --action=deactivate --modules=modSyncYunoHost
-ynh_safe_rm "$install_dir/scripts/members/syncyunohost-modules.php"
-ynh_app_setting_set --key="syncyunohost_enabled" --value="false"
+    ynh_print_info "You can't twice activate syncyunohost, desactivating syncyunohost"
+    "php${php_version}" "$install_dir/scripts/members/syncyunohost-modules.php" --action=deactivate --modules=modSyncYunoHost
+    ynh_safe_rm "$install_dir/scripts/members/syncyunohost-modules.php"
+    ynh_app_setting_set --key="syncyunohost_enabled" --value="false"
 fi
 
 if [[ ! -f "/usr/local/bin/syncyunohost.sh" && "$syncyunohost_enabled" == "true" ]]; then
-ynh_print_info "restoring syncyunohost.sh script to /usr/local/bin/..."
-ynh_restore "/usr/local/bin/syncyunohost.sh"
-chmod 550 /usr/local/bin/syncyunohost.sh
-chown "$app:" /usr/local/bin/syncyunohost.sh
+    ynh_print_info "restoring syncyunohost.sh script to /usr/local/bin/..."
+    ynh_restore "/usr/local/bin/syncyunohost.sh"
+    chmod 550 /usr/local/bin/syncyunohost.sh
+    chown "$app:" /usr/local/bin/syncyunohost.sh
 
-ynh_print_info "restoring sudoers.d file"
-ynh_restore "/etc/sudoers.d/dolibarr_syncyunohost"
+    ynh_restore "/usr/local/bin/syncyunohost_launcher.sh"
+    chmod 550 /usr/local/bin/syncyunohost_launcher.sh
+    chown "$app:" /usr/local/bin/syncyunohost_launcher.sh
 
-chmod 440 /etc/sudoers.d/dolibarr_syncyunohost
-visudo -c -f /etc/sudoers.d/dolibarr_syncyunohost
+    ynh_print_info "restoring the systemd services conf files..."
+    ynh_restore "/etc/systemd/system/$app-syncyunohost.path"
+    ynh_restore "/etc/systemd/system/$app-syncyunohost.service"
+    mkdir /dev/shm/dolibarr
+    chown "$app:" /dev/shm/dolibarr
+    systemctl daemon-reload
+
+    systemctl enable --now "$app-syncyunohost.path" --quiet
+
+# Todo some day, when path will be managed by YNH
+#    ynh_script_progression "Integrating services in YunoHost..."
+#    yunohost service add "$app-syncyunohost.path" --description="$app's syncyunohost module"
 fi
-
 
 #=================================================
 # RESTORE YUNOHOST GROUP USERS
