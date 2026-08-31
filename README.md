@@ -14,7 +14,6 @@ Manage the various aspects of your business or association
 [![App Demo](https://img.shields.io/badge/App_Demo-blue?style=for-the-badge)](https://www.dolibarr.org/onlinedemo)
 [![Version: 24.0.0~ynh2](https://img.shields.io/badge/Version-24.0.0~ynh2-rgb(18,138,11)?style=for-the-badge)](https://ci-apps.yunohost.org/ci/apps/dolibarr/)
 
-
 <div align="center">
 <a href="https://apps.yunohost.org/app/dolibarr"><img height="100px" src="https://github.com/YunoHost/yunohost-artwork/raw/refs/heads/main/badges/neopossum-badges/badge_more_info_on_the_appstore.svg"/></a>
 <a href="https://github.com/YunoHost-Apps/dolibarr_ynh/issues"><img height="100px" src="https://github.com/YunoHost/yunohost-artwork/raw/refs/heads/main/badges/neopossum-badges/badge_report_an_issue.svg"/></a>
