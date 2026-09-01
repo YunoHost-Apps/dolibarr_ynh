@@ -78,7 +78,6 @@ ram.runtime = "150M"
     [resources.sources.main_23_0_3]
     url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/23.0.3.tar.gz"
     sha256 = "01e6fa4631ba6cc6aa5843906fa3a92b016d3280f8c924fce5aba164d29fdb72"
-    autoupdate.strategy = "latest_github_release"
 
     [resources.sources.main_22_0_4]
     url = "https://github.com/Dolibarr/dolibarr/archive/refs/tags/22.0.4.tar.gz"
