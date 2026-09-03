@@ -1,0 +1,8 @@
+[Unit]
+Description= Launch syncyunohost script
+
+[Path]
+DirectoryNotEmpty=/dev/shm/__APP__
+
+[Install]
+WantedBy=multi-user.target
