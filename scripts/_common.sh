@@ -83,7 +83,7 @@ syncyunohost_modules_activate(){
 # Todo some day, when path will be managed by YNH
 #    ynh_print_info "Integrating services in YunoHost..."
 #    yunohost service add "$app-syncyunohost.path" --description="$app's syncyunohost module"
-    
+
     #=================================================
     # Activate module
     #=================================================

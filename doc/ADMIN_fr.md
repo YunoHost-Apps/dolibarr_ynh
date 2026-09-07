@@ -13,4 +13,5 @@ Dolibarr va ensuite activer le module Adhérents.
 
 ## Publications
 
-Deux versions précédentes de Dolibarr, 21 et 22 resteront accessibles sur les branches v21.0.4 et v22.0.4.
+Des versions précédentes de Dolibarr, 21, 22 et 23 resteront accessibles sur les branches `v21.0.4`, `v22.0.4` et `v23.0.4`.
+

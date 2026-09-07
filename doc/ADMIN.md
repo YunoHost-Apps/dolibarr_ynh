@@ -13,4 +13,4 @@ Dolibarr will then activate the Membership module.
 
 ## Releases
 
-Two previous versions of Dolibarr, 21 and 22, will remain accessible on the v21.0.4 and v22.0.4 branches.
+Previous versions of Dolibarr, 21, 22 and 23 will remain accessible on the `v21.0.4`, `v22.0.4` and `v23.0.4` branches.
