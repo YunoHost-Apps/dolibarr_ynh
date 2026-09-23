@@ -162,4 +162,10 @@ case "$ACTION" in
         ynh_deactivate_user
         ;;
 esac
-rm $filename
+if [[ $? -ne 0 ]]; then
+    exit 1
+elif [ -f "$filename" ]; then
+    rm $filename
+else
+    exit 0
+fi
