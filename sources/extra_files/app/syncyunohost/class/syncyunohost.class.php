@@ -35,8 +35,9 @@ class Syncyunohost extends CommonObject
         // Use prepared statement for security and better readability
         $sql = "SELECT s.fk_adherent";
         $sql .= " FROM " . MAIN_DB_PREFIX . "subscription AS s";
-        $sql .= " WHERE s.datef BETWEEN (NOW() - INTERVAL " . $nbWeeks . " WEEK) AND NOW()";
-        $sql .= " ORDER BY s.datef"; // Optional sorting
+        $sql .= " WHERE s.datef  = ( SELECT MAX(datef) FROM  " . MAIN_DB_PREFIX . "subscription WHERE fk_adherent = s.fk_adherent )";
+        $sql .= " AND s.datef BETWEEN (NOW() - INTERVAL " . $nbWeeks . " WEEK) AND NOW()";
+        $sql .= " ORDER BY s.datef DESC"; // Optional sorting
 
         dol_syslog(get_class($this) . "::doScheduledJob", LOG_DEBUG);
 
