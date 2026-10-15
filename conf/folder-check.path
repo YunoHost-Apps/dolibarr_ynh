@@ -2,7 +2,7 @@
 Description=Monitor Folder Existence
 
 [Path]
-PathExists=/dev/shm/dolibarr
+PathExists=/dev/shm/__APP__
 
 [Install]
 WantedBy=multi-user.target
