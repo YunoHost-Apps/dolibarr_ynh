@@ -1,0 +1,11 @@
+[Unit]
+Description=Create Folder if it Doesn't Exist
+After=folder-check.path
+
+[Service]
+Type=oneshotExecStart=/usr/bin/mkdir -p /dev/shm/dolibarr
+ExecStart=/usr/bin/chown __APP__ /dev/shm/dolibarr
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

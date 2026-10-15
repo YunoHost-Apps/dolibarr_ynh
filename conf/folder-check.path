@@ -1,0 +1,8 @@
+[Unit]
+Description=Monitor Folder Existence
+
+[Path]
+PathExists=/dev/shm/dolibarr
+
+[Install]
+WantedBy=multi-user.target

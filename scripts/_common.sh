@@ -69,12 +69,14 @@ syncyunohost_modules_activate(){
     # SYSTEMD CONFIGURATION
     #=================================================
     ynh_print_info "Adding systemd configurations related to syncyunohost $app module..."
-    mkdir -p "/dev/shm/$app"
-    chown "$app:" "/dev/shm/$app"
+
+    ynh_config_add --template="folder-check.path" --destination="/etc/systemd/system/$app-folder-check.path"
+    ynh_config_add_systemd --template="folder-create.service" --service="$app-folder-create.service"
     ynh_config_add --template="dolibarr_syncyunohost.path" --destination="/etc/systemd/system/$app-syncyunohost.path"
     ynh_config_add_systemd --template="dolibarr_syncyunohost.service" --service="$app-syncyunohost"
     systemctl daemon-reload
 
+    systemctl enable --now "$app-folder-check.path" --quiet
     systemctl enable --now "$app-syncyunohost.path" --quiet
 
     #=================================================
