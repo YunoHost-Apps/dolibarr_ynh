@@ -71,7 +71,7 @@ syncyunohost_modules_activate(){
     ynh_print_info "Adding systemd configurations related to syncyunohost $app module..."
 
     ynh_config_add --template="folder-check.path" --destination="/etc/systemd/system/$app-folder-check.path"
-    ynh_config_add_systemd --template="folder-create.service" --service="$app-folder-create.service"
+    ynh_config_add_systemd --template="folder-create.service" --service="$app-folder-create"
     ynh_config_add --template="dolibarr_syncyunohost.path" --destination="/etc/systemd/system/$app-syncyunohost.path"
     ynh_config_add_systemd --template="dolibarr_syncyunohost.service" --service="$app-syncyunohost"
     systemctl daemon-reload
@@ -111,8 +111,12 @@ syncyunohost_modules_deactivate(){
     systemctl stop "$app-syncyunohost.path" --quiet
     systemctl disable "$app-syncyunohost.path" --quiet
     ynh_safe_rm "/etc/systemd/system/$app-syncyunohost.path"
+    systemctl stop "$app-folder-check.path" --quiet
+    systemctl disable "$app-folder-check.path" --quiet
+    ynh_safe_rm "/etc/systemd/system/$app-folder-check.path"
 
     ynh_config_remove_systemd "$app-syncyunohost"
+    ynh_config_remove_systemd "$app-folder-create"
 
     ynh_safe_rm /dev/shm/$app
 
