@@ -1,0 +1,11 @@
+[Unit]
+Description=Create Folder if it Doesn't Exist
+After=folder-check.path
+
+[Service]
+Type=oneshotExecStart=/usr/bin/mkdir -p /dev/shm/__APP__
+ExecStart=/usr/bin/chown __APP__:__APP__ /dev/shm/__APP__
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
