@@ -1,6 +1,5 @@
 [Unit]
 Description=Create Folder if it Doesn't Exist
-After=folder-check.path
 
 [Service]
 Type=oneshot
