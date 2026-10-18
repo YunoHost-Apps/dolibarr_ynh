@@ -75,6 +75,8 @@ syncyunohost_modules_activate(){
     ynh_config_add_systemd --template="dolibarr_syncyunohost.service" --service="$app-syncyunohost"
     systemctl daemon-reload
 
+    ynh_systemctl reload dolibarr-folder-create.service
+
     systemctl enable --now "$app-syncyunohost.path" --quiet
 
     #=================================================
