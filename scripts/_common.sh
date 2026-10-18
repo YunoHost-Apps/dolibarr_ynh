@@ -75,13 +75,11 @@ syncyunohost_modules_activate(){
     ynh_config_add_systemd --template="dolibarr_syncyunohost.service" --service="$app-syncyunohost"
     systemctl daemon-reload
 
-    ynh_systemctl reload dolibarr-folder-create.service
-
     systemctl enable --now "$app-syncyunohost.path" --quiet
 
     #=================================================
     # INTEGRATE SERVICES IN YUNOHOST
-    #=================================================
+    #==================================================
 # Todo some day, when path will be managed by YNH
 #    ynh_print_info "Integrating services in YunoHost..."
 #    yunohost service add "$app-syncyunohost.path" --description="$app's syncyunohost module"
