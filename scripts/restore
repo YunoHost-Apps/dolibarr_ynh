@@ -72,13 +72,16 @@ if [[ ! -f "/usr/local/bin/syncyunohost.sh" && "$syncyunohost_enabled" == "true"
     chown "$app:" /usr/local/bin/syncyunohost_launcher.sh
 
     ynh_print_info "restoring the systemd services conf files..."
+    ynh_restore "/etc/systemd/system/$app-folder-create.service"
     ynh_restore "/etc/systemd/system/$app-syncyunohost.path"
     ynh_restore "/etc/systemd/system/$app-syncyunohost.service"
     mkdir /dev/shm/dolibarr
     chown "$app:" /dev/shm/dolibarr
     systemctl daemon-reload
 
+    systemctl enable --now "$app-folder-create.service" --quiet
     systemctl enable --now "$app-syncyunohost.path" --quiet
+    systemctl enable --now "$app-syncyunohost.service" --quiet
 
 # Todo some day, when path will be managed by YNH
 #    ynh_script_progression "Integrating services in YunoHost..."

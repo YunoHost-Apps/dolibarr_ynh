@@ -69,8 +69,8 @@ syncyunohost_modules_activate(){
     # SYSTEMD CONFIGURATION
     #=================================================
     ynh_print_info "Adding systemd configurations related to syncyunohost $app module..."
-    mkdir -p "/dev/shm/$app"
-    chown "$app:" "/dev/shm/$app"
+
+    ynh_config_add_systemd --template="folder-create.service" --service="$app-folder-create"
     ynh_config_add --template="dolibarr_syncyunohost.path" --destination="/etc/systemd/system/$app-syncyunohost.path"
     ynh_config_add_systemd --template="dolibarr_syncyunohost.service" --service="$app-syncyunohost"
     systemctl daemon-reload
@@ -79,7 +79,7 @@ syncyunohost_modules_activate(){
 
     #=================================================
     # INTEGRATE SERVICES IN YUNOHOST
-    #=================================================
+    #==================================================
 # Todo some day, when path will be managed by YNH
 #    ynh_print_info "Integrating services in YunoHost..."
 #    yunohost service add "$app-syncyunohost.path" --description="$app's syncyunohost module"
@@ -109,8 +109,8 @@ syncyunohost_modules_deactivate(){
     systemctl stop "$app-syncyunohost.path" --quiet
     systemctl disable "$app-syncyunohost.path" --quiet
     ynh_safe_rm "/etc/systemd/system/$app-syncyunohost.path"
-
     ynh_config_remove_systemd "$app-syncyunohost"
+    ynh_config_remove_systemd "$app-folder-create"
 
     ynh_safe_rm /dev/shm/$app
 
