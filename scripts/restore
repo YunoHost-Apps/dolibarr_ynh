@@ -72,7 +72,7 @@ if [[ ! -f "/usr/local/bin/syncyunohost.sh" && "$syncyunohost_enabled" == "true"
     chown "$app:" /usr/local/bin/syncyunohost_launcher.sh
 
     ynh_print_info "restoring the systemd services conf files..."
-    ynh_restore "/etc/systemd/system/$app-folder-check.path.path"
+#    ynh_restore "/etc/systemd/system/$app-folder-check.path.path"
     ynh_restore "/etc/systemd/system/$app-folder-create.service"
     ynh_restore "/etc/systemd/system/$app-syncyunohost.path"
     ynh_restore "/etc/systemd/system/$app-syncyunohost.service"
@@ -80,7 +80,7 @@ if [[ ! -f "/usr/local/bin/syncyunohost.sh" && "$syncyunohost_enabled" == "true"
     chown "$app:" /dev/shm/dolibarr
     systemctl daemon-reload
 
-    systemctl enable --now "$app-folder-check.path" --quiet
+  #  systemctl enable --now "$app-folder-check.path" --quiet
     systemctl enable --now "$app-syncyunohost.path" --quiet
 
 # Todo some day, when path will be managed by YNH
