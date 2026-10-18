@@ -69,7 +69,6 @@ ynh_backup "/usr/local/bin/syncyunohost_launcher.sh"
 ynh_print_info "Backing up the systemd services conf files..."
 ynh_backup "/etc/systemd/system/$app-syncyunohost.path"
 ynh_backup "/etc/systemd/system/$app-syncyunohost.service"
-#ynh_backup "/etc/systemd/system/$app-folder-check.path"
 ynh_backup "/etc/systemd/system/$app-$app-folder-create.service"
 
 fi
